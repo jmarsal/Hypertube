@@ -12,6 +12,8 @@ app.use(cookieParser());
 
 // APIs
 
+let subscribe = require('./src/routes/subscribe');
+
 let mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/hypertube');
 
@@ -37,6 +39,8 @@ app.post('/session', (req, res) => {
     res.json(req.session.session);
   })
 });
+
+app.use('/subscribe', subscribe);
 
 // END APIs
 
