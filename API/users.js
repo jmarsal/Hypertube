@@ -1,5 +1,6 @@
 let express = require('express');
 let router = express.Router();
+let crypto = require('crypto');
 
 let User = require('../models/user.js');
 
@@ -7,6 +8,7 @@ let User = require('../models/user.js');
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
   let user = req.body;
+  user[0].password = crypto.createHash('sha512').update(user[0].password).digest('hex');
 
   User.create(user, (err, user) => {
     if (err) throw err;
@@ -23,7 +25,7 @@ router.get('/', (req, res) => {
 });
 
 //---->>> DELETE USER <<<-----
-app.delete('/:_id', (req, res) => {
+router.delete('/:_id', (req, res) => {
   let query = {_id: req.params._id};
 
   User.remove(query, (err, user) => {
@@ -33,14 +35,17 @@ app.delete('/:_id', (req, res) => {
 });
 
 //---->>> UPDATE USER <<<-----
-app.put('/:_id', (req, res) => {
+router.put('/:_id', (req, res) => {
   let user = req.body;
-  let query = req.params._id;
+  user[0].password = crypto.createHash('sha512').update(user[0].password).digest('hex');
+  let query = {};
+  query._id = req.params._id;
 
   let update = {
     '$set': {
         login: user.login,
         password: user.password,
+        email: user.email,
         img: user.img,
         firstname: user.firstname,
         lastname: user.lastname

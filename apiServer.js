@@ -38,8 +38,8 @@ app.post('/session', (req, res) => {
   })
 });
 
-// ROUTES
-app.use('/subscribe', require('./routes/subscribe'));
+// ROUTES API
+app.use('/users', require('./API/users'));
 
 // END APIs
 

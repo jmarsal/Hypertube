@@ -14,6 +14,7 @@ class Menu extends React.Component {
                 <Navbar.Collapse>
                     <Nav pullRight>
                         <NavItem eventKey={1} href="/login">Login</NavItem>
+                        <NavItem eventKey={2} href="/subscribe">Subscribe</NavItem>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>

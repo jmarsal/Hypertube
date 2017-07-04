@@ -8,13 +8,14 @@ import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 
 //IMPORT COMBINED REDUCERS
-// import reducers from './reducers/index';
+import reducers from './reducers/index';
 
 // CREATE THE STORE
 const middleware = applyMiddleware(thunk, logger);
-const store = createStore(/*reducers,*/ middleware);
+const store = createStore(reducers, middleware);
 
 import HomePage from './components/pages/homePage';
+import SubscribeForm from './components/pages/subscribeForm';
 import Main from './main';
 
 const Routes = (
@@ -23,6 +24,7 @@ const Routes = (
             <Route path="/" component={Main}>
                 <IndexRoute component={HomePage} />
                 <Route path="/login" />
+                <Route path="/subscribe" component={SubscribeForm} />
             </Route>
         </Router>
     </Provider>
