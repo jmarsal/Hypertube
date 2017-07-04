@@ -48741,24 +48741,24 @@ var SubscribeForm = function (_React$Component) {
     _createClass(SubscribeForm, [{
         key: 'handleSubmit',
         value: function handleSubmit() {
-            var user = [{
+            var user = {
                 login: (0, _reactDom.findDOMNode)(this.refs.login).value,
                 email: (0, _reactDom.findDOMNode)(this.refs.email).value,
                 password: (0, _reactDom.findDOMNode)(this.refs.password).value,
                 //img: findDOMNode(this.refs.image).value,
                 firstname: (0, _reactDom.findDOMNode)(this.refs.firstname).value,
                 lastname: (0, _reactDom.findDOMNode)(this.refs.lastname).value
-            }];
+            };
 
-            if (user[0].login === '') {
+            if (user.login === '') {
                 this.refs.emptyLogin.show();
-            } else if (user[0].firstname === '') {
+            } else if (user.firstname === '') {
                 this.refs.emptyFirstname.show();
-            } else if (user[0].lastname === '') {
+            } else if (user.lastname === '') {
                 this.refs.emptyLastname.show();
-            } else if (user[0].email === '') {
+            } else if (user.email === '') {
                 this.refs.emptyEmail.show();
-            } else if (user[0].password === '') {
+            } else if (user.password === '') {
                 this.refs.emptyPassword.show();
             } else {
                 this.props.addUser(user);
@@ -48778,6 +48778,8 @@ var SubscribeForm = function (_React$Component) {
         key: 'render',
         value: function render() {
 
+            console.log(this.props);
+
             return _react2.default.createElement(
                 _reactBootstrap.Well,
                 null,
@@ -48787,6 +48789,13 @@ var SubscribeForm = function (_React$Component) {
                     _react2.default.createElement(
                         _reactBootstrap.Col,
                         { xs: 12, sm: 6 },
+                        this.props.errors ? this.props.errors.map(function (errorsArr, i) {
+                            return _react2.default.createElement(
+                                _reactBootstrap.Alert,
+                                { key: i, bsStyle: 'warning' },
+                                errorsArr.msg
+                            );
+                        }) : "",
                         _react2.default.createElement(
                             _reactBootstrap.Panel,
                             null,
@@ -48927,7 +48936,8 @@ function mapStateToProps(state) {
         users: state.users.users,
         msg: state.users.msg,
         style: state.users.style,
-        validation: state.users.validation
+        validation: state.users.validation,
+        errors: state.users.errors
     };
 }
 
@@ -48977,7 +48987,11 @@ function getUsers() {
 function addUser(user) {
     return function (dispatch) {
         _axios2.default.post("/api/users", user).then(function (response) {
-            dispatch({ type: "ADD_USER", payload: response.data });
+            if (response.data.status === "success") {
+                dispatch({ type: "ADD_USER", payload: response.data.content });
+            } else {
+                dispatch({ type: "ADD_USER_REJECTED", payload: response.data.content });
+            }
         }).catch(function (err) {
             dispatch({ type: "ADD_USER_REJECTED", payload: "there was an error while adding a new user" });
         });
@@ -49934,10 +49948,10 @@ function usersReducers() {
             return _extends({}, state, { users: [].concat(_toConsumableArray(state.users), _toConsumableArray(action.payload)), msg: 'Success! Click to continue', style: 'success', validation: 'success' });
 
         case "ADD_USER_REJECTED":
-            return _extends({}, state, { msg: 'Please, try again', style: 'danger', validation: 'error' });
+            return _extends({}, state, { msg: 'Please, try again', style: 'danger', validation: 'error', errors: action.payload });
 
         case "RESET_BUTTON":
-            return _extends({}, state, { msg: null, style: 'primary', validation: null });
+            return _extends({}, state, { msg: null, style: 'primary', validation: null, errors: null });
 
         case "DELETE_USER":
             var currentUserToDelete = [].concat(_toConsumableArray(state.users));

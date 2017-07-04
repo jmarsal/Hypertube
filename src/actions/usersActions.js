@@ -18,12 +18,15 @@ export function addUser(user) {
     return (dispatch) => {
         axios.post("/api/users", user)
             .then((response) => {
-                dispatch({type: "ADD_USER", payload: response.data})
+                if (response.data.status === "success") {
+                    dispatch({type: "ADD_USER", payload: response.data.content})
+                } else {
+                    dispatch({type: "ADD_USER_REJECTED", payload: response.data.content})
+                }
             })
             .catch ((err) => {
                 dispatch({type: "ADD_USER_REJECTED", payload: "there was an error while adding a new user"})
             });
-
     }
 }
 

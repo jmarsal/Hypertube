@@ -3,17 +3,32 @@ let router = express.Router();
 let crypto = require('crypto');
 
 let User = require('../models/user.js');
+let Check = require('../models/check.js');
 
 
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
-  let user = req.body;
-  user[0].password = crypto.createHash('sha512').update(user[0].password).digest('hex');
 
-  User.create(user, (err, user) => {
-    if (err) throw err;
-    res.json(user);
-  })
+  Check.subscribeInputs(req)
+    .then((response) => {
+
+      if (response.status === "success") {
+        let user = req.body;
+        user.password = crypto.createHash('sha512').update(user.password).digest('hex');
+
+        User.create(user, (err, user) => {
+          if (err) throw err;
+          res.json({status: "success", content: user});
+        })
+      } else {
+        res.json({status: "error", content: response.data})
+      }
+      
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  
 });
 
 //---->>> GET USERS <<<-----

@@ -1,12 +1,16 @@
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const validator = require('express-validator');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
 let app = express();
 
+// MIDDLEWARE
+
 app.use(bodyParser.json());
+app.use(validator());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 

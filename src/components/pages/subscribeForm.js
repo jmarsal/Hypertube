@@ -1,5 +1,5 @@
 import React from 'react';
-import {Popover, OverlayTrigger, MenuItem, InputGroup, DropdownButton, Image, Col, Row, Well, Panel, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap';
+import {Alert, Popover, OverlayTrigger, MenuItem, InputGroup, DropdownButton, Image, Col, Row, Well, Panel, FormControl, FormGroup, ControlLabel, Button} from 'react-bootstrap';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {findDOMNode} from 'react-dom';
@@ -9,24 +9,24 @@ import axios from 'axios';
 class SubscribeForm extends React.Component {
 
     handleSubmit() {
-        const user = [{
+        const user = {
             login: findDOMNode(this.refs.login).value,
             email: findDOMNode(this.refs.email).value,
             password: findDOMNode(this.refs.password).value,
             //img: findDOMNode(this.refs.image).value,
             firstname: findDOMNode(this.refs.firstname).value,
             lastname: findDOMNode(this.refs.lastname).value,
-        }];
+        };
         
-        if (user[0].login === '') {
+        if (user.login === '') {
             this.refs.emptyLogin.show();
-        } else if (user[0].firstname === '') {
+        } else if (user.firstname === '') {
             this.refs.emptyFirstname.show();
-        } else if (user[0].lastname === '') {
+        } else if (user.lastname === '') {
             this.refs.emptyLastname.show();
-        } else if (user[0].email === '') {
+        } else if (user.email === '') {
             this.refs.emptyEmail.show();
-        } else if (user[0].password === '') {
+        } else if (user.password === '') {
             this.refs.emptyPassword.show();
         } else {
             this.props.addUser(user);
@@ -43,13 +43,23 @@ class SubscribeForm extends React.Component {
     }
 
     render() {
+
+        console.log(this.props)
         
         return(
             <Well>
                 <Row>
                     <Col xs={12} sm={6}>
+                        {(this.props.errors)?(
+                            this.props.errors.map((errorsArr, i) => {
+                                return(
+                                    <Alert key={i} bsStyle="warning">
+                                        {errorsArr.msg}
+                                    </Alert>
+                                )
+                            })
+                        ):("")}
                         <Panel>
-
                             <OverlayTrigger ref="emptyLogin" placement="right" overlay={
                                 <Popover id="popover-positioned-right">
                                     Please enter your login.
@@ -135,7 +145,6 @@ class SubscribeForm extends React.Component {
                                 bsStyle={(!this.props.style)?("primary"):(this.props.style)}>
                                 {(!this.props.msg)?("Sign in"):(this.props.msg)}
                             </Button>
-
                         </Panel>
                     </Col>
                 </Row>
@@ -149,7 +158,8 @@ function mapStateToProps(state) {
         users: state.users.users,
         msg: state.users.msg,
         style: state.users.style,
-        validation: state.users.validation
+        validation: state.users.validation,
+        errors: state.users.errors
     }
 }
 
