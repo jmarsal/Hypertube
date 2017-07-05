@@ -13,7 +13,8 @@ import reducers from './reducers/index';
 // CREATE THE STORE
 const middleware = applyMiddleware(thunk, logger);
 const store = createStore(
-	/*reducers,*/ middleware,
+	reducers,
+	middleware,
 	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
 
@@ -21,13 +22,13 @@ import HomePage from './components/pages/homePage';
 import Main from './main';
 
 const Routes = (
-    <Provider store={store}>
-        <Router history={browserHistory}>
-            <Route path="/" component={Main}>
-                <IndexRoute component={HomePage} />
-            </Route>
-        </Router>
-    </Provider>
+	<Provider store={store}>
+		<Router history={browserHistory}>
+			<Route path="/" component={Main}>
+				<IndexRoute component={HomePage} />
+			</Route>
+		</Router>
+	</Provider>
 );
 
 render(Routes, document.getElementById('app'));

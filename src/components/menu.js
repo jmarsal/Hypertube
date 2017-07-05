@@ -1,6 +1,7 @@
 import React from 'react';
 import { Nav, NavItem, Navbar } from 'react-bootstrap';
 import ModalLogin from 'components/modals/modalLogin';
+import ModalSubscribe from 'components/modals/modalSubscribe';
 
 class Menu extends React.Component {
 	render() {
