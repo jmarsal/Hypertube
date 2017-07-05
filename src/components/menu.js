@@ -15,6 +15,7 @@ class Menu extends React.Component {
 				<Navbar.Collapse>
 					<Nav pullRight>
 						<ModalLogin />
+						<ModalSubscribe />
 					</Nav>
 				</Navbar.Collapse>
 			</Navbar>

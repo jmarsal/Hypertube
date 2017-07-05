@@ -18,7 +18,6 @@ const store = createStore(
 );
 
 import HomePage from './components/pages/homePage';
-import SubscribeForm from './components/pages/subscribeForm';
 import Main from './main';
 
 const Routes = (
@@ -26,8 +25,6 @@ const Routes = (
         <Router history={browserHistory}>
             <Route path="/" component={Main}>
                 <IndexRoute component={HomePage} />
-                <Route path="/login" />
-                <Route path="/subscribe" component={SubscribeForm} />
             </Route>
         </Router>
     </Provider>

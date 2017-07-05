@@ -3,7 +3,7 @@ import { ButtonToolbar, Button, Form, FormGroup, Col, Checkbox, FormControl, Con
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-@connect((state) => ({ user: state.user }), (dispatch) => bindActionCreators({ ...user }, dispatch))
+//@connect((state) => ({ user: state.user }), (dispatch) => bindActionCreators({ ...user }, dispatch))
 class FormLogin extends React.Component {
 	constructor(props) {
 		super(props);
@@ -79,7 +79,7 @@ class FormLogin extends React.Component {
 							<Button type="submit" data-dismiss="modal">
 								Close
 							</Button>
-							{this.state.sendOn
+							{this.state.sendOn == false
 								? <Button
 										bsStyle="primary"
 										type="submit"
