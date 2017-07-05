@@ -16,27 +16,27 @@ class FormLogin extends React.Component {
 			val = e.target.value;
 		if (inputId === 'formHorizontalLogin') {
 			this.setState({ login: val });
-		} else if (inputId === 'formHorizontalPassword') {
+		}
+		if (inputId === 'formHorizontalPassword') {
 			this.setState({ passwd: val });
 		}
-		if (this.state.login !== '' && this.state.passwd !== '') {
-			this.setState({ sendOn: true });
-		} else {
-			this.setState({ sendOn: false });
-		}
 	}
 
-	getInputsContent(e) {
+	submitValuesOfInputs(e) {
 		const login = this.state.login,
 			passwd = this.state.passwd;
-
-		if (login === '' || passwd === '') {
-			//error
-		}
 	}
 
-	componentDidMount() {
-		console.log(this.state);
+	componentDidUpdate() {
+		if (this.state.sendOn == false) {
+			if (this.state.login !== '' && this.state.passwd !== '') {
+				this.setState({ sendOn: true });
+			}
+		} else {
+			if (this.state.login === '' || this.state.passwd === '') {
+				this.setState({ sendOn: false });
+			}
+		}
 	}
 
 	render() {
@@ -51,6 +51,7 @@ class FormLogin extends React.Component {
 						<FormControl
 							type="text"
 							placeholder="Login"
+							ref="login"
 							value={this.state.login}
 							onChange={(e) => this.handleChange(e)}
 						/>
@@ -65,6 +66,7 @@ class FormLogin extends React.Component {
 						<FormControl
 							type="password"
 							placeholder="Password"
+							ref="passwd"
 							value={this.state.passwd}
 							onChange={(e) => this.handleChange(e)}
 						/>
@@ -87,12 +89,16 @@ class FormLogin extends React.Component {
 								? <Button
 										bsStyle="primary"
 										type="submit"
-										onClick={(login) => this.getInputsContent()}
+										onClick={(login) => this.submitValuesOfInputs()}
 										disabled
 									>
 										Sign in
 									</Button>
-								: <Button bsStyle="primary" type="submit" onClick={(login) => this.getInputsContent()}>
+								: <Button
+										bsStyle="primary"
+										type="submit"
+										onClick={(login) => this.submitValuesOfInputs()}
+									>
 										Sign in
 									</Button>}
 						</ButtonToolbar>
