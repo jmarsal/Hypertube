@@ -37,6 +37,7 @@ class FormLogin extends React.Component {
 	}
 
 	render() {
+		const { showModal } = this.props;
 		return (
 			<Form horizontal>
 				<FormGroup controlId="formHorizontalLogin">
@@ -76,7 +77,7 @@ class FormLogin extends React.Component {
 				<FormGroup>
 					<Col smOffset={2} sm={10}>
 						<ButtonToolbar>
-							<Button type="submit" data-dismiss="modal">
+							<Button type="button" onClick={() => showModal(false)}>
 								Close
 							</Button>
 							{this.state.sendOn == false

@@ -22,7 +22,7 @@ const withModal = (Content, title) => (WrappedComponent) => {
 						<Modal.Title>{title}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<Content />
+						<Content showModal={(visible) => this.showModal(visible)} {...this.props} />
 					</Modal.Body>
 				</Modal>
 			);
