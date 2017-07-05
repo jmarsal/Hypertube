@@ -33,6 +33,9 @@ class FormLogin extends React.Component {
 		if (login === '' || passwd === '') {
 			//error
 		}
+	}
+
+	componentDidMount() {
 		console.log(this.state);
 	}
 
