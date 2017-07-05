@@ -12,12 +12,8 @@ import reducers from './reducers/index';
 
 // CREATE THE STORE
 const middleware = applyMiddleware(thunk, logger);
-const store = createStore(
-	reducers,
-	middleware,
-	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
-
+const store = createStore(reducers, middleware);
+// , window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 import HomePage from './components/pages/homePage';
 import Main from './main';
 
