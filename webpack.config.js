@@ -1,25 +1,25 @@
 let path = require('path');
 
 const webpack = require('webpack');
-const ExtractTextPlugin = require("extract-text-webpack-plugin")
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry: './src/client.js',
-    output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'public')
-    },
-    watch: true,
-    module: {
-        loaders : [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['react', 'es2015', 'stage-1'],
-                }
-            }
-        ]
-    }
+	entry: './src/client.js',
+	output: {
+		filename: 'bundle.js',
+		path: path.resolve(__dirname, 'public')
+	},
+	resolve: {
+		modules: [ path.resolve(__dirname, 'src'), 'node_modules' ]
+	},
+	watch: true,
+	module: {
+		loaders: [
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				loader: 'babel-loader'
+			}
+		]
+	}
 };
