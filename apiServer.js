@@ -23,23 +23,25 @@ let db = mongoose.connection;
 db.on('error', console.error.bind(console, '# MongoDB - connection error: '));
 
 //---->>> SET UP SESSIONS <<<-----
-app.use(session({
-    secret: 'ferEFdf_dsvVaas',
-    saveUninitialized: false,
-    resave: false,
-    cookie: {maxAge: 1000 * 60 * 60 * 24 * 2},
-    store: new MongoStore({mongooseConnection: db, ttl: 2 * 24 * 60 * 60})
-    //ttl: 2 days * 24 hours * 60 minutes * 60 seconds
-}));
+app.use(
+	session({
+		secret: 'ferEFdf_dsvVaas',
+		saveUninitialized: false,
+		resave: false,
+		cookie: { maxAge: 1000 * 60 * 60 * 24 * 2 },
+		store: new MongoStore({ mongooseConnection: db, ttl: 2 * 24 * 60 * 60 })
+		//ttl: 2 days * 24 hours * 60 minutes * 60 seconds
+	})
+);
 
 // SAVE TO SESSION
 app.post('/session', (req, res) => {
-  let session = req.body;
-  req.session.session = session;
-  req.session.save((err) => {
-    if (err) throw err;
-    res.json(req.session.session);
-  })
+	let session = req.body;
+	req.session.session = session;
+	req.session.save((err) => {
+		if (err) throw err;
+		res.json(req.session.session);
+	});
 });
 
 // ROUTES API
@@ -48,8 +50,8 @@ app.use('/users', require('./API/users'));
 // END APIs
 
 app.listen(3001, (err) => {
-  if (err) {
-    return console.log(err);
-  }
-  console.log('API Server is listening in http://localhost:3001');
+	if (err) {
+		return console.error(err);
+	}
+	console.log('API Server is listening in http://localhost:3001');
 });

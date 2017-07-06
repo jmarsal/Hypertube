@@ -16,27 +16,31 @@ class FormLogin extends React.Component {
 			val = e.target.value;
 		if (inputId === 'formHorizontalLogin') {
 			this.setState({ login: val });
-		} else if (inputId === 'formHorizontalPassword') {
-			this.setState({ passwd: val });
 		}
-		if (this.state.login !== '' && this.state.passwd !== '') {
-			this.setState({ sendOn: true });
-		} else {
-			this.setState({ sendOn: false });
+		if (inputId === 'formHorizontalPassword') {
+			this.setState({ passwd: val });
 		}
 	}
 
-	getInputsContent(e) {
+	submitValuesOfInputs(e) {
 		const login = this.state.login,
 			passwd = this.state.passwd;
+	}
 
-		if (login === '' || passwd === '') {
-			//error
+	componentDidUpdate() {
+		if (this.state.sendOn == false) {
+			if (this.state.login !== '' && this.state.passwd !== '') {
+				this.setState({ sendOn: true });
+			}
+		} else {
+			if (this.state.login === '' || this.state.passwd === '') {
+				this.setState({ sendOn: false });
+			}
 		}
-		console.log(this.state);
 	}
 
 	render() {
+		const { showModal } = this.props;
 		return (
 			<Form horizontal>
 				<FormGroup controlId="formHorizontalLogin">
@@ -47,6 +51,7 @@ class FormLogin extends React.Component {
 						<FormControl
 							type="text"
 							placeholder="Login"
+							ref="login"
 							value={this.state.login}
 							onChange={(e) => this.handleChange(e)}
 						/>
@@ -61,6 +66,7 @@ class FormLogin extends React.Component {
 						<FormControl
 							type="password"
 							placeholder="Password"
+							ref="passwd"
 							value={this.state.passwd}
 							onChange={(e) => this.handleChange(e)}
 						/>
@@ -76,19 +82,23 @@ class FormLogin extends React.Component {
 				<FormGroup>
 					<Col smOffset={2} sm={10}>
 						<ButtonToolbar>
-							<Button type="submit" data-dismiss="modal">
+							<Button type="button" onClick={() => showModal(false)}>
 								Close
 							</Button>
 							{this.state.sendOn == false
 								? <Button
 										bsStyle="primary"
 										type="submit"
-										onClick={(login) => this.getInputsContent()}
+										onClick={(login) => this.submitValuesOfInputs()}
 										disabled
 									>
 										Sign in
 									</Button>
-								: <Button bsStyle="primary" type="submit" onClick={(login) => this.getInputsContent()}>
+								: <Button
+										bsStyle="primary"
+										type="submit"
+										onClick={(login) => this.submitValuesOfInputs()}
+									>
 										Sign in
 									</Button>}
 						</ButtonToolbar>
