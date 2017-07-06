@@ -4,6 +4,9 @@ const bodyParser = require('body-parser');
 const validator = require('express-validator');
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
+const mongoose = require('mongoose');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 let app = express();
 
@@ -16,7 +19,6 @@ app.use(cookieParser());
 
 // APIs
 
-let mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost:27017/hypertube');
 
 let db = mongoose.connection;
@@ -26,23 +28,17 @@ db.on('error', console.error.bind(console, '# MongoDB - connection error: '));
 app.use(
 	session({
 		secret: 'ferEFdf_dsvVaas',
-		saveUninitialized: false,
 		resave: false,
-		cookie: { maxAge: 1000 * 60 * 60 * 24 * 2 },
-		store: new MongoStore({ mongooseConnection: db, ttl: 2 * 24 * 60 * 60 })
-		//ttl: 2 days * 24 hours * 60 minutes * 60 seconds
+    	saveUninitialized: false
 	})
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
-// SAVE TO SESSION
-app.post('/session', (req, res) => {
-	let session = req.body;
-	req.session.session = session;
-	req.session.save((err) => {
-		if (err) throw err;
-		res.json(req.session.session);
-	});
-});
+var User = require('./models/user');
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // ROUTES API
 app.use('/users', require('./API/users'));

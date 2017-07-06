@@ -1,22 +1,27 @@
-let express = require('express');
-let router = express.Router();
-let crypto = require('crypto');
+const express = require('express');
+const router = express.Router();
+const crypto = require('crypto');
+const passport = require('passport');
 
-let User = require('../models/user.js');
-let Check = require('../models/check.js');
+const User = require('../models/user.js');
+const Check = require('../models/check.js');
 
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
 	Check.subscribeInputs(req)
 		.then((response) => {
 			if (response.status === 'success') {
-				let user = req.body;
-				user.password = crypto.createHash('sha512').update(user.password).digest('hex');
 
-				User.create(user, (err, user) => {
-					if (err) throw err;
-					res.json({ status: 'success', content: user });
-				});
+        console.log(req.body);
+
+        User.register(new User({ username : req.body.username, email: req.body.email, firstname: req.body.firstname, lastname: req.body.lastname }), req.body.password, function(err, user) {
+          if (err) throw err;
+
+          passport.authenticate('local')(req, res, function () {
+              res.json({ status: 'success', content: user });
+          });
+        });
+
 			} else {
 				res.json({ status: 'error', content: response.data });
 			}
@@ -53,7 +58,7 @@ router.put('/:_id', (req, res) => {
 
 	let update = {
 		$set: {
-			login: user.login,
+			username: user.username,
 			password: user.password,
 			email: user.email,
 			img: user.img,

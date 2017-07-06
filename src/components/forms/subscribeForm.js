@@ -10,7 +10,7 @@ class SubscribeForm extends React.Component {
 
     handleSubmit() {
         const user = {
-            login: findDOMNode(this.refs.login).value,
+            username: findDOMNode(this.refs.username).value,
             email: findDOMNode(this.refs.email).value,
             password: findDOMNode(this.refs.password).value,
             //img: findDOMNode(this.refs.image).value,
@@ -18,7 +18,7 @@ class SubscribeForm extends React.Component {
             lastname: findDOMNode(this.refs.lastname).value,
         };
         
-        if (user.login === '') {
+        if (user.username === '') {
             this.refs.emptyLogin.show();
         } else if (user.firstname === '') {
             this.refs.emptyFirstname.show();
@@ -35,7 +35,7 @@ class SubscribeForm extends React.Component {
 
     resetForm() {
         this.props.resetButton();
-        findDOMNode(this.refs.login).value = '';
+        findDOMNode(this.refs.username).value = '';
         findDOMNode(this.refs.email).value = '';
         findDOMNode(this.refs.password).value = '';
         findDOMNode(this.refs.firstname).value = '';
@@ -61,12 +61,12 @@ class SubscribeForm extends React.Component {
                                     Please enter your login.
                                 </Popover>
                             }>
-                                <FormGroup controlId="login" validationState={this.props.validation}>
+                                <FormGroup controlId="username" validationState={this.props.validation}>
                                     <ControlLabel>Login</ControlLabel>
                                     <FormControl
                                         type="text"
                                         placeholder="Enter your login"
-                                        ref="login"
+                                        ref="username"
                                     />
                                     <FormControl.Feedback />
                                 </FormGroup>
