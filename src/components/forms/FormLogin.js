@@ -3,7 +3,7 @@ import { ButtonToolbar, Button, Form, FormGroup, Col, Checkbox, FormControl, Con
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
-//@connect((state) => ({ user: state.user }), (dispatch) => bindActionCreators({ ...user }, dispatch))
+// @connect((state) => ({ users: state.user }), (dispatch) => bindActionCreators({ ...users }, dispatch))
 class FormLogin extends React.Component {
 	constructor(props) {
 		super(props);
@@ -21,26 +21,32 @@ class FormLogin extends React.Component {
 			this.setState({ passwd: val });
 		}
 	}
-
 	submitValuesOfInputs(e) {
 		const login = this.state.login,
 			passwd = this.state.passwd;
 	}
 
+	// componentWillUpdate(nextProps, nextState) {
+	// 	console.log(this);
+	// 	debugger;
+	// 	const { state } = this;
+	// 	console.log({ state });
+	// }
 	componentDidUpdate() {
-		if (this.state.sendOn == false) {
-			if (this.state.login !== '' && this.state.passwd !== '') {
-				this.setState({ sendOn: true });
-			}
-		} else {
-			if (this.state.login === '' || this.state.passwd === '') {
-				this.setState({ sendOn: false });
-			}
+		const { login, passwd, sendOn } = this.state;
+
+		if (!sendOn && login.length && passwd.length) {
+			return this.setState({ sendOn: true });
+		}
+
+		if (sendOn && (!login.length || !passwd.length)) {
+			return this.setState({ sendOn: false });
 		}
 	}
 
 	render() {
 		const { showModal } = this.props;
+
 		return (
 			<Form horizontal>
 				<FormGroup controlId="formHorizontalLogin">
@@ -85,22 +91,14 @@ class FormLogin extends React.Component {
 							<Button type="button" onClick={() => showModal(false)}>
 								Close
 							</Button>
-							{this.state.sendOn == false
-								? <Button
-										bsStyle="primary"
-										type="submit"
-										onClick={(login) => this.submitValuesOfInputs()}
-										disabled
-									>
-										Sign in
-									</Button>
-								: <Button
-										bsStyle="primary"
-										type="submit"
-										onClick={(login) => this.submitValuesOfInputs()}
-									>
-										Sign in
-									</Button>}
+							<Button
+								bsStyle="primary"
+								type="submit"
+								onClick={(login) => this.submitValuesOfInputs()}
+								disabled={!this.state.sendOn}
+							>
+								Sign in
+							</Button>
 						</ButtonToolbar>
 					</Col>
 				</FormGroup>

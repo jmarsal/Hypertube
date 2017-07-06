@@ -58,3 +58,4 @@ typings/
 .env
 
 public/bundle.js
+\.vscode/last\.sql
