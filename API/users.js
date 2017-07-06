@@ -8,22 +8,36 @@ const Check = require('../models/check.js');
 
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
-	Check.subscribeInputs(req)
+	Check.userExists(req.body.username)
 		.then((response) => {
 			if (response.status === 'success') {
-
-        console.log(req.body);
-
-        User.register(new User({ username : req.body.username, email: req.body.email, firstname: req.body.firstname, lastname: req.body.lastname }), req.body.password, function(err, user) {
-          if (err) throw err;
-
-          passport.authenticate('local')(req, res, function () {
-              res.json({ status: 'success', content: user });
-          });
-        });
-
+				return Check.subscribeInputs(req);
 			} else {
 				res.json({ status: 'error', content: response.data });
+			}
+		})
+		.then((response) => {
+			if (response) {
+				if (response.status === 'success') {
+					User.register(
+						new User({
+							username: req.body.username,
+							email: req.body.email,
+							firstname: req.body.firstname,
+							lastname: req.body.lastname
+						}),
+						req.body.password,
+						function(err, user) {
+							if (err) throw err;
+
+							passport.authenticate('local')(req, res, function() {
+								res.json({ status: 'success', content: user });
+							});
+						}
+					);
+				} else {
+					res.json({ status: 'error', content: response.data });
+				}
 			}
 		})
 		.catch((err) => {

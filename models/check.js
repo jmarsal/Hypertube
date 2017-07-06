@@ -1,3 +1,5 @@
+const User = require('./user');
+
 class Check {
 	static subscribeInputs(req) {
 		return new Promise((resolve, reject) => {
@@ -30,6 +32,18 @@ class Check {
 			} else {
 				resolve({ status: 'success' });
 			}
+		});
+	}
+
+	static userExists(username) {
+		return new Promise((resolve, reject) => {
+			User.findOne({ username: username }, function(err, user) {
+				if (user) {
+					resolve({ status: 'error', data: [ { msg: 'This username already exists.' } ] });
+				} else {
+					resolve({ status: 'success' });
+				}
+			});
 		});
 	}
 }
