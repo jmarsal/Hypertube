@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
 
-import { applyMiddleware, createStore } from 'redux';
+import { applyMiddleware, createStore, compose } from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
 
@@ -12,8 +12,14 @@ import reducers from './reducers/index';
 
 // CREATE THE STORE
 const middleware = applyMiddleware(thunk, logger);
-const store = createStore(reducers, middleware);
-// , window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+const store = createStore(
+	reducers,
+	compose(
+		middleware,
+		window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+	)
+);
+
 import HomePage from './components/pages/homePage';
 import Main from './main';
 

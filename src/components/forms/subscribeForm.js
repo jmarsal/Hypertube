@@ -43,13 +43,10 @@ class SubscribeForm extends React.Component {
     }
 
     render() {
-
-        console.log(this.props)
         
         return(
-            <Well>
                 <Row>
-                    <Col xs={12} sm={6}>
+                    <Col sm={10}>
                         {(this.props.errors)?(
                             this.props.errors.map((errorsArr, i) => {
                                 return(
@@ -59,7 +56,6 @@ class SubscribeForm extends React.Component {
                                 )
                             })
                         ):("")}
-                        <Panel>
                             <OverlayTrigger ref="emptyLogin" placement="right" overlay={
                                 <Popover id="popover-positioned-right">
                                     Please enter your login.
@@ -145,10 +141,8 @@ class SubscribeForm extends React.Component {
                                 bsStyle={(!this.props.style)?("primary"):(this.props.style)}>
                                 {(!this.props.msg)?("Sign in"):(this.props.msg)}
                             </Button>
-                        </Panel>
                     </Col>
                 </Row>
-            </Well>
         )
     }
 }
