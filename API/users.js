@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
+const multer = require('multer');
+const mkdirp = require('mkdirp');
 const passport = require('passport');
+const fs = require('fs');
 
 const User = require('../models/user.js');
 const Check = require('../models/check.js');
@@ -24,7 +27,8 @@ router.post('/', (req, res) => {
 							username: req.body.username,
 							email: req.body.email,
 							firstname: req.body.firstname,
-							lastname: req.body.lastname
+							lastname: req.body.lastname,
+							img: req.body.img
 						}),
 						req.body.password,
 						function(err, user) {
@@ -36,7 +40,10 @@ router.post('/', (req, res) => {
 						}
 					);
 				} else {
-					res.json({ status: 'error', content: response.data });
+					console.log('./public/upload/' + req.body.img);
+					fs.unlink('./public/upload/' + req.body.img, () => {
+						res.json({ status: 'error', content: response.data });
+					});
 				}
 			}
 		})
@@ -86,6 +93,46 @@ router.put('/:_id', (req, res) => {
 	User.findOneAndUpdate(query, update, options, (err, user) => {
 		if (err) throw err;
 		res.json(user);
+	});
+});
+
+//---->>> UPLOAD USER'S IMAGE <<<-----
+router.post('/upload', (req, res) => {
+	mkdirp('./public/upload', function(err) {
+		if (!err) {
+			let Storage = multer.diskStorage({
+				destination: function(req, file, callback) {
+					callback(null, './public/upload');
+				},
+				filename: function(req, file, callback) {
+					callback(null, req.body.name);
+				}
+			});
+
+			let upload = multer({
+				storage: Storage,
+				fileFilter: (req, file, cb) => {
+					if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+						res.json({ status: 'error', content: [ { msg: 'Avatar: Wrong format.' } ] });
+					} else {
+						cb(null, true);
+					}
+				}
+			}).single('file');
+
+			upload(req, res, function(err) {
+				if (err || !req.file) {
+					console.error(err);
+					res.json({ status: 'error', content: [ { msg: 'Avatar: Please, choose a file.' } ] });
+				}
+
+				if (req.file.size > 5000000) {
+					res.json({ status: 'error', content: [ { msg: 'Avatar: This file is too big.' } ] });
+				}
+
+				res.json({ status: 'success', content: '' });
+			});
+		} else throw err;
 	});
 });
 
