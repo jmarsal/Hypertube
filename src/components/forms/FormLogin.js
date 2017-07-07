@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { ButtonToolbar, Button, Form, FormGroup, Col, Checkbox, FormControl, ControlLabel } from 'react-bootstrap';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+import * as UsersActions from '../../actions/usersActions';
 
-// @connect((state) => ({ users: state.user }), (dispatch) => bindActionCreators({ ...users }, dispatch))
-class FormLogin extends React.Component {
+@connect((state) => ({ users: state.users.users }), (dispatch) => bindActionCreators({ ...UsersActions }, dispatch))
+class FormLogin extends Component {
 	constructor(props) {
 		super(props);
 
@@ -14,6 +15,7 @@ class FormLogin extends React.Component {
 	handleChange(e) {
 		const inputId = e.target.id,
 			val = e.target.value;
+
 		if (inputId === 'formHorizontalLogin') {
 			this.setState({ login: val });
 		}
@@ -21,17 +23,17 @@ class FormLogin extends React.Component {
 			this.setState({ passwd: val });
 		}
 	}
-	submitValuesOfInputs(e) {
-		const login = this.state.login,
-			passwd = this.state.passwd;
+
+	submitValuesOfInputs() {
+		const user = {
+				username: this.state.login,
+				password: this.state.passwd
+			},
+			{ checkUserForConnect } = this.props;
+
+		checkUserForConnect(user);
 	}
 
-	// componentWillUpdate(nextProps, nextState) {
-	// 	console.log(this);
-	// 	debugger;
-	// 	const { state } = this;
-	// 	console.log({ state });
-	// }
 	componentDidUpdate() {
 		const { login, passwd, sendOn } = this.state;
 
@@ -94,7 +96,7 @@ class FormLogin extends React.Component {
 							<Button
 								bsStyle="primary"
 								type="submit"
-								onClick={(login) => this.submitValuesOfInputs()}
+								onClick={() => this.submitValuesOfInputs()}
 								disabled={!this.state.sendOn}
 							>
 								Sign in

@@ -45,6 +45,69 @@ router.post('/', (req, res) => {
 		});
 });
 
+//---->>> LOGIN <<<-----
+router.post('/login', (req, res, next) => {
+	// debugger;
+	const user = req.body;
+	passport.authenticate('local', (err, user, info) => {
+		if (err) {
+			return res.status(400).send({ message: 'Bad request' });
+		}
+
+		if (!user) {
+			return res.status(401).send(info);
+		}
+
+		req.logIn(user, (err) => {
+			if (err) {
+				return res.status(400).send({ message: 'Bad request' });
+			}
+			const payload = {
+				id: user.id,
+				username: user.username
+			};
+			// debugger;
+			res.json({ status: 'success', user: payload });
+
+			// debugger;
+
+			// const token = jwt.sign(payload, app.get(`secretOrKey`)),
+			// 	resObj = {
+			// 		user: `${user.username}`,
+			// 		id: user.id,
+			// 		token: token,
+			// 		settings: null
+			// 	};
+
+			// const settingsQuery = SettingsModel.findOne({
+			// 	user: req.user
+			// }).select(`-active -createdAt -updatedAt -__v -user`);
+
+			// settingsQuery
+			// 	.exec()
+			// 	.then((settings) => {
+			// 		if (settings) {
+			// 			resObj.settings = settings;
+			// 		}
+
+			// 		res
+			// 			.status(200)
+			// 			.cookie(`jwt`, token, {
+			// 				secure: false,
+			// 				httpOnly: false,
+			// 				domain: `.electroleak${config.tld}`,
+			// 				maxAge: 30 * 24 * 60 * 60 * 1000 // 1 month
+			// 			})
+			// 			.send(resObj);
+			// 	})
+			// 	.catch((err) => {
+			// 		console.log(err);
+			// 		return res.status(400).send({ message: `Bad request` });
+			// 	});
+		});
+	})(req, res, next);
+});
+
 //---->>> GET USERS <<<-----
 router.get('/', (req, res) => {
 	User.find((err, users) => {

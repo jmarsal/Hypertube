@@ -47,6 +47,22 @@ export function usersReducers(
 					...currentUserToUpdate.slice(indexToUpdate + 1)
 				]
 			};
+
+		case 'LOGIN_USER':
+			console.log('reducer');
+			return {
+				...state,
+				users: [ ...action.payload ]
+			};
+
+		case 'LOGIN_USER_REJECTED':
+			return {
+				...state,
+				msg: 'Please, try again',
+				style: 'danger',
+				validation: 'error',
+				errors: action.payload
+			};
 	}
 	return state;
 }

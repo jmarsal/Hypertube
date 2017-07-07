@@ -14,8 +14,30 @@ export function getUsers() {
 	};
 }
 
+// CHECK USER IN DB FOR CONNECTION
+export function checkUserForConnect(user) {
+	return (dispatch) => {
+		// debugger;
+		axios.post('/api/users/login', user).then((response) => {
+			debugger;
+			console.log(response);
+			if (response.data.status === 'success') {
+				dispatch({ type: 'LOGIN_USER', payload: response.user });
+			} else {
+				console.log('la');
+				dispatch({ type: 'LOGIN_USER_REJECTED' });
+			}
+		});
+		// .catch(() => {
+		// 	// debugger;
+		// 	dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'problem with authentification' });
+		// });
+	};
+}
+
 // ADD AN USER
 export function addUser(user) {
+	// debugger;
 	return (dispatch) => {
 		axios
 			.post('/api/users', user)
@@ -64,13 +86,5 @@ export function updateUser(user) {
 export function resetButton() {
 	return {
 		type: 'RESET_BUTTON'
-	};
-}
-
-// CHECK USER IN DB FOR CONNECTION
-export function checkUserForConnect(user) {
-	return (dispach) => {
-		axios.get('/api/users', user);
-		//
 	};
 }

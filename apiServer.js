@@ -29,14 +29,14 @@ app.use(
 	session({
 		secret: 'ferEFdf_dsvVaas',
 		resave: false,
-    	saveUninitialized: false
+		saveUninitialized: false
 	})
 );
 app.use(passport.initialize());
 app.use(passport.session());
 
 var User = require('./models/user');
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
