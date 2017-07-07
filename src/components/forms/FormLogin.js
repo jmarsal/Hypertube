@@ -97,7 +97,7 @@ class FormLogin extends Component {
 							</Button>
 							<Button
 								bsStyle="primary"
-								type="submit"
+								type="button"
 								onClick={() => this.submitValuesOfInputs()}
 								disabled={!this.state.sendOn}
 							>

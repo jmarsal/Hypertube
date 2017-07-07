@@ -26,6 +26,13 @@ import axios from 'axios';
 import path from 'path';
 
 class SubscribeForm extends React.Component {
+	constructor() {
+		super();
+		this.state = {
+			sizeError: ''
+		};
+	}
+
 	handleSubmit() {
 		if (!this.fileUpload.files[0]) {
 			this.refs.emptyAvatar.show();
@@ -58,11 +65,15 @@ class SubscribeForm extends React.Component {
 				this.refs.emptyPassword.show();
 			} else {
 				if (this.fileUpload.files[0]) {
-					const file = this.fileUpload.files[0];
-					this.props.uploadDocumentRequest({
-						file,
-						name: filename
-					});
+					if (this.fileUpload.files[0].size > 5000000) {
+						this.setState({ sizeError: 'Avatar: File too big.' });
+					} else {
+						const file = this.fileUpload.files[0];
+						this.props.uploadDocumentRequest({
+							file,
+							name: filename
+						});
+					}
 				}
 				this.props.addUser(user);
 			}
@@ -104,6 +115,11 @@ class SubscribeForm extends React.Component {
 									</Alert>
 								);
 							})
+						: ''}
+					{this.state.sizeError
+						? <Alert key="sizeError" bsStyle="warning">
+								{this.state.sizeError}
+							</Alert>
 						: ''}
 					<OverlayTrigger
 						ref="emptyLogin"

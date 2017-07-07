@@ -40,7 +40,6 @@ router.post('/', (req, res) => {
 						}
 					);
 				} else {
-					console.log('./public/upload/' + req.body.img);
 					fs.unlink('./public/upload/' + req.body.img, () => {
 						res.json({ status: 'error', content: response.data });
 					});
@@ -54,7 +53,6 @@ router.post('/', (req, res) => {
 
 //---->>> LOGIN <<<-----
 router.post('/login', (req, res, next) => {
-	// debugger;
 	const user = req.body;
 	passport.authenticate('local', (err, user, info) => {
 		if (err) {
@@ -73,7 +71,6 @@ router.post('/login', (req, res, next) => {
 				_id: user._id,
 				username: user.username
 			};
-			debugger;
 			res.json({ status: 'success', user: payload });
 
 			// const token = jwt.sign(payload, app.get(`secretOrKey`)),
@@ -185,13 +182,9 @@ router.post('/upload', (req, res) => {
 				if (err || !req.file) {
 					console.error(err);
 					res.json({ status: 'error', content: [ { msg: 'Avatar: Please, choose a file.' } ] });
+				} else {
+					res.json({ status: 'success', content: '' });
 				}
-
-				if (req.file.size > 5000000) {
-					res.json({ status: 'error', content: [ { msg: 'Avatar: This file is too big.' } ] });
-				}
-
-				res.json({ status: 'success', content: '' });
 			});
 		} else throw err;
 	});
