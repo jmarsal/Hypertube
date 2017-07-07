@@ -34,6 +34,13 @@ export function checkUserForConnect(user) {
 	};
 }
 
+// SEND MAIL FORGET PASSWD OR LOGIN_USER
+export function sendMailForgetIdConnect(user) {
+	return (dispatch) => {
+		//
+	};
+}
+
 // ADD AN USER
 export function addUser(user) {
 	return (dispatch) => {

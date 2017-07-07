@@ -13,6 +13,7 @@ import {
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as UsersActions from '../../actions/usersActions';
+import validator from 'validator';
 
 @connect(
 	(state) => ({
@@ -26,7 +27,16 @@ class FormLogin extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state = { login: '', passwd: '', sendOn: false, forget: false };
+		this.state = {
+			login: '',
+			passwd: '',
+			email: '',
+			sendOn: false,
+			forget: false,
+			emailCheck: 'warning',
+			loginCheck: 'warning',
+			passwordCheck: 'warning'
+		};
 	}
 
 	handleChange(e) {
@@ -34,25 +44,48 @@ class FormLogin extends Component {
 			val = e.target.value;
 
 		if (inputId === 'formHorizontalLogin') {
+			if (val.length > 2 && val.length < 15) {
+				this.setState({ loginCheck: 'success' });
+			} else {
+				this.setState({ loginCheck: 'warning' });
+			}
 			this.setState({ login: val });
 		}
 		if (inputId === 'formHorizontalPassword') {
+			if (val.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i')) {
+				this.setState({ passwordCheck: 'success' });
+			} else {
+				this.setState({ passwordCheck: 'warning' });
+			}
 			this.setState({ passwd: val });
+		}
+
+		if (this.state.loginCheck === 'success' && this.state.passwordCheck === 'success') {
+			this.setState({ sendOn: true });
+		}
+		if (inputId === 'formEmail') {
+			if (validator.isEmail(val)) {
+				this.setState({ email: val, emailCheck: 'success' });
+			} else {
+				this.setState({ emailCheck: 'warning' });
+			}
 		}
 	}
 
 	submitValuesOfInputs() {
 		const user = {
-			username: this.state.login,
-			password: this.state.passwd
+			username: validator.escape(this.state.login).trim(),
+			password: validator.escape(this.state.passwd).trim()
 		};
 
 		if (user.username.length && user.password.length) {
 			const { checkUserForConnect } = this.props;
+
 			checkUserForConnect(user);
 		}
 	}
 
+	// CHANGE LE TITRE DE LA MODAL ET LE CONTENU SI CLICK SUR FORGET
 	forgetPasswd() {
 		const { changeTitle } = this.props;
 
@@ -60,16 +93,37 @@ class FormLogin extends Component {
 		return this.setState({ forget: true });
 	}
 
+	submitEmailForReinit() {
+		const user = {
+			email: validator.escape(this.state.email).trim()
+		};
+
+		if (user.email.length) {
+			const { sendMailForgetIdConnect } = this.props;
+
+			sendMailForgetIdConnect(user);
+		}
+	}
+
 	componentDidUpdate() {
 		const { login, passwd, sendOn } = this.state;
 
-		if (!sendOn && login.length && passwd.length) {
-			return this.setState({ sendOn: true });
+		if (
+			!sendOn &&
+			login.length > 2 &&
+			login.length < 15 &&
+			passwd.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i')
+		) {
+			return this.setState({ sendOn: true, loginCheck: 'success', passwordCheck: 'success' });
 		}
 
-		if (sendOn && (!login.length || !passwd.length)) {
-			showModal(false);
-			return this.setState({ sendOn: false });
+		if (
+			sendOn &&
+			(login.length < 3 ||
+				login.length > 14 ||
+				!passwd.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i'))
+		) {
+			return this.setState({ sendOn: false, loginCheck: 'warning', passwordCheck: 'warning' });
 		}
 	}
 
@@ -77,7 +131,7 @@ class FormLogin extends Component {
 		const { showModal, errorsLogin, style } = this.props;
 		return this.state.forget == false
 			? <Form horizontal>
-					<FormGroup controlId="formHorizontalLogin">
+					<FormGroup controlId="formHorizontalLogin" validationState={this.state.loginCheck}>
 						<Col sm={12}>
 							{errorsLogin
 								? <Alert bsStyle={style}>
@@ -99,7 +153,7 @@ class FormLogin extends Component {
 						</Col>
 					</FormGroup>
 
-					<FormGroup controlId="formHorizontalPassword">
+					<FormGroup controlId="formHorizontalPassword" validationState={this.state.passwordCheck}>
 						<Col componentClass={ControlLabel} sm={2}>
 							Password
 						</Col>
@@ -145,11 +199,18 @@ class FormLogin extends Component {
 					</FormGroup>
 				</Form>
 			: <Form horizontal>
-					<FormGroup>
-						<h5>Enter your email and you will recept a mail for reinitialisation</h5>
-						<ControlLabel>Email</ControlLabel>
-						<FormControl type="email" placeholder="Enter your email" ref="email" />
-						<FormControl.Feedback />
+					<FormGroup controlId="formEmail" validationState={this.state.emailCheck}>
+						<Col smOffset={2} sm={10}>
+							<h5>Enter your email and you will recept a mail for reinitialisation</h5>
+							<ControlLabel>Email</ControlLabel>
+							<FormControl
+								type="email"
+								placeholder="Enter your email"
+								ref="email"
+								onChange={(e) => this.handleChange(e)}
+							/>
+							<FormControl.Feedback />
+						</Col>
 					</FormGroup>
 					<FormGroup>
 						<Col smOffset={2} sm={10}>
@@ -160,8 +221,8 @@ class FormLogin extends Component {
 								<Button
 									bsStyle="primary"
 									type="button"
-									onClick={() => this.submitValuesOfInputs()}
-									disabled={!this.state.sendOn}
+									onClick={() => this.submitEmailForReinit()}
+									disabled={this.state.emailCheck === 'success' ? false : true}
 								>
 									Reinitialisation
 								</Button>
