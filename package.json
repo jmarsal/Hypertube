@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www & node apiServer.js"
+    "start": "node ./bin/www & node --inspect apiServer.js"
   },
   "devDependencies": {
     "babel-plugin-transform-decorators-legacy": "^1.3.4",

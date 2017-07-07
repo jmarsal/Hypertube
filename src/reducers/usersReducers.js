@@ -47,6 +47,19 @@ export function usersReducers(
 					...currentUserToUpdate.slice(indexToUpdate + 1)
 				]
 			};
+
+		case 'LOGIN_USER':
+			debugger;
+			return {
+				...state,
+				users: [ ...action.payload ]
+			};
+
+		case 'LOGIN_USER_REJECTED':
+			debugger;
+			return {
+				...state
+			};
 	}
 	return state;
 }
