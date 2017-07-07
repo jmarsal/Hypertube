@@ -70,13 +70,11 @@ router.post('/login', (req, res, next) => {
 				return res.status(400).send({ message: 'Bad request' });
 			}
 			const payload = {
-				id: user.id,
+				_id: user._id,
 				username: user.username
 			};
-			// debugger;
+			debugger;
 			res.json({ status: 'success', user: payload });
-
-			// debugger;
 
 			// const token = jwt.sign(payload, app.get(`secretOrKey`)),
 			// 	resObj = {

@@ -26,12 +26,14 @@ class FormLogin extends Component {
 
 	submitValuesOfInputs() {
 		const user = {
-				username: this.state.login,
-				password: this.state.passwd
-			},
-			{ checkUserForConnect } = this.props;
+			username: this.state.login,
+			password: this.state.passwd
+		};
 
-		checkUserForConnect(user);
+		if (user.username.length && user.password.length) {
+			const { checkUserForConnect } = this.props;
+			checkUserForConnect(user);
+		}
 	}
 
 	componentDidUpdate() {

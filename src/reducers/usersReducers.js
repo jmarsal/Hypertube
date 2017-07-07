@@ -49,19 +49,16 @@ export function usersReducers(
 			};
 
 		case 'LOGIN_USER':
-			console.log('reducer');
+			debugger;
 			return {
 				...state,
 				users: [ ...action.payload ]
 			};
 
 		case 'LOGIN_USER_REJECTED':
+			debugger;
 			return {
-				...state,
-				msg: 'Please, try again',
-				style: 'danger',
-				validation: 'error',
-				errors: action.payload
+				...state
 			};
 	}
 	return state;
