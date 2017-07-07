@@ -49,14 +49,12 @@ export function usersReducers(
 			};
 
 		case 'LOGIN_USER':
-			debugger;
 			return {
 				...state,
 				users: [ ...action.payload ]
 			};
 
 		case 'LOGIN_USER_REJECTED':
-			debugger;
 			return {
 				...state
 			};

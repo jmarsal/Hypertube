@@ -53,7 +53,6 @@ router.post('/', (req, res) => {
 
 //---->>> LOGIN <<<-----
 router.post('/login', (req, res, next) => {
-	// debugger;
 	const user = req.body;
 	passport.authenticate('local', (err, user, info) => {
 		if (err) {
@@ -72,7 +71,6 @@ router.post('/login', (req, res, next) => {
 				_id: user._id,
 				username: user.username
 			};
-			debugger;
 			res.json({ status: 'success', user: payload });
 
 			// const token = jwt.sign(payload, app.get(`secretOrKey`)),
