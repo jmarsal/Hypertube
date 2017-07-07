@@ -55,8 +55,7 @@ export function usersReducers(
 			};
 
 		case 'LOGIN_USER_REJECTED':
-			return {
-				...state
+			return { ...state, style: 'danger', info: action.payload };
 			};
 
 		case 'ACCOUNT_ACTIVATION':

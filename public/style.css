@@ -12,3 +12,10 @@ body {
 .container .footer-text {
 	margin: 20px 0;
 }
+
+.btn-toolbar .btn {
+	margin-right: 5px;
+}
+.btn-toolbar .btn:last-child {
+	margin-right: 0;
+}

@@ -6,15 +6,19 @@ const withModal = (Content, title) => (WrappedComponent) => {
 		constructor(props) {
 			super(props);
 
-			this.state = { showModal: false };
+			this.state = { showModal: false, title: title };
 		}
 
 		showModal(visible) {
 			this.setState({ showModal: visible });
 		}
 
+		changeTitle(title) {
+			this.setState({ title: title });
+		}
+
 		getModal() {
-			const { showModal } = this.state;
+			const { showModal, title } = this.state;
 
 			return (
 				<Modal show={showModal} onHide={() => this.showModal(false)}>
@@ -22,7 +26,11 @@ const withModal = (Content, title) => (WrappedComponent) => {
 						<Modal.Title>{title}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<Content showModal={(visible) => this.showModal(visible)} {...this.props} />
+						<Content
+							changeTitle={(title) => this.changeTitle(title)}
+							showModal={(visible) => this.showModal(visible)}
+							{...this.props}
+						/>
 					</Modal.Body>
 				</Modal>
 			);

@@ -23,7 +23,9 @@ export function checkUserForConnect(user) {
 				if (response.data.status === 'success') {
 					dispatch({ type: 'LOGIN_USER', payload: response.data.user });
 				} else {
-					dispatch({ type: 'LOGIN_USER_REJECTED' });
+					const error = response.data.info.message;
+
+					dispatch({ type: 'LOGIN_USER_REJECTED', payload: error });
 				}
 			})
 			.catch(() => {

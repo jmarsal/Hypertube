@@ -73,7 +73,7 @@ router.post('/login', (req, res, next) => {
 		}
 
 		if (!user) {
-			return res.status(401).send(info);
+			return res.json({ status: 'fail', info: info });
 		}
 
 		req.logIn(user, (err) => {
@@ -84,7 +84,7 @@ router.post('/login', (req, res, next) => {
 				_id: user._id,
 				username: user.username
 			};
-			res.json({ status: 'success', user: payload });
+			return res.json({ status: 'success', user: payload });
 
 			// const token = jwt.sign(payload, app.get(`secretOrKey`)),
 			// 	resObj = {

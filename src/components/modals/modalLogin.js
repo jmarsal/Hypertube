@@ -8,7 +8,7 @@ import withModal from 'components/modals/withModal';
 @withModal(FormLogin, 'Connection')
 class ModalLogin extends React.Component {
 	render() {
-		const { showModal, getModal } = this.props;
+		const { showModal, getModal, showModalForget } = this.props;
 
 		return (
 			<NavItem onClick={() => showModal(true)}>
