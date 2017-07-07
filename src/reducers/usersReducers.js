@@ -58,6 +58,18 @@ export function usersReducers(
 			return {
 				...state
 			};
+
+		case 'ACCOUNT_ACTIVATION':
+			return {
+				...state,
+				activation: true
+			};
+
+		case 'ACCOUNT_ACTIVATION_REJECTED':
+			return {
+				...state,
+				activation: false
+			};
 	}
 	return state;
 }

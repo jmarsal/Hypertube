@@ -81,6 +81,24 @@ export function updateUser(user) {
 	};
 }
 
+// ACCOUNT ACTIVATION
+export function activateAccount(key, user) {
+	return (dispatch) => {
+		axios
+			.get('/api/users/activation?key=' + key + '&user=' + user)
+			.then((response) => {
+				if (response.data.status === 'success') {
+					dispatch({ type: 'ACCOUNT_ACTIVATION' });
+				} else {
+					dispatch({ type: 'ACCOUNT_ACTIVATION_REJECTED' });
+				}
+			})
+			.catch((err) => {
+				dispatch({ type: 'ACCOUNT_ACTIVATION_REJECTED' });
+			});
+	};
+}
+
 // RESET FORM BUTTON
 export function resetButton() {
 	return {

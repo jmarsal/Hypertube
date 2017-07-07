@@ -23,7 +23,7 @@ export function uploadDocumentRequest({ file, name }) {
 		axios
 			.post('/api/users/upload', data)
 			.then((response) => {
-				if (response.status === 'success') {
+				if (response.data.status === 'success') {
 					dispatch(uploadSuccess(response));
 				} else {
 					dispatch(uploadFail(response));

@@ -46,6 +46,18 @@ class Check {
 			});
 		});
 	}
+
+	static mailExists(email) {
+		return new Promise((resolve, reject) => {
+			User.findOne({ email: email }, function(err, user) {
+				if (user) {
+					resolve({ status: 'error', data: [ { msg: 'This email is already used.' } ] });
+				} else {
+					resolve({ status: 'success' });
+				}
+			});
+		});
+	}
 }
 
 module.exports = Check;

@@ -6,7 +6,9 @@ const usersSchema = mongoose.Schema({
 	email: String,
 	img: String,
 	firstname: String,
-	lastname: String
+	lastname: String,
+	activationKey: String,
+	active: Boolean
 });
 
 usersSchema.plugin(passportLocalMongoose);

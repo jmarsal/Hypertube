@@ -22,7 +22,6 @@ import { bindActionCreators } from 'redux';
 import { findDOMNode } from 'react-dom';
 import { addUser, resetButton } from '../../actions/usersActions';
 import { uploadDocumentRequest } from '../../actions/uploadActions';
-import axios from 'axios';
 import path from 'path';
 
 class SubscribeForm extends React.Component {
