@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
 const multer = require('multer');
 const mkdirp = require('mkdirp');
 const passport = require('passport');
