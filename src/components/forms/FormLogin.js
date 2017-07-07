@@ -1,10 +1,28 @@
 import React, { Component } from 'react';
-import { ButtonToolbar, Button, Form, FormGroup, Col, Checkbox, FormControl, ControlLabel } from 'react-bootstrap';
+import {
+	Alert,
+	ButtonToolbar,
+	Button,
+	Form,
+	FormGroup,
+	Col,
+	Checkbox,
+	FormControl,
+	ControlLabel
+} from 'react-bootstrap';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import * as UsersActions from '../../actions/usersActions';
 
-@connect((state) => ({ users: state.users.users }), (dispatch) => bindActionCreators({ ...UsersActions }, dispatch))
+@connect(
+	(state) => ({
+		users: state.users.users,
+		errorsLogin: state.users.info,
+		style: state.users.style,
+		actionForget: state.users.actionForget
+	}),
+	(dispatch) => bindActionCreators({ ...UsersActions }, dispatch)
+)
 class FormLogin extends Component {
 	constructor(props) {
 		super(props);
@@ -36,6 +54,11 @@ class FormLogin extends Component {
 		}
 	}
 
+	forgetPasswd() {
+		const { displayModalForgetPasswd } = this.props;
+		displayModalForgetPasswd();
+	}
+
 	componentDidUpdate() {
 		const { login, passwd, sendOn } = this.state;
 
@@ -44,16 +67,24 @@ class FormLogin extends Component {
 		}
 
 		if (sendOn && (!login.length || !passwd.length)) {
+			showModal(false);
 			return this.setState({ sendOn: false });
 		}
 	}
 
 	render() {
-		const { showModal } = this.props;
-
+		const { showModal, errorsLogin, style } = this.props;
+		// debugger;
 		return (
 			<Form horizontal>
 				<FormGroup controlId="formHorizontalLogin">
+					<Col sm={12}>
+						{errorsLogin
+							? <Alert bsStyle={style}>
+									{errorsLogin}
+								</Alert>
+							: ''}
+					</Col>
 					<Col componentClass={ControlLabel} sm={2}>
 						Login
 					</Col>
@@ -105,7 +136,14 @@ class FormLogin extends Component {
 							</Button>
 						</ButtonToolbar>
 					</Col>
+					<hr />
+					<Col smOffset={7} sm={12}>
+						<Button bsStyle="default" type="button" onClick={() => this.forgetPasswd()}>
+							Forget Login Or Password ?
+						</Button>
+					</Col>
 				</FormGroup>
+
 			</Form>
 		);
 	}

@@ -23,12 +23,21 @@ export function checkUserForConnect(user) {
 				if (response.data.status === 'success') {
 					dispatch({ type: 'LOGIN_USER', payload: response.data.user });
 				} else {
-					dispatch({ type: 'LOGIN_USER_REJECTED' });
+					const error = response.data.info.message;
+
+					dispatch({ type: 'LOGIN_USER_REJECTED', payload: error });
 				}
 			})
 			.catch(() => {
 				dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'problem with authentification' });
 			});
+	};
+}
+
+// FORGET PASSWORD
+export function displayModalForgetPasswd() {
+	return (dispatch) => {
+		dispatch({ type: 'DISPLAY_FORGET_PASS' });
 	};
 }
 
