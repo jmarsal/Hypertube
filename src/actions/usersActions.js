@@ -34,13 +34,6 @@ export function checkUserForConnect(user) {
 	};
 }
 
-// FORGET PASSWORD
-export function displayModalForgetPasswd() {
-	return (dispatch) => {
-		dispatch({ type: 'DISPLAY_FORGET_PASS' });
-	};
-}
-
 // ADD AN USER
 export function addUser(user) {
 	return (dispatch) => {

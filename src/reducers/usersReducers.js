@@ -56,9 +56,6 @@ export function usersReducers(
 
 		case 'LOGIN_USER_REJECTED':
 			return { ...state, style: 'danger', info: action.payload };
-
-		case 'DISPLAY_FORGET_PASS':
-			return { ...state, actionForget: true };
 	}
 	return state;
 }
