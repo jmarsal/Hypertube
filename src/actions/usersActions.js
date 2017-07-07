@@ -27,7 +27,10 @@ export function addUser(user) {
 				}
 			})
 			.catch((err) => {
-				dispatch({ type: 'ADD_USER_REJECTED', payload: 'there was an error while adding a new user' });
+				dispatch({
+					type: 'ADD_USER_REJECTED',
+					payload: [ { msg: 'There was an error while adding a new user.' } ]
+				});
 			});
 	};
 }
