@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const crypto = require('crypto');
 const multer = require('multer');
 const mkdirp = require('mkdirp');
 const passport = require('passport');
@@ -8,10 +7,18 @@ const fs = require('fs');
 
 const User = require('../models/user.js');
 const Check = require('../models/check.js');
+const Mail = require('../models/mail.js');
 
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
 	Check.userExists(req.body.username)
+		.then((response) => {
+			if (response.status === 'success') {
+				return Check.mailExists(req.body.email);
+			} else {
+				res.json({ status: 'error', content: response.data });
+			}
+		})
 		.then((response) => {
 			if (response.status === 'success') {
 				return Check.subscribeInputs(req);
@@ -22,19 +29,25 @@ router.post('/', (req, res) => {
 		.then((response) => {
 			if (response) {
 				if (response.status === 'success') {
+					let randomKey =
+						Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
 					User.register(
 						new User({
 							username: req.body.username,
 							email: req.body.email,
 							firstname: req.body.firstname,
 							lastname: req.body.lastname,
-							img: req.body.img
+							img: req.body.img,
+							activationKey: randomKey,
+							active: false
 						}),
 						req.body.password,
 						function(err, user) {
 							if (err) throw err;
 
 							passport.authenticate('local')(req, res, function() {
+								Mail.sendActivation(user);
 								res.json({ status: 'success', content: user });
 							});
 						}
@@ -108,6 +121,26 @@ router.post('/login', (req, res, next) => {
 			// 	});
 		});
 	})(req, res, next);
+});
+
+// FORGET PASSWORD OR USERNAME
+router.post('/forget', (req, res) => {
+	User.findOne({ email: req.body.email }, function(err, user) {
+		console.log(req.body.email);
+		debugger;
+		if (!user) {
+			res.json({ status: 'error' });
+		} else {
+			let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+			const infoUser = {
+				email: user.email,
+				login: user.username,
+				key: randomKey
+			};
+			Mail.sendMailForget(infoUser);
+			res.json({ status: 'success' });
+		}
+	});
 });
 
 //---->>> GET USERS <<<-----
@@ -187,6 +220,34 @@ router.post('/upload', (req, res) => {
 				}
 			});
 		} else throw err;
+	});
+});
+
+router.get('/activation', (req, res) => {
+	User.findOne({ activationKey: req.query.key }, function(err, user) {
+		if (!user || user.username !== req.query.user) {
+			res.json({ status: 'error' });
+		} else {
+			let user = req.body;
+			let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+			let query = {};
+			query.username = req.query.user;
+
+			let update = {
+				$set: {
+					activationKey: randomKey,
+					active: true
+				}
+			};
+
+			let options = { new: true };
+
+			User.findOneAndUpdate(query, update, options, (err, user) => {
+				if (err) throw err;
+				res.json({ status: 'success' });
+			});
+		}
 	});
 });
 

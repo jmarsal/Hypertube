@@ -18,6 +18,7 @@ const store = createStore(
 );
 
 import HomePage from './components/pages/homePage';
+import ActivationPage from './components/pages/activationPage';
 import Main from './main';
 
 const Routes = (
@@ -25,6 +26,7 @@ const Routes = (
 		<Router history={browserHistory}>
 			<Route path="/" component={Main}>
 				<IndexRoute component={HomePage} />
+				<Route path="/activation" component={ActivationPage} />
 			</Route>
 		</Router>
 	</Provider>

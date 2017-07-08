@@ -19,7 +19,9 @@ import validator from 'validator';
 	(state) => ({
 		users: state.users.users,
 		errorsLogin: state.users.info,
-		style: state.users.style
+		style: state.users.style,
+		messForget: state.users.mess,
+		validEmailForget: state.users.validMail
 	}),
 	(dispatch) => bindActionCreators({ ...UsersActions }, dispatch)
 )
@@ -94,19 +96,16 @@ class FormLogin extends Component {
 	}
 
 	submitEmailForReinit() {
-		const user = {
-			email: validator.escape(this.state.email).trim()
-		};
+		const email = this.state.email.trim();
 
-		if (user.email.length) {
+		if (email.length) {
 			const { sendMailForgetIdConnect } = this.props;
-
-			sendMailForgetIdConnect(user);
+			sendMailForgetIdConnect(email);
 		}
 	}
 
 	componentDidUpdate() {
-		const { login, passwd, sendOn } = this.state;
+		const { login, passwd, sendOn, emailCheck, email } = this.state;
 
 		if (
 			!sendOn &&
@@ -115,6 +114,13 @@ class FormLogin extends Component {
 			passwd.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i')
 		) {
 			return this.setState({ sendOn: true, loginCheck: 'success', passwordCheck: 'success' });
+		}
+
+		if (emailCheck === 'warning' && validator.isEmail(email)) {
+			return this.setState({ emailCheck: 'success' });
+		}
+		if (emailCheck === 'success' && !validator.isEmail(email)) {
+			this.setState({ emailCheck: 'warning' });
 		}
 
 		if (
@@ -128,7 +134,9 @@ class FormLogin extends Component {
 	}
 
 	render() {
-		const { showModal, errorsLogin, style } = this.props;
+		const { showModal, errorsLogin, style, validEmailForget, messForget } = this.props;
+
+		// debugger;
 		return this.state.forget == false
 			? <Form horizontal>
 					<FormGroup controlId="formHorizontalLogin" validationState={this.state.loginCheck}>
@@ -200,6 +208,13 @@ class FormLogin extends Component {
 				</Form>
 			: <Form horizontal>
 					<FormGroup controlId="formEmail" validationState={this.state.emailCheck}>
+						<Col sm={12}>
+							{messForget
+								? <Alert bsStyle={validEmailForget ? 'success' : 'danger'}>
+										{messForget}
+									</Alert>
+								: ''}
+						</Col>
 						<Col smOffset={2} sm={10}>
 							<h5>Enter your email and you will recept a mail for reinitialisation</h5>
 							<ControlLabel>Email</ControlLabel>
