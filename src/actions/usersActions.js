@@ -34,6 +34,27 @@ export function checkUserForConnect(user) {
 	};
 }
 
+// SEND MAIL FORGET PASSWD OR LOGIN_USER
+export function sendMailForgetIdConnect(emailUser) {
+	return (dispatch) => {
+		const email = { email: emailUser };
+
+		axios.post('/api/users/forget', email).then((response) => {
+			if (response.data.status === 'success') {
+				dispatch({
+					type: 'REINIT_ACCOUNT',
+					payload: 'Check your mail !'
+				});
+			} else {
+				dispatch({
+					type: 'REINIT_ACCOUNT_FAIL',
+					payload: 'There is no account for this email.'
+				});
+			}
+		});
+	};
+}
+
 // ADD AN USER
 export function addUser(user) {
 	return (dispatch) => {
@@ -79,6 +100,24 @@ export function updateUser(user) {
 			})
 			.catch((err) => {
 				dispatch({ type: 'UPDATE_USER_REJECTED', payload: err });
+			});
+	};
+}
+
+// ACCOUNT ACTIVATION
+export function activateAccount(key, user) {
+	return (dispatch) => {
+		axios
+			.get('/api/users/activation?key=' + key + '&user=' + user)
+			.then((response) => {
+				if (response.data.status === 'success') {
+					dispatch({ type: 'ACCOUNT_ACTIVATION' });
+				} else {
+					dispatch({ type: 'ACCOUNT_ACTIVATION_REJECTED' });
+				}
+			})
+			.catch((err) => {
+				dispatch({ type: 'ACCOUNT_ACTIVATION_REJECTED' });
 			});
 	};
 }

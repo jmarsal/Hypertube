@@ -3,6 +3,7 @@ const User = require('./user');
 class Check {
 	static subscribeInputs(req) {
 		return new Promise((resolve, reject) => {
+			req.checkBody('username', 'Login: 3 to 14 characters required.').len(3, 14);
 			req.checkBody('email', 'Invalid email.').isEmail().notEmpty();
 			req.checkBody('firstname', 'Firstname: 1 to 30 characters required.').len(1, 30);
 			req.checkBody('lastname', 'Lastname: 1 to 30 characters required.').len(1, 30);
@@ -40,6 +41,18 @@ class Check {
 			User.findOne({ username: username }, function(err, user) {
 				if (user) {
 					resolve({ status: 'error', data: [ { msg: 'This username already exists.' } ] });
+				} else {
+					resolve({ status: 'success' });
+				}
+			});
+		});
+	}
+
+	static mailExists(email) {
+		return new Promise((resolve, reject) => {
+			User.findOne({ email: email }, function(err, user) {
+				if (user) {
+					resolve({ status: 'error', data: [ { msg: 'This email is already used.' } ] });
 				} else {
 					resolve({ status: 'success' });
 				}
