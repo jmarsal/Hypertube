@@ -126,19 +126,34 @@ router.post('/login', (req, res, next) => {
 // FORGET PASSWORD OR USERNAME
 router.post('/forget', (req, res) => {
 	User.findOne({ email: req.body.email }, function(err, user) {
-		console.log(req.body.email);
-		debugger;
 		if (!user) {
 			res.json({ status: 'error' });
 		} else {
 			let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
 			const infoUser = {
 				email: user.email,
 				login: user.username,
 				key: randomKey
 			};
-			Mail.sendMailForget(infoUser);
-			res.json({ status: 'success' });
+
+			let query = {};
+			query._id = user._id;
+
+			let update = {
+				$set: {
+					activationKey: randomKey,
+					active: true
+				}
+			};
+
+			let options = { new: true };
+
+			User.findOneAndUpdate(query, update, options, (err, user) => {
+				if (err) throw err;
+				Mail.sendMailForget(infoUser);
+				res.json({ status: 'success' });
+			});
 		}
 	});
 });
@@ -164,18 +179,19 @@ router.delete('/:_id', (req, res) => {
 //---->>> UPDATE USER <<<-----
 router.put('/:_id', (req, res) => {
 	let user = req.body;
-	user[0].password = crypto.createHash('sha512').update(user[0].password).digest('hex');
 	let query = {};
 	query._id = req.params._id;
+	let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 	let update = {
 		$set: {
 			username: user.username,
-			password: user.password,
 			email: user.email,
 			img: user.img,
 			firstname: user.firstname,
-			lastname: user.lastname
+			lastname: user.lastname,
+			activationKey: randomKey,
+			active: true
 		}
 	};
 
@@ -248,6 +264,22 @@ router.get('/activation', (req, res) => {
 				res.json({ status: 'success' });
 			});
 		}
+	});
+});
+
+//UPDATE PASSWORD FOR REINIT
+router.post('/reinitialisation', (req, res) => {
+	const user = req.body;
+	debugger;
+	User.findOne({ username: user.username }, (err, userToUpdate) => {
+		if (!userToUpdate) {
+			res.json({ status: 'error' });
+		}
+
+		userToUpdate.setPassword(user.password, () => {
+			userToUpdate.save();
+			res.status(200).json({ status: 'success' });
+		});
 	});
 });
 

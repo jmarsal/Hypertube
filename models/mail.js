@@ -67,7 +67,10 @@ class Mail {
 				titre: "Don't Panic !",
 				login: login,
 				link:
-					'localhost:3000/forget-passwd?log=' + encodeURIComponent(login) + '&cle=' + encodeURIComponent(cle)
+					'localhost:3000/reinitialisation?user=' +
+						encodeURIComponent(login) +
+						'&key=' +
+						encodeURIComponent(cle)
 			};
 		fs.readFile('src/mailTemplates/reinitMail.html', (err, data) => {
 			if (err) {
