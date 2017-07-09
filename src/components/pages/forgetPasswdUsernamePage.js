@@ -85,7 +85,7 @@ class ReinitPage extends React.Component {
 	redirect() {
 		setTimeout(function() {
 			window.location.href = '/';
-		}, 1000);
+		}, 2000);
 	}
 
 	render() {
