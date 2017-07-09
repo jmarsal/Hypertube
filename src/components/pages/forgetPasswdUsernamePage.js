@@ -1,5 +1,4 @@
 import React from 'react';
-import { withRouter } from 'react-router';
 import { Form, FormGroup, FormControl, Col, Alert, ControlLabel, ButtonToolbar, Button } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -85,7 +84,7 @@ class ReinitPage extends React.Component {
 	redirect() {
 		setTimeout(function() {
 			window.location.href = '/';
-		}, 2000);
+		}, 1000);
 	}
 
 	render() {
