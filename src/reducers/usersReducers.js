@@ -82,6 +82,20 @@ export function usersReducers(
 				validMail: false,
 				mess: action.payload
 			};
+
+		case 'PASSWORD_RESET_SUCCESS':
+			return {
+				...state,
+				successUpdatePasswd: true,
+				mess: 'password reset successful'
+			};
+
+		case 'PASSWORD_RESET_FAILLURE':
+			return {
+				...state,
+				successUpdatePasswd: false,
+				mess: 'password reset faillure'
+			};
 	}
 	return state;
 }

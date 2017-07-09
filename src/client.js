@@ -19,6 +19,7 @@ const store = createStore(
 
 import HomePage from './components/pages/homePage';
 import ActivationPage from './components/pages/activationPage';
+import ReinitPage from './components/pages/forgetPasswdUsernamePage';
 import Main from './main';
 
 const Routes = (
@@ -27,6 +28,7 @@ const Routes = (
 			<Route path="/" component={Main}>
 				<IndexRoute component={HomePage} />
 				<Route path="/activation" component={ActivationPage} />
+				<Route path="/reinitialisation" component={ReinitPage} />
 			</Route>
 		</Router>
 	</Provider>

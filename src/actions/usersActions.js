@@ -128,3 +128,22 @@ export function resetButton() {
 		type: 'RESET_BUTTON'
 	};
 }
+
+// UPDATE PASSWORD AFTER REINIT
+export function updatePassword(user) {
+	// debugger;
+	return (dispatch) => {
+		axios
+			.post('/api/users/reinitialisation', user)
+			.then((response) => {
+				if (response.data.status === 'success') {
+					dispatch({ type: 'PASSWORD_RESET_SUCCESS' });
+				} else {
+					dispatch({ type: 'PASSWORD_RESET_FAILLURE' });
+				}
+			})
+			.catch((err) => {
+				dispatch({ type: 'PASSWORD_RESET_FAILLURE' });
+			});
+	};
+}
