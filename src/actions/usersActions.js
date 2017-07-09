@@ -147,3 +147,25 @@ export function updatePassword(user) {
 			});
 	};
 }
+
+// LOGIN WITH OAUTH METHODE
+export function logPassportWithOauth(site) {
+	return (dispatch) => {
+		if (site === 'facebook') {
+			axios
+				.get('/api/auth/facebook/callback')
+				.then((response) => {
+					if (response.data.status === 'success') {
+						dispatch({ type: 'LOGIN_USER', payload: response.data.user });
+					} else {
+						const error = response.data.info.message;
+
+						dispatch({ type: 'LOGIN_USER_REJECTED', payload: error });
+					}
+				})
+				.catch(() => {
+					dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'problem with authentification' });
+				});
+		}
+	};
+}

@@ -19,3 +19,28 @@ body {
 .btn-toolbar .btn:last-child {
 	margin-right: 0;
 }
+
+.logoOauth {
+	width: 60px;
+	height: 60px;
+	background-position: center;
+	background-size: cover;
+	border: 2px solid black;
+	border-radius: 50%;
+	cursor: pointer;
+}
+.logoOauth.school42 {
+	background-image: url('/img_connect_oauth/42.png');
+}
+.logoOauth.facebook {
+	background-image: url('/img_connect_oauth/facebook.png');
+}
+.logoOauth.google {
+	background-image: url('/img_connect_oauth/google-plus.png');
+}
+.logoOauth.twitter {
+	background-image: url('/img_connect_oauth/twitter.png');
+}
+.logoOauth.github {
+	background-image: url('/img_connect_oauth/github.png');
+}

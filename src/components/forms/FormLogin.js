@@ -8,7 +8,9 @@ import {
 	Col,
 	Checkbox,
 	FormControl,
-	ControlLabel
+	ControlLabel,
+	Image,
+	Thumbnail
 } from 'react-bootstrap';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
@@ -133,12 +135,40 @@ class FormLogin extends Component {
 		}
 	}
 
+	loginOauth(site) {
+		const { logPassportWithOauth } = this.props;
+		logPassportWithOauth(site);
+		//
+	}
+
 	render() {
 		const { showModal, errorsLogin, style, validEmailForget, messForget } = this.props;
 
-		// debugger;
 		return this.state.forget == false
 			? <Form horizontal>
+					<FormGroup>
+						<Col smOffset={2} sm={10}>
+							<h5>Login from 42, facebook, google, twitter, github</h5>
+							<Col xs={2}>
+								<div className="logoOauth school42" onClick={() => this.loginOauth('42')} />
+							</Col>
+							<Col xs={2}>
+								<div className="logoOauth facebook" onClick={() => this.loginOauth('facebook')} />
+							</Col>
+							<Col xs={2}>
+								<div className="logoOauth google" onClick={() => this.loginOauth('google')} />
+							</Col>
+							<Col xs={2}>
+								<div className="logoOauth twitter" onClick={() => this.loginOauth('twitter')} />
+							</Col>
+							<Col xs={2}>
+								<div className="logoOauth github" onClick={() => this.loginOauth('github')} />
+							</Col>
+						</Col>
+						<Col smOffset={5} sm={10}>
+							<h5>Or manuely</h5>
+						</Col>
+					</FormGroup>
 					<FormGroup controlId="formHorizontalLogin" validationState={this.state.loginCheck}>
 						<Col sm={12}>
 							{errorsLogin
