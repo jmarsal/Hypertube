@@ -40,14 +40,14 @@ passport.use(
 							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 						user = new User({
-							username: profile._json.name,
-							email: profile._json.email,
-							firstname: profile._json.first_name,
-							lastname: profile._json.last_name,
-							img: profile.photos[0].value,
+							username: profile._json.name ? profile._json.name : '',
+							email: profile._json.email ? profile._json.email : '',
+							firstname: profile._json.first_name ? profile._json.first_name : '',
+							lastname: profile._json.last_name ? profile._json.last_name : '',
+							img: profile.photos[0] ? profile.photos[0].value : '',
 							activationKey: randomKey,
 							active: true,
-							facebook: profile._json
+							facebook: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
 							if (err) console.log(err);
@@ -85,14 +85,14 @@ passport.use(
 							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 						user = new User({
-							username: profile._json.screen_name,
-							email: profile._json.email,
-							firstname: profile._json.name,
+							username: profile._json.screen_name ? profile._json.screen_name : '',
+							email: profile._json.email ? profile._json.email : '',
+							firstname: profile._json.name ? profile._json.name : '',
 							lastname: '',
-							img: profile.photos[0].value,
+							img: profile.photos[0] ? profile.photos[0].value : '',
 							activationKey: randomKey,
 							active: true,
-							twitter: profile._json
+							twitter: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
 							if (err) console.log(err);
@@ -129,14 +129,14 @@ passport.use(
 							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 						user = new User({
-							username: profile._json.displayName,
-							email: profile._json.emails[0].value,
-							firstname: profile._json.name.givenName,
-							lastname: profile._json.name.familyName,
-							img: profile.photos[0].value,
+							username: profile._json.displayName ? profile._json.displayName : '',
+							email: profile._json.emails[0] ? profile._json.emails[0].value : '',
+							firstname: profile._json.name.givenName ? profile._json.name.givenName : '',
+							lastname: profile._json.name.familyName ? profile._json.name.familyName : '',
+							img: profile.photos[0] ? profile.photos[0].value : '',
 							activationKey: randomKey,
 							active: true,
-							google: profile._json
+							google: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
 							if (err) console.log(err);
@@ -174,14 +174,14 @@ passport.use(
 							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 						user = new User({
-							username: profile._json.login,
-							email: profile.emails[0].value,
+							username: profile._json.login ? profile._json : '',
+							email: profile.emails[0] ? profile.emails[0].value : '',
 							firstname: '',
 							lastname: '',
-							img: profile.avatar_url,
+							img: profile.avatar_url ? profile.avatar_url : '',
 							activationKey: randomKey,
 							active: true,
-							github: profile._json
+							github: profile._json ? profile._json : ''
 						});
 						user.save(function(err) {
 							if (err) console.log(err);
@@ -218,7 +218,6 @@ passport.use(
 				if (!error && response.statusCode == 200) {
 					profile = JSON.parse(profile);
 
-					console.log(profile);
 					User.findOne(
 						{
 							'42.id': profile.id
@@ -233,14 +232,14 @@ passport.use(
 									Math.random().toString(36).substring(2, 15);
 
 								user = new User({
-									username: profile.login,
-									email: profile.email,
-									firstname: profile.first_name,
-									lastname: profile.last_name,
-									img: profile.image_url,
+									username: profile.login ? profile.login : '',
+									email: profile.email ? profile.email : '',
+									firstname: profile.first_name ? profile.first_name : '',
+									lastname: profile.last_name ? profile.last_name : '',
+									img: profile.image_url ? profile.image_url : '',
 									activationKey: randomKey,
 									active: true,
-									42: profile
+									42: profile ? profile : {}
 								});
 								user.save(function(err) {
 									if (err) console.log(err);
