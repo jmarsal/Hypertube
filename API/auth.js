@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
+const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 
 const User = require('../models/user.js');
 
@@ -69,7 +70,6 @@ passport.use(
 			includeEmail: true
 		},
 		function(token, tokenSecret, profile, done) {
-			console.log(profile);
 			User.findOne(
 				{
 					'twitter.id': profile.id
@@ -86,11 +86,55 @@ passport.use(
 							username: profile._json.screen_name,
 							email: profile._json.email,
 							firstname: profile._json.name,
-							lastname: 'Not filled in',
+							lastname: '',
 							img: profile.photos[0].value,
 							activationKey: randomKey,
 							active: true,
 							twitter: profile._json
+						});
+						user.save(function(err) {
+							if (err) console.log(err);
+							return done(err, user);
+						});
+					} else {
+						return done(err, user);
+					}
+				}
+			);
+		}
+	)
+);
+
+// GOOGLE
+passport.use(
+	new GoogleStrategy(
+		{
+			clientID: '145149806397-ldpgusv17htfi73hooms2louohnfo2j1.apps.googleusercontent.com',
+			clientSecret: 'U0zfQdwS0S8rpNNCHdpLIJsd',
+			callbackURL: 'http://localhost:3000/api/auth/google/callback'
+		},
+		function(token, tokenSecret, profile, done) {
+			User.findOne(
+				{
+					'google.id': profile.id
+				},
+				function(err, user) {
+					if (err) {
+						return done(err);
+					}
+					if (!user) {
+						let randomKey =
+							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+						user = new User({
+							username: profile._json.displayName,
+							email: profile._json.emails[0].value,
+							firstname: profile._json.name.givenName,
+							lastname: profile._json.name.familyName,
+							img: profile.photos[0].value,
+							activationKey: randomKey,
+							active: true,
+							google: profile._json
 						});
 						user.save(function(err) {
 							if (err) console.log(err);
@@ -123,6 +167,29 @@ router.get('/facebook/callback', passport.authenticate('facebook', { failureRedi
 router.get('/twitter', passport.authenticate('twitter'));
 
 router.get('/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), (req, res) => {
+	const payload = {
+		_id: req.user._id,
+		username: req.user.username
+	};
+	req.session.user = payload;
+
+	req.session.save((err) => {
+		if (err) throw err;
+		res.redirect('/');
+	});
+});
+
+router.get(
+	'/google',
+	passport.authenticate('google', {
+		scope: [
+			'https://www.googleapis.com/auth/plus.login',
+			'https://www.googleapis.com/auth/plus.profile.emails.read'
+		]
+	})
+);
+
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function(req, res) {
 	const payload = {
 		_id: req.user._id,
 		username: req.user.username
