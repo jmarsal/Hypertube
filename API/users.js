@@ -69,28 +69,39 @@ router.post('/login', (req, res, next) => {
 	const user = req.body;
 	passport.authenticate('local', (err, user, info) => {
 		if (err) {
-			return res.status(400).send({ message: 'Bad request' });
+			return res.json({ status: 'error', msg: 'Error while logging in.' });
 		}
 
 		if (!user) {
-			return res.json({ status: 'fail', info: info });
+			return res.json({ status: 'error', msg: 'Invalid username/password.' });
 		}
 
 		req.logIn(user, (err) => {
 			if (err) {
-				return res.status(400).send({ message: 'Bad request' });
+				console.error(err);
+				return res.json({ status: 'error', msg: 'Error while logging in.' });
 			}
 
-			const payload = {
-				_id: user._id,
-				username: user.username
-			};
-			req.session.user = payload;
+			Check.isActive(user.username)
+				.then((response) => {
+					if (response.status === 'success') {
+						const payload = {
+							_id: user._id,
+							username: user.username
+						};
+						req.session.user = payload;
 
-			req.session.save((err) => {
-				if (err) throw err;
-				return res.json({ status: 'success', user: payload });
-			});
+						req.session.save((err) => {
+							if (err) throw err;
+							return res.json({ status: 'success', user: payload });
+						});
+					} else {
+						return res.json({ status: 'error', msg: 'This account is not activated.' });
+					}
+				})
+				.catch((err) => {
+					console.error(err);
+				});
 		});
 	})(req, res, next);
 });

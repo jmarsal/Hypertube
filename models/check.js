@@ -59,6 +59,18 @@ class Check {
 			});
 		});
 	}
+
+	static isActive(username) {
+		return new Promise((resolve, reject) => {
+			User.findOne({ username: username }, function(err, user) {
+				if (user.active === false) {
+					resolve({ status: 'error', data: [ { msg: 'This username already exists.' } ] });
+				} else {
+					resolve({ status: 'success' });
+				}
+			});
+		});
+	}
 }
 
 module.exports = Check;

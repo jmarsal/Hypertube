@@ -23,13 +23,13 @@ export function checkUserForConnect(user) {
 				if (response.data.status === 'success') {
 					dispatch({ type: 'LOGIN_USER', payload: response.data.user });
 				} else {
-					const error = response.data.info.message;
+					const error = response.data.msg;
 
 					dispatch({ type: 'LOGIN_USER_REJECTED', payload: error });
 				}
 			})
 			.catch(() => {
-				dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'problem with authentification' });
+				dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'Problem with authentification.' });
 			});
 	};
 }
