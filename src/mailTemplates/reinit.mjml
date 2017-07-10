@@ -1,0 +1,58 @@
+<mjml>
+  <mj-body>
+    <mj-container>
+
+      <!-- Company Header -->
+      <mj-section background-color="#202020">
+        <mj-column>
+            <mj-text  font-style="italic"
+                    font-size="20"
+                    color="#626262">
+            Hypertube Support
+            </mj-text>
+        </mj-column>
+        </mj-section>
+
+      <!-- Image Header -->
+      <mj-section background-url="http://www.3agiba.com/wp-content/uploads/2014/09/top10movies.jpg"
+              background-size="cover"
+              background-repeat="no-repeat">
+
+    <mj-column width="600">
+
+          <mj-text  align="center"
+                color="#fff"
+                font-size="40"
+                font-family="Helvetica Neue">^^title^^</mj-text>
+
+    </mj-column>
+
+  </mj-section>
+
+      <!-- Introduction Text -->
+      <mj-section background-color="#202020">
+        <mj-column width="400">
+
+          <mj-text font-style="italic"
+                   font-size="20"
+                   font-family="Helvetica Neue"
+                   color="#ffffff">Salut ^^login^^</mj-text>
+
+            <mj-text color="#ffffff">
+                Comme tu as perdu tes identifiants, nous allons reinitialiser ton mot de passe.
+          </mj-text>
+          <mj-text color="#ffffff">
+                Et pour ca, rien de plus simple!
+          </mj-text>
+          <mj-text color="#ffffff">
+                Clique simplement sur le bouton ci dessous.
+          </mj-text>
+
+            <mj-button background-color="#1b698e"
+                     href="http://^^link^^">Reinitialise</mj-button>
+
+    </mj-column>
+  </mj-section>
+    </mj-container>
+  </mj-body>
+</mjml>
