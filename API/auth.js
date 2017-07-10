@@ -4,7 +4,7 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 const TwitterStrategy = require('passport-twitter').Strategy;
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
+const GitHubStrategy = require('passport-github2').Strategy;
 const User = require('../models/user.js');
 
 passport.serializeUser(function(user, done) {
@@ -149,6 +149,52 @@ passport.use(
 	)
 );
 
+// GITHUB
+passport.use(
+	new GitHubStrategy(
+		{
+			clientID: 'e57a80157a15dbda44df',
+			clientSecret: 'bc56f1b247d4f25c8c8615606a27970357eb2115',
+			callbackURL: 'http://localhost:3000/api/auth/github/callback',
+			scope: [ 'user:email' ]
+		},
+		function(accessToken, refreshToken, profile, done) {
+			console.log(profile);
+			User.findOne(
+				{
+					'github.id': profile.id
+				},
+				function(err, user) {
+					if (err) {
+						return done(err);
+					}
+					if (!user) {
+						let randomKey =
+							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+						user = new User({
+							username: profile._json.login,
+							email: profile.emails[0].value,
+							firstname: '',
+							lastname: '',
+							img: profile.avatar_url,
+							activationKey: randomKey,
+							active: true,
+							github: profile._json
+						});
+						user.save(function(err) {
+							if (err) console.log(err);
+							return done(err, user);
+						});
+					} else {
+						return done(err, user);
+					}
+				}
+			);
+		}
+	)
+);
+
 router.get('/facebook', passport.authenticate('facebook', { scope: [ 'email' ] }));
 
 router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
@@ -190,6 +236,21 @@ router.get(
 );
 
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function(req, res) {
+	const payload = {
+		_id: req.user._id,
+		username: req.user.username
+	};
+	req.session.user = payload;
+
+	req.session.save((err) => {
+		if (err) throw err;
+		res.redirect('/');
+	});
+});
+
+router.get('/github', passport.authenticate('github', { scope: [ 'user' ] }));
+
+router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
 	const payload = {
 		_id: req.user._id,
 		username: req.user.username
