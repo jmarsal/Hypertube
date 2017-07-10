@@ -80,47 +80,33 @@ router.post('/login', (req, res, next) => {
 			if (err) {
 				return res.status(400).send({ message: 'Bad request' });
 			}
+
 			const payload = {
 				_id: user._id,
 				username: user.username
 			};
-			return res.json({ status: 'success', user: payload });
+			req.session.user = payload;
 
-			// const token = jwt.sign(payload, app.get(`secretOrKey`)),
-			// 	resObj = {
-			// 		user: `${user.username}`,
-			// 		id: user.id,
-			// 		token: token,
-			// 		settings: null
-			// 	};
-
-			// const settingsQuery = SettingsModel.findOne({
-			// 	user: req.user
-			// }).select(`-active -createdAt -updatedAt -__v -user`);
-
-			// settingsQuery
-			// 	.exec()
-			// 	.then((settings) => {
-			// 		if (settings) {
-			// 			resObj.settings = settings;
-			// 		}
-
-			// 		res
-			// 			.status(200)
-			// 			.cookie(`jwt`, token, {
-			// 				secure: false,
-			// 				httpOnly: false,
-			// 				domain: `.electroleak${config.tld}`,
-			// 				maxAge: 30 * 24 * 60 * 60 * 1000 // 1 month
-			// 			})
-			// 			.send(resObj);
-			// 	})
-			// 	.catch((err) => {
-			// 		console.log(err);
-			// 		return res.status(400).send({ message: `Bad request` });
-			// 	});
+			req.session.save((err) => {
+				if (err) throw err;
+				return res.json({ status: 'success', user: payload });
+			});
 		});
 	})(req, res, next);
+});
+
+// USER DISCONNECT
+router.get('/disconnect', (req, res) => {
+	req.logout();
+	req.session = null;
+	res.redirect('/');
+});
+
+// GET SESSION
+router.get('/session', (req, res) => {
+	if (typeof req.session.user !== 'undefined') {
+		res.json(req.session.user);
+	}
 });
 
 // FORGET PASSWORD OR USERNAME
@@ -239,6 +225,7 @@ router.post('/upload', (req, res) => {
 	});
 });
 
+// ACCOUNT ACTIVATION
 router.get('/activation', (req, res) => {
 	User.findOne({ activationKey: req.query.key }, function(err, user) {
 		if (!user || user.username !== req.query.user) {

@@ -148,12 +148,41 @@ export function updatePassword(user) {
 	};
 }
 
+// GET USER FROM SESSION
+export function getUserFromSession() {
+	return (dispatch) => {
+		axios
+			.get('/api/users/session')
+			.then((response) => {
+				dispatch({ type: 'GET_SESSION', payload: response.data });
+			})
+			.catch((err) => {
+				dispatch({ type: 'GET_SESSION_REJECTED', msg: 'Error when get user from session.' });
+			});
+	};
+}
+
+// DISCONNECT USER
+export function disconnectUser() {
+	return (dispatch) => {
+		axios
+			.get('/api/users/disconnect')
+			.then((response) => {
+				dispatch({ type: 'USER_DISCONNECT' });
+			})
+			.catch((err) => {
+				dispatch({ type: 'USER_DISCONNECT_REJECTED', msg: 'Error when user disconnected.' });
+			});
+	};
+}
+
+/*
 // LOGIN WITH OAUTH METHODE
 export function logPassportWithOauth(site) {
 	return (dispatch) => {
 		if (site === 'facebook') {
 			axios
-				.get('/api/auth/facebook/callback')
+				.get('/api/auth/facebook')
 				.then((response) => {
 					if (response.data.status === 'success') {
 						dispatch({ type: 'LOGIN_USER', payload: response.data.user });
@@ -169,3 +198,4 @@ export function logPassportWithOauth(site) {
 		}
 	};
 }
+*/

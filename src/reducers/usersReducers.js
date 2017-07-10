@@ -56,10 +56,24 @@ export function usersReducers(
 
 		case 'LOGIN_USER_REJECTED':
 			return { ...state, style: 'danger', info: action.payload };
-=======
+
+		case 'GET_SESSION':
 			return {
-				...state
+				...state,
+				sessionUser: action.payload
 			};
+
+		case 'GET_SESSION_REJECTED':
+			return { ...state, style: 'danger', info: action.msg };
+
+		case 'USER_DISCONNECT':
+			return {
+				...state,
+				sessionUser: null
+			};
+
+		case 'USER_DISCONNECT_REJECTED':
+			return { ...state };
 
 		case 'ACCOUNT_ACTIVATION':
 			return {

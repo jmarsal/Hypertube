@@ -29,7 +29,11 @@ app.use(
 	session({
 		secret: 'ferEFdf_dsvVaas',
 		resave: false,
-		saveUninitialized: false
+		saveUninitialized: false,
+		cookie: { maxAge: 1000 * 60 * 60 * 24 * 2 },
+		store: new MongoStore({ mongooseConnection: db, ttl: 2 * 24 * 60 * 60 }),
+		unset: 'destroy'
+		//ttl: 2 days * 24 hours * 60 minutes * 60 seconds
 	})
 );
 app.use(passport.initialize());

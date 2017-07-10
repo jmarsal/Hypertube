@@ -135,11 +135,13 @@ class FormLogin extends Component {
 		}
 	}
 
+	/*
 	loginOauth(site) {
 		const { logPassportWithOauth } = this.props;
 		logPassportWithOauth(site);
 		//
 	}
+	*/
 
 	render() {
 		const { showModal, errorsLogin, style, validEmailForget, messForget } = this.props;
@@ -150,19 +152,19 @@ class FormLogin extends Component {
 						<Col smOffset={2} sm={10}>
 							<h5>Login from 42, facebook, google, twitter, github</h5>
 							<Col xs={2}>
-								<div className="logoOauth school42" onClick={() => this.loginOauth('42')} />
+								<a href="/api/auth/42"><div className="logoOauth school42" /></a>
 							</Col>
 							<Col xs={2}>
-								<div className="logoOauth facebook" onClick={() => this.loginOauth('facebook')} />
+								<a href="/api/auth/facebook"><div className="logoOauth facebook" /></a>
 							</Col>
 							<Col xs={2}>
-								<div className="logoOauth google" onClick={() => this.loginOauth('google')} />
+								<a href="/api/auth/google"><div className="logoOauth google" /></a>
 							</Col>
 							<Col xs={2}>
-								<div className="logoOauth twitter" onClick={() => this.loginOauth('twitter')} />
+								<a href="/api/auth/twitter"><div className="logoOauth twitter" /></a>
 							</Col>
 							<Col xs={2}>
-								<div className="logoOauth github" onClick={() => this.loginOauth('github')} />
+								<a href="/api/auth/github"><div className="logoOauth github" /></a>
 							</Col>
 						</Col>
 						<Col smOffset={5} sm={10}>
