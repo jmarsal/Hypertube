@@ -12,7 +12,8 @@ const usersSchema = mongoose.Schema({
 	facebook: JSON,
 	twitter: JSON,
 	google: JSON,
-	github: JSON
+	github: JSON,
+	42: JSON
 });
 
 usersSchema.plugin(passportLocalMongoose);
