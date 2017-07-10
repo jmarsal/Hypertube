@@ -56,6 +56,9 @@ export function usersReducers(
 
 		case 'LOGIN_USER_REJECTED':
 			return { ...state, style: 'danger', info: action.payload };
+=======
+			return {
+				...state
 			};
 
 		case 'ACCOUNT_ACTIVATION':
@@ -68,6 +71,34 @@ export function usersReducers(
 			return {
 				...state,
 				activation: false
+			};
+
+		case 'REINIT_ACCOUNT':
+			return {
+				...state,
+				validMail: true,
+				mess: action.payload
+			};
+
+		case 'REINIT_ACCOUNT_FAIL':
+			return {
+				...state,
+				validMail: false,
+				mess: action.payload
+			};
+
+		case 'PASSWORD_RESET_SUCCESS':
+			return {
+				...state,
+				successUpdatePasswd: true,
+				mess: 'password reset successful'
+			};
+
+		case 'PASSWORD_RESET_FAILLURE':
+			return {
+				...state,
+				successUpdatePasswd: false,
+				mess: 'password reset faillure'
 			};
 	}
 	return state;

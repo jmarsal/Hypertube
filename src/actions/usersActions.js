@@ -34,6 +34,27 @@ export function checkUserForConnect(user) {
 	};
 }
 
+// SEND MAIL FORGET PASSWD OR LOGIN_USER
+export function sendMailForgetIdConnect(emailUser) {
+	return (dispatch) => {
+		const email = { email: emailUser };
+
+		axios.post('/api/users/forget', email).then((response) => {
+			if (response.data.status === 'success') {
+				dispatch({
+					type: 'REINIT_ACCOUNT',
+					payload: 'Check your mail !'
+				});
+			} else {
+				dispatch({
+					type: 'REINIT_ACCOUNT_FAIL',
+					payload: 'There is no account for this email.'
+				});
+			}
+		});
+	};
+}
+
 // ADD AN USER
 export function addUser(user) {
 	return (dispatch) => {
@@ -105,5 +126,46 @@ export function activateAccount(key, user) {
 export function resetButton() {
 	return {
 		type: 'RESET_BUTTON'
+	};
+}
+
+// UPDATE PASSWORD AFTER REINIT
+export function updatePassword(user) {
+	// debugger;
+	return (dispatch) => {
+		axios
+			.post('/api/users/reinitialisation', user)
+			.then((response) => {
+				if (response.data.status === 'success') {
+					dispatch({ type: 'PASSWORD_RESET_SUCCESS' });
+				} else {
+					dispatch({ type: 'PASSWORD_RESET_FAILLURE' });
+				}
+			})
+			.catch((err) => {
+				dispatch({ type: 'PASSWORD_RESET_FAILLURE' });
+			});
+	};
+}
+
+// LOGIN WITH OAUTH METHODE
+export function logPassportWithOauth(site) {
+	return (dispatch) => {
+		if (site === 'facebook') {
+			axios
+				.get('/api/auth/facebook/callback')
+				.then((response) => {
+					if (response.data.status === 'success') {
+						dispatch({ type: 'LOGIN_USER', payload: response.data.user });
+					} else {
+						const error = response.data.info.message;
+
+						dispatch({ type: 'LOGIN_USER_REJECTED', payload: error });
+					}
+				})
+				.catch(() => {
+					dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'problem with authentification' });
+				});
+		}
 	};
 }
