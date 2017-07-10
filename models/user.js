@@ -9,7 +9,8 @@ const usersSchema = mongoose.Schema({
 	lastname: String,
 	activationKey: String,
 	active: Boolean,
-	facebook: JSON
+	facebook: JSON,
+	twitter: JSON
 });
 
 usersSchema.plugin(passportLocalMongoose);
