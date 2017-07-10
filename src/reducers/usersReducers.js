@@ -51,7 +51,7 @@ export function usersReducers(
 		case 'LOGIN_USER':
 			return {
 				...state,
-				users: [ ...action.payload ]
+				sessionUser: action.payload
 			};
 
 		case 'LOGIN_USER_REJECTED':
