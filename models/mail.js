@@ -11,36 +11,40 @@ class Mail {
 			}
 		});
 
-		const mailOptions = {
-			from: '"Hypertube Support" <noreply@hypertube.com>',
-			to: user.email,
-			subject: 'Activation Hypertube',
-			html:
-				'<b>Bienvenue sur Hypertube !</b>' +
-					'<br />' +
-					'<p>Veuillez cliquer <a href="http://localhost:3000/activation?user=' +
-					user.username +
-					'&key=' +
-					user.activationKey +
-					'">ici</a> pour activer votre compte !</p>' +
-					"<p>Si la page ne s'affiche pas copiez-collez ce lien dans votre navigateur : </p>" +
-					'<a href="http://localhost:3000/activation?user=' +
-					user.username +
-					'&key=' +
-					user.activationKey +
-					'">http://localhost:3000/activation?user=' +
-					user.username +
-					'&key=' +
-					user.activationKey +
-					'</a>' +
-					'<br />' +
-					'<p>A très vite sur Hypertube !</p>'
-		};
-
-		transporter.sendMail(mailOptions, (error, info) => {
-			if (error) {
-				return console.error(error);
+		const email = user.email,
+			login = user.username,
+			cle = user.activationKey;
+		// debugger;
+		let contentMail = '',
+			search = {
+				titre: '^^title^^',
+				login: '^^login^^',
+				link: '^^link^^'
+			},
+			replace = {
+				titre: 'Welcome to Hypertube !',
+				login: login,
+				link: 'localhost:3000/activation?user=' + encodeURIComponent(login) + '&key=' + encodeURIComponent(cle)
+			};
+		fs.readFile('src/mailTemplates/subscribe.html', (err, data) => {
+			if (err) {
+				return console.error(err);
 			}
+			contentMail = data.toString();
+			const mailOptions = {
+				from: '"Hypertube Support" <noreply@hypertube.com>', // sender address
+				to: email, // list of receivers
+				subject: 'Activation Hypertube for ' + login, // Subject line
+				html: contentMail
+					.replace(search.login, replace.login)
+					.replace(search.titre, replace.titre)
+					.replace(search.link, replace.link) // html body
+			};
+			transporter.sendMail(mailOptions, (error, info) => {
+				if (error) {
+					return console.error(error);
+				}
+			});
 		});
 	}
 
@@ -68,9 +72,9 @@ class Mail {
 				login: login,
 				link:
 					'localhost:3000/reinitialisation?user=' +
-						encodeURIComponent(login) +
-						'&key=' +
-						encodeURIComponent(cle)
+					encodeURIComponent(login) +
+					'&key=' +
+					encodeURIComponent(cle)
 			};
 		fs.readFile('src/mailTemplates/reinitMail.html', (err, data) => {
 			if (err) {
