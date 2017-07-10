@@ -29,6 +29,11 @@ body {
 	border-radius: 50%;
 	cursor: pointer;
 }
+.logoOauth:hover {
+	-webkit-filter: drop-shadow(0px 5px 10px #00babc); /* Safari */
+	filter: drop-shadow(0px 5px 10px #00babc);
+	border: 2px solid #00babc;
+}
 .logoOauth.school42 {
 	background-image: url('/img_connect_oauth/42.png');
 	background-color: #00babc;
