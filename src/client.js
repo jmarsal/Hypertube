@@ -14,7 +14,7 @@ import reducers from './reducers/index';
 const middleware = applyMiddleware(thunk, logger);
 const store = createStore(
 	reducers,
-	compose(middleware, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
+	compose(middleware, window.devToolsExtension ? window.devToolsExtension() : (f) => f)
 );
 
 import HomePage from './components/pages/homePage';
