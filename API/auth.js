@@ -17,6 +17,19 @@ passport.deserializeUser(function(user, done) {
 	done(null, user);
 });
 
+const saveToSession = (req, res) => {
+	const payload = {
+		_id: req.user._id,
+		username: req.user.username
+	};
+	req.session.user = payload;
+
+	req.session.save((err) => {
+		if (err) throw err;
+		res.redirect('/');
+	});
+};
+
 // FACEBOOK
 passport.use(
 	new FacebookStrategy(
@@ -61,6 +74,12 @@ passport.use(
 		}
 	)
 );
+
+router.get('/facebook', passport.authenticate('facebook', { scope: [ 'email' ] }));
+
+router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
+	saveToSession(req, res);
+});
 
 // TWITTER
 passport.use(
@@ -107,6 +126,12 @@ passport.use(
 	)
 );
 
+router.get('/twitter', passport.authenticate('twitter'));
+
+router.get('/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), (req, res) => {
+	saveToSession(req, res);
+});
+
 // GOOGLE
 passport.use(
 	new GoogleStrategy(
@@ -151,6 +176,20 @@ passport.use(
 	)
 );
 
+router.get(
+	'/google',
+	passport.authenticate('google', {
+		scope: [
+			'https://www.googleapis.com/auth/plus.login',
+			'https://www.googleapis.com/auth/plus.profile.emails.read'
+		]
+	})
+);
+
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function(req, res) {
+	saveToSession(req, res);
+});
+
 // GITHUB
 passport.use(
 	new GitHubStrategy(
@@ -174,7 +213,7 @@ passport.use(
 							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 						user = new User({
-							username: profile._json.login ? profile._json : '',
+							username: profile._json.login ? profile._json.login : '',
 							email: profile.emails[0] ? profile.emails[0].value : '',
 							firstname: '',
 							lastname: '',
@@ -196,7 +235,13 @@ passport.use(
 	)
 );
 
-//42
+router.get('/github', passport.authenticate('github', { scope: [ 'user' ] }));
+
+router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
+	saveToSession(req, res);
+});
+
+// 42
 passport.use(
 	new OAuth2Strategy(
 		{
@@ -256,87 +301,10 @@ passport.use(
 	)
 );
 
-router.get('/facebook', passport.authenticate('facebook', { scope: [ 'email' ] }));
-
-router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
-	const payload = {
-		_id: req.user._id,
-		username: req.user.username
-	};
-	req.session.user = payload;
-
-	req.session.save((err) => {
-		if (err) throw err;
-		res.redirect('/');
-	});
-});
-
-router.get('/twitter', passport.authenticate('twitter'));
-
-router.get('/twitter/callback', passport.authenticate('twitter', { failureRedirect: '/login' }), (req, res) => {
-	const payload = {
-		_id: req.user._id,
-		username: req.user.username
-	};
-	req.session.user = payload;
-
-	req.session.save((err) => {
-		if (err) throw err;
-		res.redirect('/');
-	});
-});
-
-router.get(
-	'/google',
-	passport.authenticate('google', {
-		scope: [
-			'https://www.googleapis.com/auth/plus.login',
-			'https://www.googleapis.com/auth/plus.profile.emails.read'
-		]
-	})
-);
-
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function(req, res) {
-	const payload = {
-		_id: req.user._id,
-		username: req.user.username
-	};
-	req.session.user = payload;
-
-	req.session.save((err) => {
-		if (err) throw err;
-		res.redirect('/');
-	});
-});
-
-router.get('/github', passport.authenticate('github', { scope: [ 'user' ] }));
-
-router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
-	const payload = {
-		_id: req.user._id,
-		username: req.user.username
-	};
-	req.session.user = payload;
-
-	req.session.save((err) => {
-		if (err) throw err;
-		res.redirect('/');
-	});
-});
-
 router.get('/42', passport.authenticate('oauth2'));
 
 router.get('/42/callback', passport.authenticate('oauth2', { failureRedirect: '/login' }), function(req, res) {
-	const payload = {
-		_id: req.user._id,
-		username: req.user.username
-	};
-	req.session.user = payload;
-
-	req.session.save((err) => {
-		if (err) throw err;
-		res.redirect('/');
-	});
+	saveToSession(req, res);
 });
 
 module.exports = router;
