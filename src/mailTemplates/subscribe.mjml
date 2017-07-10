@@ -2,7 +2,7 @@
   <mj-body>
     <mj-container>
 
-       <!-- Company Header -->
+      <!-- Company Header -->
       <mj-section background-color="#202020">
         <mj-column>
             <mj-text  font-style="italic"
@@ -29,28 +29,27 @@
 
   </mj-section>
 
-       <!-- Introduction Text -->
+      <!-- Introduction Text -->
       <mj-section background-color="#202020">
         <mj-column width="400">
 
           <mj-text font-style="italic"
                    font-size="20"
                    font-family="Helvetica Neue"
-                   color="#ffffff">Hi ^^login^^ !</mj-text>
+                   color="#ffffff">Congratulation ^^login^^ !</mj-text>
 
             <mj-text color="#ffffff">
-                As you lost your credentials, we will reset your password.
+                You asked to register on Hypertube and we thank you. More than one step to start our new streaming experience!
           </mj-text>
           <mj-text color="#ffffff">
-               And for that, nothing more simple!
+                And for that, nothing more simple!
           </mj-text>
           <mj-text color="#ffffff">
                 Simply click on the button below.
           </mj-text>
 
             <mj-button background-color="#1b698e"
-                     href="http://^^link^^">Resets
-                     </mj-button>
+                     href="http://^^link^^">Subscribe</mj-button>
 
     </mj-column>
   </mj-section>
