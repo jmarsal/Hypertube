@@ -2,6 +2,7 @@ import React from 'react';
 import { Nav, NavItem, Navbar, Button } from 'react-bootstrap';
 import ModalLogin from 'components/modals/modalLogin';
 import ModalSubscribe from 'components/modals/modalSubscribe';
+import ModalProfil from 'components/modals/modalProfil';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { getUserFromSession, disconnectUser } from '../actions/usersActions';
@@ -26,18 +27,15 @@ class Menu extends React.Component {
 					<Navbar.Toggle />
 				</Navbar.Header>
 				<Navbar.Collapse>
-
 					{!this.props.sessionUser
 						? <Nav pullRight>
 								<ModalLogin />
 								<ModalSubscribe />
 							</Nav>
 						: <Nav pullRight>
-								<NavItem onClick={this.handleDisconnect.bind(this)}>
-									Disconnect
-								</NavItem>
+								<ModalProfil />
+								<NavItem onClick={this.handleDisconnect.bind(this)}>Disconnect</NavItem>
 							</Nav>}
-
 				</Navbar.Collapse>
 			</Navbar>
 		);
