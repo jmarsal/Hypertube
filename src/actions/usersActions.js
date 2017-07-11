@@ -14,6 +14,20 @@ export function getUsers() {
 	};
 }
 
+// GET AN SPECIFIC USER
+export function getOneUser(username) {
+	return (dispatch) => {
+		axios
+			.get('/api/users/one/' + username)
+			.then((response) => {
+				dispatch({ type: 'GET_ONE_USER', payload: response.data });
+			})
+			.catch((err) => {
+				dispatch({ type: 'GET_ONE_USER_REJECTED', payload: err });
+			});
+	};
+}
+
 // CHECK USER IN DB FOR CONNECTION
 export function checkUserForConnect(user) {
 	return (dispatch) => {
@@ -94,15 +108,22 @@ export function deleteUser(id) {
 }
 
 // UPDATE AN USER
-export function updateUser(user) {
+export function updateUser(user, id) {
 	return (dispatch) => {
 		axios
 			.put('/api/users/' + id, user)
 			.then((response) => {
-				dispatch({ type: 'UPDATE_USER', payload: response.data });
+				if (response.data.status === 'success') {
+					dispatch({ type: 'UPDATE_USER', payload: response.data });
+				} else {
+					dispatch({ type: 'UPDATE_USER_REJECTED', payload: response.data.content });
+				}
 			})
 			.catch((err) => {
-				dispatch({ type: 'UPDATE_USER_REJECTED', payload: err });
+				dispatch({
+					type: 'UPDATE_USER_REJECTED',
+					payload: [ { msg: 'There was an error while updating user.' } ]
+				});
 			});
 	};
 }

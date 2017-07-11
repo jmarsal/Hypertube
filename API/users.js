@@ -11,7 +11,6 @@ const Mail = require('../models/mail.js');
 
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
-	debugger;
 	Check.userExists(req.body.username)
 		.then((response) => {
 			if (response.status === 'success') {
@@ -156,6 +155,19 @@ router.post('/forget', (req, res) => {
 	});
 });
 
+//---->>> GET ONE USER <<<-----
+router.get('/one/:user', (req, res) => {
+	console.log(req.params.user);
+	User.findOne({ username: req.params.user }, function(err, user) {
+		if (user) {
+			console.log(user);
+			res.json({ status: 'success', data: user });
+		} else {
+			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+		}
+	});
+});
+
 //---->>> GET USERS <<<-----
 router.get('/', (req, res) => {
 	User.find((err, users) => {
@@ -176,28 +188,73 @@ router.delete('/:_id', (req, res) => {
 
 //---->>> UPDATE USER <<<-----
 router.put('/:_id', (req, res) => {
-	let user = req.body;
+	const user = req.body;
 	let query = {};
 	query._id = req.params._id;
 	let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-	let update = {
-		$set: {
-			username: user.username,
-			email: user.email,
-			img: user.img,
-			firstname: user.firstname,
-			lastname: user.lastname,
-			activationKey: randomKey,
-			active: true
+	User.findOne({ username: user.username }, (err, userToUpdate) => {
+		if (!userToUpdate) {
+			res.json({ status: 'error' });
 		}
-	};
 
-	let options = { new: true };
+		Check.userExistsForUpdate(req.body.username, userToUpdate)
+			.then((response) => {
+				if (response.status === 'success') {
+					return Check.mailExistsForUpdate(req.body.email, userToUpdate);
+				} else {
+					res.json({ status: 'error', content: response.data });
+				}
+			})
+			.then((response) => {
+				if (response.status === 'success') {
+					return Check.subscribeInputsForUpdate(req);
+				} else {
+					res.json({ status: 'error', content: response.data });
+				}
+			})
+			.then((response) => {
+				if (response) {
+					if (response.status === 'success') {
+						let update = {
+							$set: {
+								username: user.username,
+								email: user.email,
+								img: user.img,
+								firstname: user.firstname,
+								lastname: user.lastname,
+								activationKey: randomKey,
+								active: true
+							}
+						};
 
-	User.findOneAndUpdate(query, update, options, (err, user) => {
-		if (err) throw err;
-		res.json(user);
+						let options = { new: true };
+
+						User.findOneAndUpdate(query, update, options, (err, userUpdated) => {
+							if (err) throw err;
+							const payload = {
+								_id: userUpdated._id,
+								username: userUpdated.username
+							};
+							req.session.user = payload;
+
+							req.session.save((err) => {
+								if (err) throw err;
+
+								userToUpdate.setPassword(user.password, () => {
+									userToUpdate.save();
+									return res.json({ status: 'success', user: payload });
+								});
+							});
+						});
+					} else {
+						res.json({ status: 'error', content: response.data });
+					}
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
 	});
 });
 

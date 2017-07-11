@@ -91,3 +91,18 @@ body {
 .logoOauth.woman {
 	background-image: url('/avatars/woman.png');
 }
+
+.profilImage {
+	width: 160px;
+	height: 160px;
+	border-radius: 50%;
+	background-position: center;
+	background-size: cover;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+h4,
+h5 {
+	text-align: center;
+}
