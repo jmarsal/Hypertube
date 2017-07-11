@@ -48,7 +48,7 @@ class FormLogin extends Component {
 			val = e.target.value;
 
 		if (inputId === 'formHorizontalLogin') {
-			if (val.length > 2 && val.length < 15) {
+			if (val.length > 0 && val.length < 31) {
 				this.setState({ loginCheck: 'success' });
 			} else {
 				this.setState({ loginCheck: 'warning' });
@@ -111,8 +111,8 @@ class FormLogin extends Component {
 
 		if (
 			!sendOn &&
-			login.length > 2 &&
-			login.length < 15 &&
+			login.length > 0 &&
+			login.length < 31 &&
 			passwd.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i')
 		) {
 			return this.setState({ sendOn: true, loginCheck: 'success', passwordCheck: 'success' });
@@ -127,8 +127,8 @@ class FormLogin extends Component {
 
 		if (
 			sendOn &&
-			(login.length < 3 ||
-				login.length > 14 ||
+			(login.length < 1 ||
+				login.length > 30 ||
 				!passwd.match(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, 'i'))
 		) {
 			return this.setState({ sendOn: false, loginCheck: 'warning', passwordCheck: 'warning' });

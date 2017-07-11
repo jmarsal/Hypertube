@@ -47,6 +47,7 @@ passport.deserializeUser(User.deserializeUser());
 // ROUTES API
 app.use('/users', require('./API/users'));
 app.use('/auth', require('./API/auth'));
+app.use('/movies', require('./API/movies'));
 
 // END APIs
 

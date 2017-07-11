@@ -37,7 +37,7 @@ class SubscribeForm extends React.Component {
 			val = e.target.value;
 
 		if (inputId === 'username') {
-			if (val.length > 2 && val.length < 15) {
+			if (val.length > 0 && val.length < 31) {
 				this.setState({ usernameCheck: 'success' });
 			} else {
 				this.setState({ usernameCheck: 'warning' });
@@ -45,7 +45,7 @@ class SubscribeForm extends React.Component {
 			this.setState({ username: val });
 		}
 		if (inputId === 'firstname') {
-			if (val.length > 1 && val.length < 50) {
+			if (val.length > 0 && val.length < 50) {
 				this.setState({ firstnameCheck: 'success' });
 			} else {
 				this.setState({ firstnameCheck: 'warning' });
@@ -53,7 +53,7 @@ class SubscribeForm extends React.Component {
 			this.setState({ firstname: val });
 		}
 		if (inputId === 'lastname') {
-			if (val.length > 2 && val.length < 50) {
+			if (val.length > 0 && val.length < 50) {
 				this.setState({ lastnameCheck: 'success' });
 			} else {
 				this.setState({ lastnameCheck: 'warning' });
