@@ -142,7 +142,7 @@ class ProfilPage extends React.Component {
 	}
 
 	componentDidUpdate() {
-		const { updateSuccess } = this.props;
+		const { updateSuccess, showModal } = this.props;
 
 		if (this.props.profilUser) {
 			this.state.username === '' && this.props.profilUser.data.username !== ''
@@ -179,7 +179,7 @@ class ProfilPage extends React.Component {
 
 		if (updateSuccess) {
 			setTimeout(function() {
-				window.location.href = '/';
+				showModal(false);
 			}, 1000);
 		}
 	}
