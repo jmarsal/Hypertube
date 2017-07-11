@@ -62,7 +62,10 @@ export function addUser(user) {
 			.post('/api/users', user)
 			.then((response) => {
 				if (response.data.status === 'success') {
-					dispatch({ type: 'ADD_USER', payload: response.data.content });
+					dispatch({
+						type: 'ADD_USER',
+						payload: 'response.data.content'
+					});
 				} else {
 					dispatch({ type: 'ADD_USER_REJECTED', payload: response.data.content });
 				}
@@ -176,26 +179,36 @@ export function disconnectUser() {
 	};
 }
 
-/*
-// LOGIN WITH OAUTH METHODE
-export function logPassportWithOauth(site) {
+// SELECT BASIC AVATAR
+export function selectBasicAvatar(avatar) {
+	// debugger;
 	return (dispatch) => {
-		if (site === 'facebook') {
-			axios
-				.get('/api/auth/facebook')
-				.then((response) => {
-					if (response.data.status === 'success') {
-						dispatch({ type: 'LOGIN_USER', payload: response.data.user });
-					} else {
-						const error = response.data.info.message;
-
-						dispatch({ type: 'LOGIN_USER_REJECTED', payload: error });
-					}
-				})
-				.catch(() => {
-					dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'problem with authentification' });
-				});
+		if (avatar === '/avatars/croupier.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'croupier' });
+		} else if (avatar === '/avatars/diver.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'diver' });
+		} else if (avatar === '/avatars/doctor.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'doctor' });
+		} else if (avatar === '/avatars/doctor2.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'doctor2' });
+		} else if (avatar === '/avatars/farmer.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'farmer' });
+		} else if (avatar === '/avatars/firefighter.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'firefighter' });
+		} else if (avatar === '/avatars/man.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'man' });
+		} else if (avatar === '/avatars/nun.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'nun' });
+		} else if (avatar === '/avatars/showman.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'showman' });
+		} else if (avatar === '/avatars/stewardess.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'stewardess' });
+		} else if (avatar === '/avatars/welder.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'welder' });
+		} else if (avatar === '/avatars/woman.png') {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'woman' });
+		} else {
+			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'none' });
 		}
 	};
 }
-*/

@@ -14,7 +14,8 @@ export function usersReducers(
 				users: [ ...state.users, ...action.payload ],
 				msg: 'Success! Click to continue',
 				style: 'success',
-				validation: 'success'
+				validation: 'success',
+				messSuccess: 'Welcome to Hypertube '
 			};
 
 		case 'ADD_USER_REJECTED':
@@ -113,6 +114,13 @@ export function usersReducers(
 				...state,
 				successUpdatePasswd: false,
 				mess: 'password reset faillure'
+			};
+
+		case 'SELECT_BASIC_AVATAR':
+			console.log(action.payload);
+			return {
+				...state,
+				classActive: action.payload
 			};
 	}
 	return state;

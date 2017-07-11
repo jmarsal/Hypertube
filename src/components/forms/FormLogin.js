@@ -152,19 +152,29 @@ class FormLogin extends Component {
 						<Col smOffset={2} sm={10}>
 							<h5>Login from 42, facebook, google, twitter, github</h5>
 							<Col xs={2}>
-								<a href="/api/auth/42"><div className="logoOauth school42" /></a>
+								<a href="/api/auth/42">
+									<div className="logoOauth school42" />
+								</a>
 							</Col>
 							<Col xs={2}>
-								<a href="/api/auth/facebook"><div className="logoOauth facebook" /></a>
+								<a href="/api/auth/facebook">
+									<div className="logoOauth facebook" />
+								</a>
 							</Col>
 							<Col xs={2}>
-								<a href="/api/auth/google"><div className="logoOauth google" /></a>
+								<a href="/api/auth/google">
+									<div className="logoOauth google" />
+								</a>
 							</Col>
 							<Col xs={2}>
-								<a href="/api/auth/twitter"><div className="logoOauth twitter" /></a>
+								<a href="/api/auth/twitter">
+									<div className="logoOauth twitter" />
+								</a>
 							</Col>
 							<Col xs={2}>
-								<a href="/api/auth/github"><div className="logoOauth github" /></a>
+								<a href="/api/auth/github">
+									<div className="logoOauth github" />
+								</a>
 							</Col>
 						</Col>
 						<Col smOffset={5} sm={10}>
@@ -189,6 +199,7 @@ class FormLogin extends Component {
 								ref="login"
 								value={this.state.login}
 								onChange={(e) => this.handleChange(e)}
+								autoFocus="true"
 							/>
 						</Col>
 					</FormGroup>
@@ -255,6 +266,7 @@ class FormLogin extends Component {
 								placeholder="Enter your email"
 								ref="email"
 								onChange={(e) => this.handleChange(e)}
+								autoFocus="true"
 							/>
 							<FormControl.Feedback />
 						</Col>

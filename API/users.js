@@ -11,6 +11,7 @@ const Mail = require('../models/mail.js');
 
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
+	debugger;
 	Check.userExists(req.body.username)
 		.then((response) => {
 			if (response.status === 'success') {

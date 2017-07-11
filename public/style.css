@@ -34,6 +34,11 @@ body {
 	filter: drop-shadow(0px 5px 10px #00babc);
 	border: 2px solid #00babc;
 }
+.logoOauth.active {
+	-webkit-filter: drop-shadow(0px 5px 10px gold); /* Safari */
+	filter: drop-shadow(0px 5px 10px gold);
+	border: 2px solid gold;
+}
 .logoOauth.school42 {
 	background-image: url('/img_connect_oauth/42.png');
 	background-color: #00babc;
@@ -49,4 +54,40 @@ body {
 }
 .logoOauth.github {
 	background-image: url('/img_connect_oauth/github.png');
+}
+.logoOauth.croupier {
+	background-image: url('/avatars/croupier.png');
+}
+.logoOauth.diver {
+	background-image: url('/avatars/diver.png');
+}
+.logoOauth.doctor {
+	background-image: url('/avatars/doctor.png');
+}
+.logoOauth.doctor2 {
+	background-image: url('/avatars/doctor2.png');
+}
+.logoOauth.farmer {
+	background-image: url('/avatars/farmer.png');
+}
+.logoOauth.firefighter {
+	background-image: url('/avatars/firefighter.png');
+}
+.logoOauth.man {
+	background-image: url('/avatars/man.png');
+}
+.logoOauth.nun {
+	background-image: url('/avatars/nun.png');
+}
+.logoOauth.showman {
+	background-image: url('/avatars/showman.png');
+}
+.logoOauth.stewardess {
+	background-image: url('/avatars/stewardess.png');
+}
+.logoOauth.welder {
+	background-image: url('/avatars/welder.png');
+}
+.logoOauth.woman {
+	background-image: url('/avatars/woman.png');
 }
