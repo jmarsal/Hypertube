@@ -193,7 +193,7 @@ router.put('/:_id', (req, res) => {
 	query._id = req.params._id;
 	let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-	User.findOne({ username: user.username }, (err, userToUpdate) => {
+	User.findOne({ _id: req.params._id }, (err, userToUpdate) => {
 		if (!userToUpdate) {
 			res.json({ status: 'error' });
 		}
