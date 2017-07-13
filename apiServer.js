@@ -18,7 +18,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 // APIs
-
+mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/hypertube');
 
 let db = mongoose.connection;
@@ -39,7 +39,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-var User = require('./models/user');
+let User = require('./models/user');
 passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -47,7 +47,7 @@ passport.deserializeUser(User.deserializeUser());
 // ROUTES API
 app.use('/users', require('./API/users'));
 app.use('/auth', require('./API/auth'));
-app.use('/movies', require('./API/movies'));
+app.use('/collection', require('./API/collection'));
 
 // END APIs
 
