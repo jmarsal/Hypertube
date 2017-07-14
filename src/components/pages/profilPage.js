@@ -139,10 +139,11 @@ class ProfilPage extends React.Component {
 		}
 
 		this.props.updateUser(user, this.props.sessionUser._id);
+		this.setState({ updated: true });
 	}
 
 	componentDidUpdate() {
-		const { updateSuccess } = this.props;
+		const { updateSuccess, showModal } = this.props;
 
 		if (this.props.profilUser) {
 			this.state.username === '' && this.props.profilUser.data.username !== ''
@@ -177,9 +178,10 @@ class ProfilPage extends React.Component {
 			this.setState({ sendOn: false });
 		}
 
-		if (updateSuccess) {
+		if (updateSuccess && this.state.updated == true) {
+			this.setState({ updated: false });
 			setTimeout(function() {
-				window.location.href = '/';
+				showModal(false);
 			}, 1000);
 		}
 	}
@@ -248,9 +250,6 @@ class ProfilPage extends React.Component {
 									? <Alert key="sizeError" bsStyle="warning">
 											{this.state.sizeError}
 										</Alert>
-									: ''}
-								{updateSuccess
-									? <Alert bsStyle="success">Votre profil a bien été mis à jour !</Alert>
 									: ''}
 							</Col>
 						</FormGroup>
@@ -472,16 +471,14 @@ class ProfilPage extends React.Component {
 									<Button type="button" onClick={() => this.getBack()}>
 										Back
 									</Button>
-									{updateSuccess
-										? ''
-										: <Button
-												bsStyle="primary"
-												type="button"
-												disabled={!this.state.sendOn}
-												onClick={() => this.submitForm()}
-											>
-												Change
-											</Button>}
+									<Button
+										bsStyle="primary"
+										type="button"
+										disabled={!this.state.sendOn}
+										onClick={() => this.submitForm()}
+									>
+										Change
+									</Button>
 								</ButtonToolbar>
 							</Col>
 						</FormGroup>

@@ -42,7 +42,7 @@ passport.use(
 		function(accessToken, refreshToken, profile, done) {
 			User.findOne(
 				{
-					'facebook.id': profile.id
+					oauthID: profile.id
 				},
 				function(err, user) {
 					if (err) {
@@ -60,6 +60,7 @@ passport.use(
 							img: profile.photos[0] ? profile.photos[0].value : '',
 							activationKey: randomKey,
 							active: true,
+							oauthID: profile.id,
 							facebook: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
@@ -93,13 +94,14 @@ passport.use(
 		function(token, tokenSecret, profile, done) {
 			User.findOne(
 				{
-					'twitter.id': profile.id
+					oauthID: profile.id
 				},
 				function(err, user) {
 					if (err) {
 						return done(err);
 					}
 					if (!user) {
+						console.log('WRONG');
 						let randomKey =
 							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -111,6 +113,7 @@ passport.use(
 							img: profile.photos[0] ? profile.photos[0].value : '',
 							activationKey: randomKey,
 							active: true,
+							oauthID: profile.id,
 							twitter: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
@@ -143,7 +146,7 @@ passport.use(
 		function(token, tokenSecret, profile, done) {
 			User.findOne(
 				{
-					'google.id': profile.id
+					oauthID: profile.id
 				},
 				function(err, user) {
 					if (err) {
@@ -161,6 +164,7 @@ passport.use(
 							img: profile.photos[0] ? profile.photos[0].value : '',
 							activationKey: randomKey,
 							active: true,
+							oauthID: profile.id,
 							google: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
@@ -202,7 +206,7 @@ passport.use(
 		function(accessToken, refreshToken, profile, done) {
 			User.findOne(
 				{
-					'github.id': profile.id
+					oauthID: profile.id
 				},
 				function(err, user) {
 					if (err) {
@@ -220,6 +224,7 @@ passport.use(
 							img: profile.avatar_url ? profile.avatar_url : '',
 							activationKey: randomKey,
 							active: true,
+							oauthID: profile.id,
 							github: profile._json ? profile._json : ''
 						});
 						user.save(function(err) {
@@ -265,7 +270,7 @@ passport.use(
 
 					User.findOne(
 						{
-							'42.id': profile.id
+							oauthID: profile.id
 						},
 						function(err, user) {
 							if (err) {
@@ -284,6 +289,7 @@ passport.use(
 									img: profile.image_url ? profile.image_url : '',
 									activationKey: randomKey,
 									active: true,
+									oauthID: profile.id,
 									42: profile ? profile : {}
 								});
 								user.save(function(err) {
