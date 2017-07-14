@@ -44,7 +44,7 @@ class ProfilPage extends React.Component {
 	}
 
 	componentDidMount() {
-		this.props.getOneUser(this.props.sessionUser.username);
+		this.props.getOneUser(this.props.sessionUser._id);
 		this.setState({ modif: false });
 	}
 

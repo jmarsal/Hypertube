@@ -156,11 +156,10 @@ router.post('/forget', (req, res) => {
 });
 
 //---->>> GET ONE USER <<<-----
-router.get('/one/:user', (req, res) => {
-	console.log(req.params.user);
-	User.findOne({ username: req.params.user }, function(err, user) {
+router.get('/one/:userID', (req, res) => {
+	console.log(req.params.userID);
+	User.findOne({ _id: req.params.userID }, function(err, user) {
 		if (user) {
-			console.log(user);
 			res.json({ status: 'success', data: user });
 		} else {
 			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });

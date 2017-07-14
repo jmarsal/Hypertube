@@ -15,10 +15,10 @@ export function getUsers() {
 }
 
 // GET AN SPECIFIC USER
-export function getOneUser(username) {
+export function getOneUser(userID) {
 	return (dispatch) => {
 		axios
-			.get('/api/users/one/' + username)
+			.get('/api/users/one/' + userID)
 			.then((response) => {
 				dispatch({ type: 'GET_ONE_USER', payload: response.data });
 			})
