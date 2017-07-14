@@ -37,7 +37,7 @@ passport.use(
 			clientID: '122480595025478',
 			clientSecret: '28f0c656529abb43a369c615bef489e4',
 			callbackURL: 'http://localhost:3000/api/auth/facebook/callback',
-			profileFields: [ 'id', 'emails', 'name', 'photos', 'displayName' ]
+			profileFields: [ 'id', 'emails', 'name', 'picture.type(large)', 'displayName' ]
 		},
 		function(accessToken, refreshToken, profile, done) {
 			User.findOne(
