@@ -7,7 +7,7 @@ const moviesListSchema = mongoose.Schema({
 	year: Number,
 	season: Number,
 	episode: Number,
-	quality: Number,
+	quality: String,
 	magnet: String
 });
 

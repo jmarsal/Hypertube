@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+var mongoosePaginate = require('mongoose-paginate');
 
 const moviesListSchema = mongoose.Schema({
 	title: String,
@@ -8,8 +9,10 @@ const moviesListSchema = mongoose.Schema({
 	imdb_code: String,
 	runtime: Number,
 	genres: [ String ],
-	summary: String
+	summary: String,
+	torrent: []
 });
 
+moviesListSchema.plugin(mongoosePaginate);
 const YtsCollection = mongoose.model('YtsCollection', moviesListSchema);
 module.exports = YtsCollection;

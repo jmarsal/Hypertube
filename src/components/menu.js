@@ -5,7 +5,9 @@ import ModalSubscribe from 'components/modals/modalSubscribe';
 import ModalProfil from 'components/modals/modalProfil';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+
 import { getUserFromSession, disconnectUser } from '../actions/usersActions';
+import ReinitPage from './pages/forgetPasswdUsernamePage';
 
 class Menu extends React.Component {
 	componentDidMount() {
@@ -13,7 +15,6 @@ class Menu extends React.Component {
 	}
 
 	handleDisconnect() {
-		console.log('test');
 		this.props.disconnectUser();
 	}
 
@@ -33,6 +34,7 @@ class Menu extends React.Component {
 								<ModalSubscribe />
 							</Nav>
 						: <Nav pullRight>
+								<NavItem href="/">Collections</NavItem>
 								<ModalProfil />
 								<NavItem onClick={this.handleDisconnect.bind(this)}>Disconnect</NavItem>
 							</Nav>}

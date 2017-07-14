@@ -106,3 +106,22 @@ h4,
 h5 {
 	text-align: center;
 }
+
+.title-collection {
+	color: white;
+	font-size: 30px;
+	margin: 0px 320px;
+	width: 100%;
+	padding: 0;
+}
+
+.img-collection {
+	margin-top: 10px;
+	margin-left: 300px;
+	margin-bottom: 40px;
+}
+.year-collection {
+	margin-top: 10px;
+	margin-left: 400px;
+	margin-bottom: 0px;
+}
