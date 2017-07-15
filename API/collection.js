@@ -128,7 +128,7 @@ router.post('/getCollectionByTitleForClient', (req, res) => {
 
 	YtsCollection.paginate(
 		title,
-		{ page: req.body.page, limit: req.body.limit, sort: { year: 'desc' } },
+		{ page: req.body.page, limit: req.body.limit, sort: { title: 'asc' } },
 		(err, json) => {
 			if (err) {
 				console.error(err);
