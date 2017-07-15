@@ -41,7 +41,8 @@ class HomePage extends React.Component {
 
 		this.state = {
 			searchRequest: '',
-			pageRequestDb: 1
+			pageRequestDb: 1,
+			scrollHeight: 0
 		};
 	}
 
@@ -51,15 +52,39 @@ class HomePage extends React.Component {
 			val = e.target.value;
 
 		if (inputId === 'formControlsText') {
-			getCollectionsListByName(val, this.state.pageRequestDb);
+			this.setState({ pageRequestDb: 1, searchRequest: val, scrollHeight: 0 });
+			getCollectionsListByName(val, this.state.pageRequestDb, 'input');
 		}
-		//requete db des movies...
 	}
 
 	componentDidMount() {
 		const { getCollectionsListByName } = this.props;
 
 		getCollectionsListByName('', 1);
+		window.addEventListener('scroll', (e) => this.handleScroll(e));
+	}
+
+	componentDidUpdate() {
+		if (this.state.scrollHeight < document.getElementById('collectionListItems').scrollHeight) {
+			this.setState({ scrollHeight: document.getElementById('collectionListItems').scrollHeight });
+		}
+	}
+
+	componentWillUnmount() {
+		window.removeEventListener('scroll', (e) => this.handleScroll(e));
+	}
+
+	handleScroll(event) {
+		if (event.srcElement.body.scrollTop >= this.state.scrollHeight - 1000) {
+			this.getNewPageMovies();
+		}
+	}
+
+	getNewPageMovies() {
+		const { getCollectionsListByName } = this.props;
+
+		this.setState({ pageRequestDb: this.state.pageRequestDb + 1 });
+		getCollectionsListByName(this.state.searchRequest, this.state.pageRequestDb, 'scroll');
 	}
 
 	render() {
@@ -85,7 +110,7 @@ class HomePage extends React.Component {
 									/>
 								</Col>
 							</FormGroup>
-							<Col smOffset={0} xs={12} md={12} lg={12}>
+							<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
 								{collection
 									? collection.map((movie, index) => {
 											return (

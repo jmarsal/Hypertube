@@ -1,13 +1,18 @@
 import axios from 'axios';
 
-export function jsonFormatForClient(jsonArr) {
-	return {
-		type: 'GET_COLLECTION_BY_NAME_SUCCESS',
-		json: jsonArr
-	};
+export function jsonFormatForClient(jsonArr, requestAction) {
+	return requestAction === 'scroll'
+		? {
+				type: 'GET_COLLECTION_BY_SCROLL_SUCCESS',
+				json: jsonArr
+			}
+		: {
+				type: 'GET_COLLECTION_BY_TITLE_SUCCESS',
+				json: jsonArr
+			};
 }
 
-export function getCollectionsListByName(requestTitle, page) {
+export function getCollectionsListByName(requestTitle, page, requestAction) {
 	const request = { title: requestTitle, page: page, limit: 10 };
 
 	return (dispatch) => {
@@ -15,10 +20,10 @@ export function getCollectionsListByName(requestTitle, page) {
 			.post('/api/collection/getCollectionByTitleForClient', request)
 			.then((response) => {
 				if (response.data.status === 'success') {
-					dispatch(jsonFormatForClient(response));
+					dispatch(jsonFormatForClient(response, requestAction));
 				} else {
 					dispatch({
-						type: 'GET_COLLECTION_BY_NAME_FAIL'
+						type: 'GET_COLLECTION_BY_TITLE_FAIL'
 					});
 				}
 			})
