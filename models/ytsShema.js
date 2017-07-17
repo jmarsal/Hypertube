@@ -10,7 +10,9 @@ const moviesListSchema = mongoose.Schema({
 	runtime: Number,
 	genres: [ String ],
 	summary: String,
-	torrent: []
+	torrent: [],
+	filePath: String,
+	downloadDate: String
 });
 
 moviesListSchema.plugin(mongoosePaginate);

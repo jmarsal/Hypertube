@@ -8,7 +8,9 @@ const moviesListSchema = mongoose.Schema({
 	season: Number,
 	episode: Number,
 	quality: String,
-	magnet: String
+	magnet: String,
+	filePath: String,
+	downloadDate: String
 });
 
 const EztvCollection = mongoose.model('EztvCollection', moviesListSchema);
