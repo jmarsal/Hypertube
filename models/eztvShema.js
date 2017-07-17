@@ -8,12 +8,16 @@ const moviesListSchema = mongoose.Schema({
 	title_episode: String,
 	original_title: String,
 	cover: String,
+	cover2: String,
 	year: Number,
 	season: Number,
 	episode: Number,
 	quality: String,
-	magnet: String
+	magnet: String,
+	actors: String,
+	country: String,
+	genres: [ String ],
+	plot: String
 });
-
 const EztvCollection = mongoose.model('EztvCollection', moviesListSchema);
 module.exports = EztvCollection;

@@ -10,7 +10,17 @@ const moviesListSchema = mongoose.Schema({
 	runtime: Number,
 	genres: [ String ],
 	summary: String,
-	torrent: []
+	torrent: [],
+	id_movie_eztv: Number,
+	title_episode: String,
+	original_title: String,
+	cover2: String,
+	season: Number,
+	episode: Number,
+	quality: String,
+	magnet: String,
+	actors: String,
+	country: String
 });
 
 moviesListSchema.plugin(mongoosePaginate);

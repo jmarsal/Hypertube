@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
-const imdb = require('imdb-api');
+const omdb = require('imdb-api');
+var imdb = require('imdb');
 
 const YtsCollection = require('../models/ytsShema');
 const EztvCollection = require('../models/eztvShema');
@@ -72,7 +73,7 @@ function parseJsonEztv(json) {
 	}
 
 	// Recupere imdb code et supprime du titre si existant
-	response.imdb_code = json.title.match(imdbBased) ? json.title.match(imdbBased)[0] : (response.imdb_code = 'NaN');
+	response.imdb_code = json.title.match(imdbBased) ? json.title.match(imdbBased)[0] : (response.imdb_code = '');
 	if (!titleRegex) {
 		title = title.replace(response.imdb_code, '');
 	}
@@ -121,12 +122,12 @@ function saveEztvListInCollection(json, allJson) {
 	} else {
 		cover = '/movies/not-available.png';
 	}
-	const movie = new EztvCollection({
+	const movie = new YtsCollection({
 		id_movie_eztv: response.idEztv,
 		imdb_code: response.imdb_code,
-		rating: 0,
+		rating: -1,
 		title: response.title.trim(),
-		title_episode: response.episodeTitle ? response.episodeTitle.trim() : 'NaN',
+		title_episode: response.episodeTitle ? response.episodeTitle.trim() : '',
 		original_title: json.title,
 		cover: cover,
 		year: response.year,
@@ -136,33 +137,88 @@ function saveEztvListInCollection(json, allJson) {
 		magnet: response.magnet
 	});
 
-	EztvCollection.findOne({ id_movie_eztv: movie.id_movie_eztv }, (err, res) => {
+	YtsCollection.findOne({ id_movie_eztv: movie.id_movie_eztv }, (err, res) => {
 		if (err) {
 			console.error(err);
+			return false;
 		}
-		if (!res && movie.season != -1 && movie.episode != -1) {
-			imdb
-				.get(movie.title, { apiKey: '7c212437', timeout: 300000 })
-				.then((things) => {
-					// debugger;
-					if (things.series == false) {
-						// debugger;
-						movie.imdb_code = things.imdbid;
-						movie.year = things.year;
-						movie.rating = things.rating;
-					} else {
-						things.episodes().then(console.log).catch((err) => {
-							console.error('episode : ', err);
+
+		omdb
+			.get(movie.title, { apiKey: '7c212437', timeout: 300000 })
+			.then((things) => {
+				// debugger;
+				if (!things) {
+					throw 'There is not imdbcode for ' + movie.title;
+				}
+
+				movie.imdb_code = things.imdbid;
+				movie.year = things.year ? things.year : movie.year;
+				movie.rating = things.rating !== 'N/A' ? things.rating : -1;
+				movie.actors = things.actors ? things.actors : '';
+				movie.country = things.country ? things.country : '';
+				movie.genres = things.genres ? things.genres : '';
+				movie.summary = things.plot ? things.plot : '';
+				movie.cover = movie.cover === '/movies/not-available.png' ? things.poster : movie.cover;
+				movie.cover2 = things.poster;
+
+				if (!things.series) {
+					return movie;
+				}
+
+				return new Promise((resolve, reject) => {
+					things.episodes((err, data) => {
+						if (err) {
+							return reject(err);
+						}
+						data.map((episode) => {
+							if (episode.season == movie.season && episode.episode == movie.episode) {
+								// debugger;
+								movie.imdb_code = episode.imdbid;
+								movie.rating = episode.rating;
+								if (movie.title_episode === '') {
+									movie.title_episode = episode.name;
+								}
+								const date = new Date(episode.released);
+								const year = date.getFullYear();
+
+								if (year) {
+									movie.year = year;
+								}
+							}
 						});
-					}
-				})
-				.catch((err) => {
-					// console.error('get : ', err);
+						// debugger;
+						return resolve(movie);
+					});
+				}).then((movie) => {
+					// debugger;
+					return new Promise((resolve, reject) => {
+						imdb(movie.imdb_code, (err, data) => {
+							debugger;
+							if (err || !data) {
+								return resolve(movie);
+							}
+
+							if (data.rating && data.rating != movie.rating) {
+								movie.rating = parseInt(data.rating, 10);
+							}
+							if (data.description && (!movie.plot || movie.plot !== data.description)) {
+								movie.summary = data.description;
+							}
+							if (data.poster && movie.cover === movie.cover2 && data.poster !== movie.cover) {
+								movie.cover = data.poster;
+							}
+							return resolve(movie);
+						});
+					});
 				});
-			// movie.save();
-		} else if (!res && (movie.season == -1 || movie.episode == -1)) {
-			// allJson.torrents_count -= 1;
-		}
+			})
+			.then((movie) => movie.save())
+			.catch((err) => {
+				if (err.name !== 'imdb api error') {
+					console.error(err);
+					// debugger;
+				}
+			});
 	});
 }
 
@@ -183,8 +239,34 @@ function saveYtsListInCollection(json) {
 			console.error(err);
 		}
 		if (!res) {
-			movie.save();
+			omdb
+				.get(movie.title, { apiKey: '7c212437' })
+				.then((things) => {
+					debugger;
+					if (!things) {
+						throw 'There is not imdbcode for ' + movie.title;
+					}
+
+					movie.imdb_code = things.imdbid;
+					movie.year = things.year ? things.year : movie.year;
+					movie.rating = things.rating !== 'N/A' ? things.rating : -1;
+					movie.actors = things.actors ? things.actors : 'N/A';
+					movie.country = things.country ? things.country : 'N/A';
+					movie.genres = things.genres ? things.genres : 'N/A';
+					movie.summary = things.plot ? things.plot : 'N/A';
+					movie.cover = movie.cover === '/movies/not-available.png' ? things.poster : movie.cover;
+					movie.cover2 = things.poster ? things.poster : 'N/A';
+
+					return movie;
+				})
+				.then((movie) => movie.save())
+				.catch((err) => {
+					if (err.name !== 'imdb api error') {
+						console.error(err);
+					}
+				});
 		}
+		return;
 	});
 }
 
@@ -242,26 +324,9 @@ function insertCollection(source) {
 
 // GET LIST OF MOVIES / TV SHOW FROM YTS AND EZTV
 router.post('/getMovies', (req, res) => {
-	YtsCollection.count({}, (err, count) => {
-		if (err) {
-			console.error(err);
-		}
-		if (count) {
-			console.log('there are ' + count + ' movies in yts Collection...');
-		} else {
-			insertCollection('yts');
-		}
-	});
-	EztvCollection.count({}, (err, count) => {
-		if (err) {
-			console.error(err);
-		}
-		if (count) {
-			console.log('there are ' + count + ' tv show in eztv Collection...');
-		} else {
-			insertCollection('eztv');
-		}
-	});
+	insertCollection('yts');
+	insertCollection('eztv');
+	return res.json({ status: 'success' });
 });
 
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
