@@ -11,6 +11,8 @@ const moviesListSchema = mongoose.Schema({
 	genres: [ String ],
 	summary: String,
 	torrent: [],
+	filePath: String,
+	downloadDate: String
 	id_movie_eztv: Number,
 	title_episode: String,
 	original_title: String,
@@ -18,8 +20,8 @@ const moviesListSchema = mongoose.Schema({
 	season: Number,
 	episode: Number,
 	quality: String,
-	magnet: String,
 	actors: String,
+	magnet: String,
 	country: String
 });
 

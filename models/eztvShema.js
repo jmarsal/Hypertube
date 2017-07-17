@@ -13,11 +13,13 @@ const moviesListSchema = mongoose.Schema({
 	season: Number,
 	episode: Number,
 	quality: String,
-	magnet: String,
 	actors: String,
 	country: String,
 	genres: [ String ],
 	plot: String
+	magnet: String,
+	filePath: String,
+	downloadDate: String
 });
 const EztvCollection = mongoose.model('EztvCollection', moviesListSchema);
 module.exports = EztvCollection;
