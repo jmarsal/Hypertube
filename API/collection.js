@@ -4,8 +4,7 @@ const request = require('request');
 const omdb = require('imdb-api');
 var imdb = require('imdb');
 
-const YtsCollection = require('../models/ytsShema');
-const EztvCollection = require('../models/eztvShema');
+const Library = require('../models/library');
 
 function parseJsonEztv(json) {
 	const wordsToRemove = [
@@ -122,7 +121,7 @@ function saveEztvListInCollection(json, allJson) {
 	} else {
 		cover = '/movies/not-available.png';
 	}
-	const movie = new YtsCollection({
+	const movie = new Library({
 		id_movie_eztv: response.idEztv,
 		imdb_code: response.imdb_code,
 		rating: -1,
@@ -137,7 +136,7 @@ function saveEztvListInCollection(json, allJson) {
 		magnet: response.magnet
 	});
 
-	YtsCollection.findOne({ id_movie_eztv: movie.id_movie_eztv }, (err, res) => {
+	Library.findOne({ id_movie_eztv: movie.id_movie_eztv }, (err, res) => {
 		if (err) {
 			console.error(err);
 			return false;
@@ -230,7 +229,7 @@ function saveEztvListInCollection(json, allJson) {
 }
 
 function saveYtsListInCollection(json) {
-	const movie = new YtsCollection({
+	const movie = new Library({
 		title: json['title'],
 		cover: json['medium_cover_image'],
 		cover2: json['background_image'],
@@ -242,7 +241,7 @@ function saveYtsListInCollection(json) {
 		summary: json['summary'],
 		torrent: json.torrents
 	});
-	YtsCollection.findOne({ imdb_code: movie.imdb_code }, (err, res) => {
+	Library.findOne({ imdb_code: movie.imdb_code }, (err, res) => {
 		if (err) {
 			console.error(err);
 		}
@@ -342,7 +341,7 @@ router.post('/getMovies', (req, res) => {
 router.post('/getCollectionByTitleForClient', (req, res) => {
 	const title = { title: { $regex: req.body.title, $options: 'i' } };
 
-	YtsCollection.paginate(
+	Library.paginate(
 		title,
 		{
 			page: req.body.page,
