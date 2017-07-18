@@ -50,6 +50,11 @@ app.use('/auth', require('./API/auth'));
 app.use('/collection', require('./API/collection'));
 app.use('/torrent', require('./API/torrent'));
 
+// GET LIST MOVIES IN DB
+const createLibrary = require('./models/createLibrary');
+createLibrary('yts');
+createLibrary('eztv');
+
 // END APIs
 
 app.listen(3001, (err) => {
