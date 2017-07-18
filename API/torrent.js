@@ -7,31 +7,21 @@ const Transcoder = require('stream-transcoder');
 const mime = require('mime');
 const ffmpeg = require('fluent-ffmpeg');
 
-const EZTV = require('../models/eztvShema.js');
-const YTS = require('../models/ytsShema.js');
+const Library = require('../models/library.js');
 
 function findMovie(_id) {
 	return new Promise((resolve, reject) => {
-		let movie = undefined;
-
-		EZTV.findOne({ _id: _id }, function(err, data) {
+		Library.findOne({ _id: _id }, function(err, movie) {
 			if (data) {
-				console.log('Found on EZTV');
-				movie = data;
+				console.log('Found on Library');
+
+				if (!movie.magnet) {
+					movie.magnet = 'magnet:?xt=urn:btih:' + data.torrent[0].hash;
+				}
 
 				resolve(movie);
 			} else {
-				YTS.findOne({ _id: _id }, function(err, data) {
-					if (data) {
-						console.log('Found on YTS');
-						movie = data;
-						movie.magnet = 'magnet:?xt=urn:btih:' + data.torrent[0].hash;
-
-						resolve(movie);
-					} else {
-						reject('There is no movies with this ID');
-					}
-				});
+				reject('There is no movies with this ID');
 			}
 		});
 	});

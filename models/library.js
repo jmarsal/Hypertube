@@ -26,5 +26,5 @@ const moviesListSchema = mongoose.Schema({
 });
 
 moviesListSchema.plugin(mongoosePaginate);
-const YtsCollection = mongoose.model('YtsCollection', moviesListSchema);
-module.exports = YtsCollection;
+const Library = mongoose.model('Library', moviesListSchema);
+module.exports = Library;

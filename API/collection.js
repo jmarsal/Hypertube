@@ -333,8 +333,8 @@ function insertCollection(source) {
 
 // GET LIST OF MOVIES / TV SHOW FROM YTS AND EZTV
 router.post('/getMovies', (req, res) => {
-	// insertCollection('yts');
-	// insertCollection('eztv');
+	insertCollection('yts');
+	insertCollection('eztv');
 	return res.json({ status: 'success' });
 });
 
