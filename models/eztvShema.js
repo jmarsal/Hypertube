@@ -16,7 +16,7 @@ const moviesListSchema = mongoose.Schema({
 	actors: String,
 	country: String,
 	genres: [ String ],
-	plot: String
+	plot: String,
 	magnet: String,
 	filePath: String,
 	downloadDate: String

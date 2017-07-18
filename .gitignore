@@ -60,3 +60,4 @@ typings/
 public/bundle.js
 \.vscode/last\.sql
 public/upload
+public/movies

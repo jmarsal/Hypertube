@@ -32,3 +32,20 @@ export function getCollectionsListByName(requestTitle, page, requestAction) {
 			});
 	};
 }
+
+export function getDetailMovie(idMovie) {
+	return (dispatch) => {
+		axios
+			.get('/api/torrent/' + idMovie)
+			.then((response) => {
+				if (response.data.status === 'success') {
+					dispatch({ type: 'GET_DETAIL_SUCCESS' });
+				} else {
+					dispatch({ type: 'GET_DETAIL__FAIL' });
+				}
+			})
+			.catch((err) => {
+				dispatch({ type: 'GET_COLLECTION_ERROR', payload: err });
+			});
+	};
+}

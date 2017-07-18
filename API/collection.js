@@ -115,9 +115,9 @@ function saveEztvListInCollection(json, allJson) {
 	const response = parseJsonEztv(json);
 	let cover = '';
 
-	if (response.largeImage && response.largeImage.length) {
+	if (response.largeImage && response.largeImage.length && response.largeImage !== 'N/A') {
 		cover = response.largeImage.replace('//', '');
-	} else if (response.smallImage && response.smallImage.length) {
+	} else if (response.smallImage && response.smallImage.length && response.smallImage !== 'N/A') {
 		cover = response.smallImage.replace('//', '');
 	} else {
 		cover = '/movies/not-available.png';
@@ -142,11 +142,12 @@ function saveEztvListInCollection(json, allJson) {
 			console.error(err);
 			return false;
 		}
-
+		if (res) {
+			return;
+		}
 		omdb
-			.get(movie.title, { apiKey: '7c212437', timeout: 300000 })
+			.get(movie.title, { apiKey: '7c212437' })
 			.then((things) => {
-				// debugger;
 				if (!things) {
 					throw 'There is not imdbcode for ' + movie.title;
 				}
@@ -159,8 +160,15 @@ function saveEztvListInCollection(json, allJson) {
 				movie.genres = things.genres ? things.genres : '';
 				movie.summary = things.plot ? things.plot : '';
 				movie.cover = movie.cover === '/movies/not-available.png' ? things.poster : movie.cover;
+				movie.cover = movie.cover !== 'N/A' ? movie.cover : '/movies/not-available.png';
 				movie.cover2 = things.poster;
 
+				if (movie.cover.search('ezimg.ch') != -1) {
+					movie.cover = 'https://' + movie.cover;
+				}
+				if (movie.cover2.search('ezimg.ch') != -1) {
+					movie.cover2 = 'https://' + movie.cover2;
+				}
 				if (!things.series) {
 					return movie;
 				}
@@ -171,10 +179,11 @@ function saveEztvListInCollection(json, allJson) {
 							return reject(err);
 						}
 						data.map((episode) => {
+							debugger;
 							if (episode.season == movie.season && episode.episode == movie.episode) {
-								// debugger;
 								movie.imdb_code = episode.imdbid;
-								movie.rating = episode.rating;
+								movie.rating =
+									episode.rating && episode.rating !== 'N/A' ? episode.rating : movie.rating;
 								if (movie.title_episode === '') {
 									movie.title_episode = episode.name;
 								}
@@ -186,19 +195,16 @@ function saveEztvListInCollection(json, allJson) {
 								}
 							}
 						});
-						// debugger;
 						return resolve(movie);
 					});
 				}).then((movie) => {
-					// debugger;
 					return new Promise((resolve, reject) => {
 						imdb(movie.imdb_code, (err, data) => {
-							debugger;
 							if (err || !data) {
 								return resolve(movie);
 							}
 
-							if (data.rating && data.rating != movie.rating) {
+							if (data.rating && data.rating != movie.rating && data.rating !== 'N/A') {
 								movie.rating = parseInt(data.rating, 10);
 							}
 							if (data.description && (!movie.plot || movie.plot !== data.description)) {
@@ -207,6 +213,8 @@ function saveEztvListInCollection(json, allJson) {
 							if (data.poster && movie.cover === movie.cover2 && data.poster !== movie.cover) {
 								movie.cover = data.poster;
 							}
+							movie.cover.replace('ezimg.ch', 'https://ezimg.ch');
+							movie.cover2.replace('ezimg.ch', 'https://ezimg.ch');
 							return resolve(movie);
 						});
 					});
@@ -214,10 +222,9 @@ function saveEztvListInCollection(json, allJson) {
 			})
 			.then((movie) => movie.save())
 			.catch((err) => {
-				if (err.name !== 'imdb api error') {
-					console.error(err);
-					// debugger;
-				}
+				// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
+				// 	console.error(err);
+				// }
 			});
 	});
 }
@@ -226,6 +233,7 @@ function saveYtsListInCollection(json) {
 	const movie = new YtsCollection({
 		title: json['title'],
 		cover: json['medium_cover_image'],
+		cover2: json['background_image'],
 		year: json['year'],
 		rating: json['rating'],
 		imdb_code: json['imdb_code'],
@@ -238,35 +246,36 @@ function saveYtsListInCollection(json) {
 		if (err) {
 			console.error(err);
 		}
-		if (!res) {
-			omdb
-				.get(movie.title, { apiKey: '7c212437' })
-				.then((things) => {
-					debugger;
-					if (!things) {
-						throw 'There is not imdbcode for ' + movie.title;
-					}
-
-					movie.imdb_code = things.imdbid;
-					movie.year = things.year ? things.year : movie.year;
-					movie.rating = things.rating !== 'N/A' ? things.rating : -1;
-					movie.actors = things.actors ? things.actors : 'N/A';
-					movie.country = things.country ? things.country : 'N/A';
-					movie.genres = things.genres ? things.genres : 'N/A';
-					movie.summary = things.plot ? things.plot : 'N/A';
-					movie.cover = movie.cover === '/movies/not-available.png' ? things.poster : movie.cover;
-					movie.cover2 = things.poster ? things.poster : 'N/A';
-
-					return movie;
-				})
-				.then((movie) => movie.save())
-				.catch((err) => {
-					if (err.name !== 'imdb api error') {
-						console.error(err);
-					}
-				});
+		if (res) {
+			return;
 		}
-		return;
+
+		omdb
+			.get(movie.title, { apiKey: '7c212437' })
+			.then((things) => {
+				if (!things) {
+					throw 'There is not imdbcode for ' + movie.title;
+				}
+
+				movie.imdb_code = things.imdbid;
+				movie.year = things.year ? things.year : movie.year;
+				movie.rating = things.rating !== 'N/A' ? things.rating : -1;
+				movie.actors = things.actors ? things.actors : 'N/A';
+				movie.country = things.country ? things.country : 'N/A';
+				movie.genres = things.genres ? things.genres : 'N/A';
+				movie.summary = things.plot ? things.plot : 'N/A';
+				movie.cover = movie.cover === '/movies/not-available.png' ? things.poster : movie.cover;
+				movie.cover = movie.cover !== 'N/A' ? movie.cover : '/movies/not-available.png';
+				// movie.cover2 = things.poster ? things.poster : 'N/A';
+
+				return movie;
+			})
+			.then((movie) => movie.save())
+			.catch((err) => {
+				// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
+				// 	console.error(err);
+				// }
+			});
 	});
 }
 
@@ -324,8 +333,8 @@ function insertCollection(source) {
 
 // GET LIST OF MOVIES / TV SHOW FROM YTS AND EZTV
 router.post('/getMovies', (req, res) => {
-	insertCollection('yts');
-	insertCollection('eztv');
+	// insertCollection('yts');
+	// insertCollection('eztv');
 	return res.json({ status: 'success' });
 });
 
@@ -335,13 +344,18 @@ router.post('/getCollectionByTitleForClient', (req, res) => {
 
 	YtsCollection.paginate(
 		title,
-		{ page: req.body.page, limit: req.body.limit, sort: { title: 'asc' } },
+		{
+			page: req.body.page,
+			limit: req.body.limit,
+			sort: req.body.title === '' ? { rating: 'desc' } : { title: 'asc' }
+		},
 		(err, json) => {
 			if (err) {
 				console.error(err);
 				res.json({ status: 'error', content: err });
 			}
 			if (json) {
+				debugger;
 				res.json({ status: 'success', payload: json });
 			} else {
 				res.json({ status: 'no_data' });

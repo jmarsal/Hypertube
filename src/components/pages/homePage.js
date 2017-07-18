@@ -87,6 +87,14 @@ class HomePage extends React.Component {
 		getCollectionsListByName(this.state.searchRequest, this.state.pageRequestDb, 'scroll');
 	}
 
+	openDetailMovie(id) {
+		// pour le moment n'ouvre que le player sur click
+		// Je me charge de la modal de details apres !
+		const { getDetailMovie } = this.props;
+		debugger;
+		getDetailMovie(id);
+	}
+
 	render() {
 		const { collection } = this.props;
 
@@ -115,10 +123,21 @@ class HomePage extends React.Component {
 									? collection.map((movie, index) => {
 											return (
 												<ListGroup key={index}>
-													<ListGroupItem>
+													<ListGroupItem
+														id={movie._id}
+														onClick={() => this.openDetailMovie(movie._id)}
+													>
 														<Well>
 															{movie.title}
+															{movie.season && movie.season != -1
+																? '     Season : ' + movie.season
+																: ''}
 														</Well>
+														{movie.title_episode
+															? <Well bsSize="small">
+																	{movie.title_episode}
+																</Well>
+															: ''}
 														<div className="year-collection">
 															<span>
 																{movie.year}
@@ -129,7 +148,9 @@ class HomePage extends React.Component {
 														</div>
 
 														<Well>
-															{movie.summary}
+															{movie.episode ? '     Episode: ' + movie.episode : ''}
+															{movie.quality ? '     Quality : ' + movie.quality : ''}
+															{movie.rating ? '     Rating : ' + movie.rating + '/10' : ''}
 														</Well>
 													</ListGroupItem>
 												</ListGroup>
