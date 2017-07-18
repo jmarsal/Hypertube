@@ -12,11 +12,11 @@ const Library = require('../models/library.js');
 function findMovie(_id) {
 	return new Promise((resolve, reject) => {
 		Library.findOne({ _id: _id }, function(err, movie) {
-			if (data) {
+			if (movie) {
 				console.log('Found on Library');
 
 				if (!movie.magnet) {
-					movie.magnet = 'magnet:?xt=urn:btih:' + data.torrent[0].hash;
+					movie.magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
 				}
 
 				resolve(movie);
@@ -131,6 +131,10 @@ router.get('/:_id', (req, res) => {
 										.pipe(res);
 								}
 							} else {
+								console.log('Conversion starting...');
+
+								console.log(file);
+
 								fileExt = '.webm';
 								let torrent = file.createReadStream({
 									start: 0,
@@ -148,7 +152,9 @@ router.get('/:_id', (req, res) => {
 										console.log('An error occurred: ' + err.message);
 									})
 									.on('progress', function(progress) {
-										console.log('Processing: ' + progress.percent + '% done');
+										console.log(
+											'Processing: ' + progress.targetSize * 100 / file.length + '% done'
+										);
 									})
 									.on('end', function() {
 										console.log('Processing finished !');
