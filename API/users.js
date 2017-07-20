@@ -325,7 +325,7 @@ router.get('/activation', (req, res) => {
 //UPDATE PASSWORD FOR REINIT
 router.post('/reinitialisation', (req, res) => {
 	const user = req.body;
-	debugger;
+	//debugger;
 	User.findOne({ username: user.username }, (err, userToUpdate) => {
 		if (!userToUpdate) {
 			res.json({ status: 'error' });

@@ -29,6 +29,7 @@ function findMovie(_id) {
 
 // DOWNLOAD A NEW MOVIE
 router.get('/:_id', (req, res) => {
+	console.log('Torrent process beginning');
 	findMovie(req.params._id)
 		.then((movie) => {
 			if (!movie.filePath) {
@@ -135,7 +136,7 @@ router.get('/:_id', (req, res) => {
 
 								console.log(file);
 
-								fileExt = '.webm';
+								fileExt = '.mkv'; //A CHANGER
 								let torrent = file.createReadStream({
 									start: 0,
 									end: file.length
@@ -170,6 +171,7 @@ router.get('/:_id', (req, res) => {
 						movie.save();
 					});
 			} else {
+				console.log('This movie is already downloaded');
 				let stats = fs.statSync(movie.filePath);
 				let total = stats['size'];
 				let start = 0;
@@ -185,6 +187,8 @@ router.get('/:_id', (req, res) => {
 					start = parseInt(newStart, 10);
 					end = newEnd ? parseInt(newEnd, 10) : total - 1;
 					let chunksize = end - start + 1;
+
+					console.log(start + ' : ' + end);
 
 					res.writeHead(206, {
 						'Content-Range': 'bytes ' + start + '-' + end + '/' + total,

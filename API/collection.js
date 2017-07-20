@@ -178,7 +178,7 @@ function saveEztvListInCollection(json, allJson) {
 							return reject(err);
 						}
 						data.map((episode) => {
-							debugger;
+							//debugger;
 							if (episode.season == movie.season && episode.episode == movie.episode) {
 								movie.imdb_code = episode.imdbid;
 								movie.rating =
@@ -354,7 +354,7 @@ router.post('/getCollectionByTitleForClient', (req, res) => {
 				res.json({ status: 'error', content: err });
 			}
 			if (json) {
-				debugger;
+				//debugger;
 				res.json({ status: 'success', payload: json });
 			} else {
 				res.json({ status: 'no_data' });

@@ -32,6 +32,11 @@ export function collectionReducers(
 				msg: 'Error, please try again...',
 				style: 'danger'
 			};
+
+		case 'GET_DETAIL_SUCCESS':
+			return {
+				...state
+			};
 	}
 	return state;
 }

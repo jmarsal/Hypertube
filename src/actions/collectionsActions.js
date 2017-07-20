@@ -41,7 +41,7 @@ export function getDetailMovie(idMovie) {
 				if (response.data.status === 'success') {
 					dispatch({ type: 'GET_DETAIL_SUCCESS' });
 				} else {
-					dispatch({ type: 'GET_DETAIL__FAIL' });
+					dispatch({ type: 'GET_DETAIL_FAIL' });
 				}
 			})
 			.catch((err) => {
