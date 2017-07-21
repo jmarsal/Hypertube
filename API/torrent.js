@@ -3,9 +3,9 @@ const router = express.Router();
 const path = require('path');
 const fs = require('fs');
 const torrentStream = require('torrent-stream');
-const Transcoder = require('stream-transcoder');
-const mime = require('mime');
 const ffmpeg = require('fluent-ffmpeg');
+const pump = require('pump');
+const mime = require('mime');
 
 const Library = require('../models/library.js');
 
@@ -27,13 +27,41 @@ function findMovie(_id) {
 	});
 }
 
+function streamFile(res, file, start, end, mimetype) {
+	if (mimetype === 'video/ogg' || mimetype === 'video/mp4') {
+		let stream = file.createReadStream({
+			start: start,
+			end: end
+		});
+		pump(stream, res);
+	} else {
+		let torrent = file.createReadStream({
+			start: start,
+			end: end
+		});
+
+		let stream = ffmpeg(torrent)
+			.videoCodec('libvpx')
+			.audioCodec('libvorbis')
+			.format('webm')
+			.audioBitrate(128)
+			.videoBitrate(1024)
+			.outputOptions([ '-threads 8', '-deadline realtime', '-error-resilient 1' ])
+			.on('end', () => {
+				console.log('Converting is done !');
+			});
+		pump(stream, res);
+	}
+}
+
 // DOWNLOAD A NEW MOVIE
 router.get('/:_id', (req, res) => {
-	console.log('Torrent process beginning');
+	console.log('Torrent process begins...');
 	findMovie(req.params._id)
 		.then((movie) => {
 			if (!movie.filePath) {
-				console.log('No file path yet');
+				console.log('No file path yet, preparing to download...');
+				console.log('Magnet: ' + movie.magnet);
 				const engine = torrentStream(movie.magnet, {
 					connections: 100,
 					uploads: 10,
@@ -68,7 +96,6 @@ router.get('/:_id', (req, res) => {
 				engine
 					.on('ready', () => {
 						engine.files.forEach(function(file) {
-							console.log('file name: ' + file.name);
 							if (
 								path.extname(file.name) !== '.mp4' &&
 								path.extname(file.name) !== '.avi' &&
@@ -79,8 +106,10 @@ router.get('/:_id', (req, res) => {
 								return;
 							}
 
-							console.log(file.path.replace(path.extname(file.name), ''));
-							console.log(mime.lookup(file.name));
+							console.log('file name: ' + file.name);
+							console.log('Path: ', file.path.replace(path.extname(file.name), ''));
+							console.log('File type: ', mime.lookup(file.name));
+							console.log('Download started...');
 
 							let mimetype = mime.lookup(file.name);
 							let isVideo = mimetype.split('/')[0];
@@ -91,81 +120,41 @@ router.get('/:_id', (req, res) => {
 							let total = file.length;
 							let start = 0;
 							let end = total - 1;
+
 							fileName = file.path.replace(path.extname(file.name), '');
+							fileExt = path.extname(file.name);
 
-							if (mimetype === 'video/ogg' || mimetype === 'video/mp4') {
-								fileExt = path.extname(file.name);
-								if (req.headers.range) {
-									let range = req.headers.range;
-									let parts = range.replace(/bytes=/, '').split('-');
-									let newStart = parts[0];
-									let newEnd = parts[1];
+							if (req.headers.range) {
+								let range = req.headers.range;
+								let parts = range.replace(/bytes=/, '').split('-');
+								let newStart = parts[0];
+								let newEnd = parts[1];
 
-									start = parseInt(newStart, 10);
-									end = newEnd ? parseInt(newEnd, 10) : total - 1;
-									let chunksize = end - start + 1;
+								start = parseInt(newStart, 10);
+								end = newEnd ? parseInt(newEnd, 10) : total - 1;
+								let chunksize = end - start + 1;
 
-									res.writeHead(206, {
-										'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
-										'Accept-Ranges': 'bytes',
-										'Content-Length': chunksize,
-										'Content-Type': mimetype,
-										Connection: 'keep-alive'
-									});
-
-									file
-										.createReadStream({
-											start: start,
-											end: end
-										})
-										.pipe(res);
-								} else {
-									res.writeHead(200, {
-										'Content-Length': total,
-										'Content-Type': mimetype
-									});
-									file
-										.createReadStream({
-											start: start,
-											end: end
-										})
-										.pipe(res);
-								}
-							} else {
-								console.log('Conversion starting...');
-
-								console.log(file);
-
-								fileExt = '.mkv'; //A CHANGER
-								let torrent = file.createReadStream({
-									start: 0,
-									end: file.length
+								res.writeHead(206, {
+									'Content-Range': 'bytes ' + start + '-' + end + '/' + total,
+									'Accept-Ranges': 'bytes',
+									'Content-Length': chunksize,
+									'Content-Type': mimetype,
+									Connection: 'keep-alive'
 								});
 
-								var convert = ffmpeg(torrent)
-									.videoCodec('libvpx')
-									.audioCodec('libvorbis')
-									.format('webm')
-									.audioBitrate(128)
-									.videoBitrate(1024)
-									.outputOptions([ '-threads 8', '-deadline realtime', '-error-resilient 1' ])
-									.on('error', function(err) {
-										console.log('An error occurred: ' + err.message);
-									})
-									.on('progress', function(progress) {
-										console.log(
-											'Processing: ' + progress.targetSize * 100 / file.length + '% done'
-										);
-									})
-									.on('end', function() {
-										console.log('Processing finished !');
-									})
-									.pipe(res);
+								streamFile(res, file, start, end, mimetype);
+							} else {
+								res.writeHead(200, {
+									'Content-Length': total,
+									'Content-Type': mimetype
+								});
+
+								streamFile(res, file, start, end, mimetype);
 							}
 						});
 					})
 					.on('idle', () => {
-						console.log('Download done !');
+						console.log('Download is done !');
 						movie.filePath = 'public/movies/' + fileName + fileExt;
 						movie.downloadDate = new Date();
 						movie.save();
@@ -198,24 +187,23 @@ router.get('/:_id', (req, res) => {
 						Connection: 'keep-alive'
 					});
 
-					fs
-						.createReadStream(movie.filePath, {
-							start: start,
-							end: end
-						})
-						.pipe(res);
+					let stream = fs.createReadStream(movie.filePath, {
+						start: start,
+						end: end
+					});
+					pump(stream, res);
 				} else {
 					res.writeHead(200, {
 						'Content-Length': total,
 						Connection: 'keep-alive',
 						'Content-Type': mimetype
 					});
-					fs
-						.createReadStream(movie.filePath, {
-							start: start,
-							end: end
-						})
-						.pipe(res);
+
+					let stream = fs.createReadStream(movie.filePath, {
+						start: start,
+						end: end
+					});
+					pump(stream, res);
 				}
 			}
 		})
