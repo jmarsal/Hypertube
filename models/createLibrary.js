@@ -1,10 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const request = require('request');
-const omdb = require('imdb-api');
-var imdb = require('imdb');
-
-const Library = require('../models/library');
+const express = require('express'),
+	router = express.Router(),
+	request = require('request'),
+	omdb = require('imdb-api'),
+	imdb = require('imdb'),
+	Serie = require('../models/serie'),
+	Season = require('../models/season'),
+	Video = require('../models/video');
 
 function parseJsonEztv(json) {
 	const wordsToRemove = [
@@ -111,7 +112,8 @@ function parseJsonEztv(json) {
 }
 
 function saveEztvListInCollection(json, allJson) {
-	const response = parseJsonEztv(json);
+	const response = parseJsonEztv(json),
+		title = response.title;
 	let cover = '';
 
 	if (response.largeImage && response.largeImage.length && response.largeImage !== 'N/A') {
@@ -121,170 +123,282 @@ function saveEztvListInCollection(json, allJson) {
 	} else {
 		cover = '/movies/not-available.png';
 	}
-	const movie = new Library({
-		id_movie_eztv: response.idEztv,
-		imdb_code: response.imdb_code,
-		rating: -1,
-		title: response.title.trim(),
-		title_episode: response.episodeTitle ? response.episodeTitle.trim() : '',
-		original_title: json.title,
-		cover: cover,
-		year: response.year,
-		season: response.season ? response.season : -1,
-		episode: response.episode ? response.episode : -1,
-		quality: response.quality,
-		magnet: response.magnet
-	});
 
-	Library.findOne({ id_movie_eztv: movie.id_movie_eztv }, (err, res) => {
-		if (err) {
-			console.error(err);
-			return false;
-		}
-		if (res) {
-			return;
-		}
-		omdb
-			.get(movie.title, { apiKey: '7c212437' })
-			.then((things) => {
-				if (!things) {
-					throw 'There is not imdbcode for ' + movie.title;
+	omdb
+		.get(title, { apiKey: '7c212437' })
+		.then((data) => {
+			if (!data) {
+				throw 'There is not imdbcode for ' + title;
+			}
+			if (!data.series) {
+				const video = new Video({
+					type: 'movie',
+					provider: 'eztv',
+					imdb_code: data.imdbid,
+					title: response.title,
+					cover: cover === '/movies/not-available.png' ? data.poster : cover,
+					year: data.year ? data.year : response.year,
+					rating: data.rating !== 'N/A' ? data.rating : -1,
+					quality: response.quality,
+					magnet: response.magnet,
+					actors: data.actors ? data.actors : '',
+					country: data.country ? data.country : '',
+					genres: data.genres ? data.genres.split(',') : '',
+					summary: data.plot ? data.plot : '',
+					background: data.poster
+				});
+				video.cover = video.cover !== 'N/A' ? video.cover : '/movies/not-available.png';
+				if (video.cover.search('ezimg.ch') != -1) {
+					video.cover = 'https://' + video.cover;
 				}
+				if (video.background.search('ezimg.ch') != -1) {
+					video.background = 'https://' + video.background;
+				}
+				return video;
+			}
 
-				movie.imdb_code = things.imdbid;
-				movie.year = things.year ? things.year : movie.year;
-				movie.rating = things.rating !== 'N/A' ? things.rating : -1;
-				movie.actors = things.actors ? things.actors : '';
-				movie.country = things.country ? things.country : '';
-				movie.genres = things.genres ? things.genres : '';
-				movie.summary = things.plot ? things.plot : '';
-				movie.cover = movie.cover === '/movies/not-available.png' ? things.poster : movie.cover;
-				movie.cover = movie.cover !== 'N/A' ? movie.cover : '/movies/not-available.png';
-				movie.cover2 = things.poster;
+			const serie = new Serie({
+				imdb_code: data.imdbid,
+				type: data.__proto__.constructor.name,
+				title: response.title,
+				cover: cover === '/movies/not-available.png' ? data.poster : cover,
+				year: data.year ? data.year : response.year,
+				rating: data.rating !== 'N/A' ? data.rating : -1,
+				actors: data.actors ? data.actors : '',
+				country: data.country ? data.country : '',
+				genres: data.genres ? data.genres.split(',') : '',
+				summary: data.plot ? data.plot : '',
+				background: data.poster
+			});
+			serie.cover = serie.cover !== 'N/A' ? serie.cover : '/movies/not-available.png';
+			if (serie.cover.search('ezimg.ch') != -1) {
+				serie.cover = 'https://' + serie.cover;
+			}
+			if (serie.background.search('ezimg.ch') != -1) {
+				serie.background = 'https://' + serie.background;
+			}
 
-				if (movie.cover.search('ezimg.ch') != -1) {
-					movie.cover = 'https://' + movie.cover;
-				}
-				if (movie.cover2.search('ezimg.ch') != -1) {
-					movie.cover2 = 'https://' + movie.cover2;
-				}
-				if (!things.series) {
-					return movie;
-				}
-
-				return new Promise((resolve, reject) => {
-					things.episodes((err, data) => {
-						if (err) {
-							return reject(err);
+			return new Promise((resolve, reject) => {
+				data.episodes((err, dataEpisode) => {
+					if (err) {
+						return reject(err);
+					}
+					dataEpisode.map((episode) => {
+						if (episode.season == response.season && episode.episode == response.episode) {
+							const video = new Video({
+								type: 'serie',
+								provider: 'eztv',
+								imdb_code: episode.imdbid,
+								title: response.episodeTitle === '' ? episode.name : response.episodeTitle,
+								episode: response.episode,
+								cover: cover,
+								rating: episode.rating && episode.rating !== 'N/A' ? episode.rating : -1,
+								quality: response.quality,
+								magnet: response.magnet
+							});
+							const date = new Date(episode.released);
+							const year = date.getFullYear();
+							if (year) {
+								video.year = year;
+							}
+							return resolve([ serie, video ]);
 						}
-						data.map((episode) => {
-							debugger;
-							if (episode.season == movie.season && episode.episode == movie.episode) {
-								movie.imdb_code = episode.imdbid;
-								movie.rating =
-									episode.rating && episode.rating !== 'N/A' ? episode.rating : movie.rating;
-								if (movie.title_episode === '') {
-									movie.title_episode = episode.name;
-								}
-								const date = new Date(episode.released);
-								const year = date.getFullYear();
-
-								if (year) {
-									movie.year = year;
-								}
-							}
-						});
-						return resolve(movie);
 					});
-				}).then((movie) => {
-					return new Promise((resolve, reject) => {
-						imdb(movie.imdb_code, (err, data) => {
-							if (err || !data) {
-								return resolve(movie);
-							}
+					return resolve(false);
+				});
+			}).then((serie) => {
+				if (serie == false) {
+					return false;
+				}
+				return new Promise((resolve, reject) => {
+					const video = serie[1];
 
-							if (data.rating && data.rating != movie.rating && data.rating !== 'N/A') {
-								movie.rating = parseInt(data.rating, 10);
-							}
-							if (data.description && (!movie.plot || movie.plot !== data.description)) {
-								movie.summary = data.description;
-							}
-							if (data.poster && movie.cover === movie.cover2 && data.poster !== movie.cover) {
-								movie.cover = data.poster;
-							}
-							movie.cover.replace('ezimg.ch', 'https://ezimg.ch');
-							movie.cover2.replace('ezimg.ch', 'https://ezimg.ch');
-							return resolve(movie);
-						});
+					imdb(video.imdb_code, (err, data) => {
+						if (err || !data) {
+							return resolve(video);
+						}
+						if (data.rating && data.rating != video.rating && data.rating !== 'N/A') {
+							video.rating = parseInt(data.rating, 10);
+						}
+						if (data.description && (!video.summary || video.summary !== data.description)) {
+							video.summary = data.description;
+						}
+						if (data.poster && video.cover === video.background && data.poster !== video.cover) {
+							video.cover = data.poster;
+						}
+						if (video.cover.search('ezimg.ch') != -1) {
+							video.cover = 'https://' + video.cover;
+						}
+
+						return resolve([ video, serie[0] ]);
 					});
 				});
-			})
-			.then((movie) => movie.save())
-			.catch((err) => {
-				// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
-				// 	console.error(err);
-				// }
 			});
-	});
+		})
+		.then((res) => {
+			// Si res.length : serie, sinon movie
+			video = res.length ? res[0] : res;
+			if (video != false) {
+				// Sauvegarde la video
+				video.save();
+				if (res.length) {
+					return res;
+				}
+			}
+		})
+		.then((arr) => {
+			const video = arr[0],
+				serie = arr[1];
+
+			// Cherche par l'imdb_code si la serie existe deja dans la db
+			Serie.findOne({ imdb_code: serie.imdb_code })
+				.populate({
+					path: 'seasons',
+					populate: {
+						path: 'episodes',
+						model: 'Video'
+					}
+				})
+				.exec()
+				.then((res) => {
+					// Si la serie est deja presente
+					if (res) {
+						let find = false,
+							indexSeasonNumber = 0,
+							seasonId,
+							serieId;
+
+						// Check dans les seasons si le numero de saison de la video est deja presente dans la db
+						res.seasons.map((season, index) => {
+							if (season.number != response.season && !find) {
+								find = false;
+							} else if (season.number == response.season && !find) {
+								find = true;
+								indexSeasonNumber = index;
+								seasonId = season._id;
+								serieId = res._id;
+							}
+						});
+						// Si pas presente, creer une nouvelle saisons avec le number de la saison de la video et sauvegarde la tout dans la db
+						if (!find && response.season > 0) {
+							const season = new Season({
+								number: response.season
+							});
+							// ajoute la video dans la saison
+							season.episodes.push(video);
+							// enregistre la saison
+							season.save();
+							// ajoute la saison dans la serie
+							res.seasons.push(season);
+						} else {
+							// Si la saison existe deja dans la db
+							let differenteQuality = true,
+								newEpisode = true;
+
+							// check dans tous les episodes si la video existe et si oui, check si quality est differente
+							res.seasons[indexSeasonNumber].episodes.map((episode) => {
+								if (episode.episode == video.episode) {
+									newEpisode = false;
+									episode.quality.map((qualEpisode) => {
+										video.quality.map((qualVideo) => {
+											if (qualEpisode === qualVideo) {
+												differenteQuality = false;
+											}
+										});
+									});
+								}
+							});
+							// Ajoute l'episode si la l'episode n'existe pas ou la qualite de la video n'est pas presente dans la db
+							if (differenteQuality || newEpisode) {
+								// Ajoute dans la serie, a la saison correspondante le nouvel episode
+								debugger;
+								res.seasons[indexSeasonNumber].episodes.push(video);
+							}
+						}
+					} else if (!res && response.season > 0) {
+						// Si la serie n'existe pas, l'ajoute a la db
+
+						// Creer une nouvelle saison avec le numero de saison de la video
+						const season = new Season({
+							number: response.season
+						});
+
+						// ajoute le nouvel episode dans la saison
+						season.episodes.push(video);
+						// enregistre la saison
+						season.save();
+						// ajoute la nouvelle saison a la serie
+						serie.seasons.push(season);
+						// ajoute la serie dans la db
+						serie.save();
+					}
+				});
+		})
+		.catch((err) => {
+			// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
+			// 	console.error(err);
+			// }
+		});
 }
 
 function saveYtsListInCollection(json) {
-	const movie = new Library({
+	if (!json.torrents) {
+		return;
+	}
+	const video = new Video({
+		type: 'movie',
+		provider: 'yts',
+		imdb_code: json['imdb_code'],
 		title: json['title'],
+		background: json['background_image'],
 		cover: json['medium_cover_image'],
-		cover2: json['background_image'],
 		year: json['year'],
 		rating: json['rating'],
-		imdb_code: json['imdb_code'],
 		runtime: json['runtime'],
 		genres: json['genres'],
 		summary: json['summary'],
-		torrent: json.torrents
+		torrent: json.torrents,
+		quality:
+			json.torrents && json.torrents.length >= 1 && json.torrents[1] && json.torrents[1].quality
+				? [ json.torrents[0].quality, json.torrents[1].quality ]
+				: [ json.torrents[0].quality ]
 	});
-	Library.findOne({ imdb_code: movie.imdb_code }, (err, res) => {
-		if (err) {
-			console.error(err);
-		}
-		if (res) {
-			return;
-		}
 
-		omdb
-			.get(movie.title, { apiKey: '7c212437' })
-			.then((things) => {
-				if (!things) {
-					throw 'There is not imdbcode for ' + movie.title;
-				}
+	omdb
+		.get(video.title, { apiKey: '7c212437' })
+		.then((data) => {
+			if (!data) {
+				throw 'There is not imdbcode for ' + video.title;
+			}
+			video.imdb_code = data.imdbid;
+			video.year = data.year ? data.year : video.year;
+			video.rating = data.rating !== 'N/A' ? data.rating : -1;
+			video.actors = data.actors ? data.actors : 'N/A';
+			video.country = data.country ? data.country : 'N/A';
+			video.genres = data.genres ? data.genres.split(',') : 'N/A';
+			video.summary = data.plot ? data.plot : 'N/A';
+			video.cover = video.cover === '/movies/not-available.png' ? data.poster : video.cover;
+			video.cover = video.cover !== 'N/A' ? video.cover : '/movies/not-available.png';
+			// movie.background = data.poster ? data.poster : 'N/A';
 
-				movie.imdb_code = things.imdbid;
-				movie.year = things.year ? things.year : movie.year;
-				movie.rating = things.rating !== 'N/A' ? things.rating : -1;
-				movie.actors = things.actors ? things.actors : 'N/A';
-				movie.country = things.country ? things.country : 'N/A';
-				movie.genres = things.genres ? things.genres : 'N/A';
-				movie.summary = things.plot ? things.plot : 'N/A';
-				movie.cover = movie.cover === '/movies/not-available.png' ? things.poster : movie.cover;
-				movie.cover = movie.cover !== 'N/A' ? movie.cover : '/movies/not-available.png';
-				// movie.cover2 = things.poster ? things.poster : 'N/A';
-
-				return movie;
-			})
-			.then((movie) => movie.save())
-			.catch((err) => {
-				// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
-				// 	console.error(err);
-				// }
-			});
-	});
+			return video;
+		})
+		.then((video) => {
+			video.save();
+		})
+		.catch((err) => {
+			// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
+			// 	console.error(err);
+			// }
+		});
 }
 
-function getAndInsertListMoviesInDb(i, index, source, cb) {
+function getAndInsertVideo(i, index, source, cb) {
 	const url =
 		source === 'yts'
 			? 'https://yts.ag/api/v2/list_movies.json?limit=50&page=https://yts.ag/api/v2/list_movies.json?limit=50&page='
 			: 'https://eztv.ag/api/get-torrents?limit=50&page=';
 	let json = {};
-
 	return request(url + i, (err, res, body) => {
 		if (!res) {
 			cb(true, 'Error with request dependencies');
@@ -297,7 +411,7 @@ function getAndInsertListMoviesInDb(i, index, source, cb) {
 			}
 		}
 
-		if (source === 'yts' ? json.data.movies === undefined : json.torrents === undefined) {
+		if (source === 'yts' ? !json.data : !json.torrents) {
 			return cb(false);
 		}
 
@@ -311,22 +425,37 @@ function getAndInsertListMoviesInDb(i, index, source, cb) {
 		}
 		i++;
 
-		const count = source === 'yts' ? json.data.movie_count : json.torrents_count;
+		const count = source === 'yts' ? json.data.movie_count : json.torrents_count - 65000;
 		if (index >= count) {
 			return cb(false);
 		} else {
-			getAndInsertListMoviesInDb(i, index, source, cb);
+			getAndInsertVideo(i, index, source, cb);
 		}
 	});
 }
 
-const InsertCollection = function(source) {
-	getAndInsertListMoviesInDb(1, 0, source, (err, data) => {
-		if (err) {
-			console.error(err + ' ERROR FOR ADD MOVIES COLLECTION IN DB');
-		} else {
-			console.log(source + 'Movies collection downloaded');
-		}
+const InsertCollection = function() {
+	const sources = [ 'yts', 'eztv' ];
+
+	sources.forEach((source) => {
+		Video.find({
+			provider: source
+		})
+			.count()
+			.exec()
+			.then((count) => {
+				if (count) {
+					return;
+				}
+
+				getAndInsertVideo(1, 0, source, (err, data) => {
+					if (err) {
+						console.error(err + ' ERROR FOR ADD MOVIES COLLECTION IN DB');
+					} else {
+						console.log(source + 'Movies collection downloaded');
+					}
+				});
+			});
 	});
 };
 module.exports = InsertCollection;

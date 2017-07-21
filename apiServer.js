@@ -52,8 +52,7 @@ app.use('/torrent', require('./API/torrent'));
 
 // GET LIST MOVIES IN DB
 const createLibrary = require('./models/createLibrary');
-createLibrary('yts');
-createLibrary('eztv');
+createLibrary();
 
 // END APIs
 
