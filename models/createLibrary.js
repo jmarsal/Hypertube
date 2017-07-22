@@ -111,9 +111,11 @@ function parseJsonEztv(json) {
 	return response;
 }
 
-function saveEztvListInCollection(json, allJson) {
-	const response = parseJsonEztv(json),
-		title = response.title;
+function addMissingHttps(pattern, url) {
+	return url.search(pattern) > -1 ? 'https://' + url : url;
+}
+
+function getCover(response, data) {
 	let cover = '';
 
 	if (response.largeImage && response.largeImage.length && response.largeImage !== 'N/A') {
@@ -121,8 +123,215 @@ function saveEztvListInCollection(json, allJson) {
 	} else if (response.smallImage && response.smallImage.length && response.smallImage !== 'N/A') {
 		cover = response.smallImage.replace('//', '');
 	} else {
-		cover = '/movies/not-available.png';
+		cover = data.poster === 'N/A' ? '/movies/not-available.png' : data.poster;
 	}
+	return addMissingHttps('ezimg.ch', cover);
+}
+
+function getMissingEpisodeDataForVideo(video) {
+	return new Promise((resolve, reject) => {
+		const imdb_code = video.imdb_code ? video.imdb_code : video.imdbid;
+
+		imdb(imdb_code, (err, data) => {
+			if (err || !data) {
+				return resolve(video);
+			}
+			video.imdb_code = imdb_code;
+			if (data.rating && data.rating != video.rating && data.rating !== 'N/A') {
+				video.rating = parseInt(data.rating, 10);
+			}
+			if (data.description && (!video.summary || video.summary !== data.description)) {
+				video.summary = data.description;
+			}
+			if (data.poster && video.cover === video.background && data.poster !== video.cover) {
+				video.cover = addMissingHttps('ezimg.ch', data.poster);
+			}
+			// debugger;
+			return resolve(video);
+		});
+	});
+}
+
+function getMissingVideoData(data, response) {
+	return new Promise((resolve, reject) => {
+		if (!data.series) {
+			return resolve(data);
+		}
+
+		data.episodes((err, dataEpisode) => {
+			if (err) {
+				return reject(err);
+			}
+			dataEpisode.map((episode) => {
+				if (episode.season == response.season && episode.episode == response.episode) {
+					// return nouvel objet pour completé les donnees manquante avant le createVideo
+					const infosEpisode = {
+						imdb_code: episode.imdbid,
+						title: episode.name,
+						episode: response.episode,
+						rating: episode.rating && episode.rating !== 'N/A' ? episode.rating : -1
+					};
+					const date = new Date(episode.released);
+					const year = date.getFullYear();
+					if (year) {
+						infosEpisode.year = year;
+					}
+					//debugger;
+					return resolve(infosEpisode);
+				}
+			});
+			return resolve(false);
+		});
+	});
+}
+
+function fillIfMovie(response, data, video) {
+	//debugger;
+	video.imdb_code = data.imdbid;
+	video.title = response.title;
+	video.year = data.year ? data.year : response.year;
+	video.rating = data.rating !== 'N/A' ? data.rating : -1;
+	video.summary = data.plot ? data.plot : '';
+
+	return video;
+}
+
+function fillIfEpisode(data, video) {
+	//debugger;
+	video.imdb_code = data.imdb_code;
+	video.title = data.title;
+	video.episode = data.episode;
+	video.rating = data.rating;
+	video.summary = data.summary;
+
+	return video;
+}
+
+function createVideo(response, data, infosEpisode) {
+	const isSerie = data.series;
+
+	const video = new Video({
+		type: isSerie ? 'serie' : 'movie',
+		provider: 'eztv',
+		cover: getCover(response, data),
+		quality: response.quality,
+		magnet: response.magnet,
+		actors: data.actors ? data.actors : '',
+		country: data.country ? data.country : '',
+		genres: data.genres ? data.genres.split(',') : '',
+		background: addMissingHttps('ezimg.ch', data.poster),
+		magnet: response.magnet,
+		quality: response.quality
+	});
+
+	if (!isSerie) {
+		//debugger;
+		return fillIfMovie(response, data, video);
+	}
+	//debugger;
+	return fillIfEpisode(infosEpisode, video);
+}
+
+function createNewSerie(response, data, video) {
+	const serie = new Serie({
+		imdb_code: data.imdbid,
+		type: data.__proto__.constructor.name,
+		title: response.title,
+		cover: getCover(response, data),
+		year: data.year ? data.year : response.year,
+		rating: data.rating !== 'N/A' ? data.rating : -1,
+		actors: data.actors ? data.actors : '',
+		country: data.country ? data.country : '',
+		genres: data.genres ? data.genres.split(',') : '',
+		summary: data.plot ? data.plot : '',
+		background: addMissingHttps('ezimg.ch', data.poster)
+	});
+
+	// Creer une nouvelle saison avec le numero de saison de la video
+	const season = new Season({
+		number: response.season
+	});
+	debugger;
+	// ajoute le nouvel episode dans la saison
+	season.episodes.push(video);
+	// enregistre la saison
+	season.save();
+	// ajoute la nouvelle saison a la serie
+	serie.seasons.push(season);
+	// ajoute la serie dans la db
+	return serie.save();
+}
+
+function saveNewSaison(response, serie, video) {
+	const season = new Season({
+		number: response.season
+	});
+	debugger;
+	// ajoute la video dans la saison
+	season.episodes.push(video);
+	// enregistre la saison
+	season.save();
+	// ajoute la saison dans la serie
+	return serie.seasons.push(season);
+}
+
+function updateSaison(serie, indexSeasonNumber, video) {
+	let differenteQuality = true,
+		newEpisode = true;
+
+	// check dans tous les episodes si la video existe et si oui, check si quality est differente
+	serie.seasons[indexSeasonNumber].episodes.map((episode) => {
+		if (episode.episode == video.episode) {
+			newEpisode = false;
+			episode.quality.map((qualEpisode) => {
+				video.quality.map((qualVideo) => {
+					if (qualEpisode === qualVideo) {
+						differenteQuality = false;
+					}
+				});
+			});
+		}
+	});
+	// Ajoute l'episode si la l'episode n'existe pas ou la qualite de la video n'est pas presente dans la db
+	if (differenteQuality || newEpisode) {
+		// Ajoute dans la serie, a la saison correspondante le nouvel episode
+		debugger;
+		return serie.seasons[indexSeasonNumber].episodes.push(video);
+	}
+	debugger;
+	return false;
+}
+
+function createOrUpdateSeason(serie, response, video) {
+	let find = false,
+		indexSeasonNumber = 0,
+		seasonId,
+		serieId;
+
+	// Check dans les seasons si le numero de saison de la video est deja presente dans la db
+	serie.seasons.map((season, index) => {
+		if (season.number != response.season && !find) {
+			find = false;
+		} else if (season.number == response.season && !find) {
+			find = true;
+			indexSeasonNumber = index;
+			seasonId = season._id;
+			serieId = res._id;
+		}
+	});
+	// Si pas presente, creer une nouvelle saisons avec le number de la saison de la video et sauvegarde la tout dans la db
+	//debugger;
+	if (!find && response.season > 0) {
+		return saveNewSaison(serie, response, video);
+	} else {
+		// Si la saison existe deja dans la db
+		return updateSaison(serie, indexSeasonNumber, video);
+	}
+}
+
+function saveEztvListInCollection(json, allJson) {
+	const response = parseJsonEztv(json),
+		title = response.title;
 
 	omdb
 		.get(title, { apiKey: '7c212437' })
@@ -130,128 +339,49 @@ function saveEztvListInCollection(json, allJson) {
 			if (!data) {
 				throw 'There is not imdbcode for ' + title;
 			}
-			if (!data.series) {
-				const video = new Video({
-					type: 'movie',
-					provider: 'eztv',
-					imdb_code: data.imdbid,
-					title: response.title,
-					cover: cover === '/movies/not-available.png' ? data.poster : cover,
-					year: data.year ? data.year : response.year,
-					rating: data.rating !== 'N/A' ? data.rating : -1,
-					quality: response.quality,
-					magnet: response.magnet,
-					actors: data.actors ? data.actors : '',
-					country: data.country ? data.country : '',
-					genres: data.genres ? data.genres.split(',') : '',
-					summary: data.plot ? data.plot : '',
-					background: data.poster
-				});
-				video.cover = video.cover !== 'N/A' ? video.cover : '/movies/not-available.png';
-				if (video.cover.search('ezimg.ch') != -1) {
-					video.cover = 'https://' + video.cover;
-				}
-				if (video.background.search('ezimg.ch') != -1) {
-					video.background = 'https://' + video.background;
-				}
-				return video;
-			}
-
-			const serie = new Serie({
-				imdb_code: data.imdbid,
-				type: data.__proto__.constructor.name,
-				title: response.title,
-				cover: cover === '/movies/not-available.png' ? data.poster : cover,
-				year: data.year ? data.year : response.year,
-				rating: data.rating !== 'N/A' ? data.rating : -1,
-				actors: data.actors ? data.actors : '',
-				country: data.country ? data.country : '',
-				genres: data.genres ? data.genres.split(',') : '',
-				summary: data.plot ? data.plot : '',
-				background: data.poster
-			});
-			serie.cover = serie.cover !== 'N/A' ? serie.cover : '/movies/not-available.png';
-			if (serie.cover.search('ezimg.ch') != -1) {
-				serie.cover = 'https://' + serie.cover;
-			}
-			if (serie.background.search('ezimg.ch') != -1) {
-				serie.background = 'https://' + serie.background;
-			}
-
 			return new Promise((resolve, reject) => {
-				data.episodes((err, dataEpisode) => {
-					if (err) {
-						return reject(err);
-					}
-					dataEpisode.map((episode) => {
-						if (episode.season == response.season && episode.episode == response.episode) {
-							const video = new Video({
-								type: 'serie',
-								provider: 'eztv',
-								imdb_code: episode.imdbid,
-								title: response.episodeTitle === '' ? episode.name : response.episodeTitle,
-								episode: response.episode,
-								cover: cover,
-								rating: episode.rating && episode.rating !== 'N/A' ? episode.rating : -1,
-								quality: response.quality,
-								magnet: response.magnet
-							});
-							const date = new Date(episode.released);
-							const year = date.getFullYear();
-							if (year) {
-								video.year = year;
-							}
-							return resolve([ serie, video ]);
-						}
-					});
-					return resolve(false);
-				});
-			}).then((serie) => {
-				if (serie == false) {
-					return false;
-				}
-				return new Promise((resolve, reject) => {
-					const video = serie[1];
-
-					imdb(video.imdb_code, (err, data) => {
-						if (err || !data) {
-							return resolve(video);
-						}
-						if (data.rating && data.rating != video.rating && data.rating !== 'N/A') {
-							video.rating = parseInt(data.rating, 10);
-						}
-						if (data.description && (!video.summary || video.summary !== data.description)) {
-							video.summary = data.description;
-						}
-						if (data.poster && video.cover === video.background && data.poster !== video.cover) {
-							video.cover = data.poster;
-						}
-						if (video.cover.search('ezimg.ch') != -1) {
-							video.cover = 'https://' + video.cover;
-						}
-
-						return resolve([ video, serie[0] ]);
-					});
-				});
+				return resolve(getMissingVideoData(data, response));
+			}).then((video) => {
+				return {
+					video: video != false ? video : data,
+					data: data
+				};
 			});
 		})
-		.then((res) => {
-			// Si res.length : serie, sinon movie
-			video = res.length ? res[0] : res;
-			if (video != false) {
-				// Sauvegarde la video
-				video.save();
-				if (res.length) {
-					return res;
-				}
+		.then((videoData) => {
+			// debugger;
+			if (!videoData.data.series) {
+				return videoData.data;
 			}
+			return new Promise((resolve, reject) => {
+				return resolve(getMissingEpisodeDataForVideo(videoData.video));
+			}).then((video) => {
+				// debugger;
+				return {
+					video: video,
+					data: data
+				};
+			});
 		})
-		.then((arr) => {
-			const video = arr[0],
-				serie = arr[1];
-
+		.then((videoData) => {
+			debugger;
+			return {
+				video: createVideo(response, videoData.data, videoData.video),
+				data: videoData.data
+			};
+		})
+		.then((videoData) => {
+			debugger;
+			videoData.video.save();
+			return videoData;
+		})
+		.then((videoData) => {
+			debugger;
+			if (!videoData.data.series) {
+				return false;
+			}
 			// Cherche par l'imdb_code si la serie existe deja dans la db
-			Serie.findOne({ imdb_code: serie.imdb_code })
+			Serie.findOne({ imdb_code: videoData.data.imdb_code })
 				.populate({
 					path: 'seasons',
 					populate: {
@@ -260,78 +390,17 @@ function saveEztvListInCollection(json, allJson) {
 					}
 				})
 				.exec()
-				.then((res) => {
-					// Si la serie est deja presente
-					if (res) {
-						let find = false,
-							indexSeasonNumber = 0,
-							seasonId,
-							serieId;
-
-						// Check dans les seasons si le numero de saison de la video est deja presente dans la db
-						res.seasons.map((season, index) => {
-							if (season.number != response.season && !find) {
-								find = false;
-							} else if (season.number == response.season && !find) {
-								find = true;
-								indexSeasonNumber = index;
-								seasonId = season._id;
-								serieId = res._id;
-							}
-						});
-						// Si pas presente, creer une nouvelle saisons avec le number de la saison de la video et sauvegarde la tout dans la db
-						if (!find && response.season > 0) {
-							const season = new Season({
-								number: response.season
-							});
-							// ajoute la video dans la saison
-							season.episodes.push(video);
-							// enregistre la saison
-							season.save();
-							// ajoute la saison dans la serie
-							res.seasons.push(season);
-						} else {
-							// Si la saison existe deja dans la db
-							let differenteQuality = true,
-								newEpisode = true;
-
-							// check dans tous les episodes si la video existe et si oui, check si quality est differente
-							res.seasons[indexSeasonNumber].episodes.map((episode) => {
-								if (episode.episode == video.episode) {
-									newEpisode = false;
-									episode.quality.map((qualEpisode) => {
-										video.quality.map((qualVideo) => {
-											if (qualEpisode === qualVideo) {
-												differenteQuality = false;
-											}
-										});
-									});
-								}
-							});
-							// Ajoute l'episode si la l'episode n'existe pas ou la qualite de la video n'est pas presente dans la db
-							if (differenteQuality || newEpisode) {
-								// Ajoute dans la serie, a la saison correspondante le nouvel episode
-								debugger;
-								res.seasons[indexSeasonNumber].episodes.push(video);
-							}
-						}
-					} else if (!res && response.season > 0) {
-						// Si la serie n'existe pas, l'ajoute a la db
-
-						// Creer une nouvelle saison avec le numero de saison de la video
-						const season = new Season({
-							number: response.season
-						});
-
-						// ajoute le nouvel episode dans la saison
-						season.episodes.push(video);
-						// enregistre la saison
-						season.save();
-						// ajoute la nouvelle saison a la serie
-						serie.seasons.push(season);
-						// ajoute la serie dans la db
-						serie.save();
+				.then((serie) => {
+					debugger;
+					// Si la serie n'existe pas, l'ajoute a la db
+					if (!serie && response.season > 0) {
+						return createNewSerie(response, videoData.data, video);
 					}
+					// Si la serie est deja presente
+					if (serie && response.season > 0) {
+						return createOrUpdateSeason(serie, response, video);
+					}
+					debugger;
 				});
 		})
 		.catch((err) => {
