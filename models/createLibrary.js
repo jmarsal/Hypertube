@@ -128,7 +128,7 @@ function getCover(response, data) {
 	return addMissingHttps('ezimg.ch', cover);
 }
 
-function getMissingEpisodeDataForVideo(video) {
+function getMissingEpisodeDataForVideo(data, video) {
 	return new Promise((resolve, reject) => {
 		const imdb_code = video.imdb_code ? video.imdb_code : video.imdbid;
 
@@ -147,7 +147,7 @@ function getMissingEpisodeDataForVideo(video) {
 				video.cover = addMissingHttps('ezimg.ch', data.poster);
 			}
 			// debugger;
-			return resolve(video);
+			return resolve({ video: video, data: data });
 		});
 	});
 }
@@ -155,7 +155,7 @@ function getMissingEpisodeDataForVideo(video) {
 function getMissingVideoData(data, response) {
 	return new Promise((resolve, reject) => {
 		if (!data.series) {
-			return resolve(data);
+			return resolve({ data: data });
 		}
 
 		data.episodes((err, dataEpisode) => {
@@ -177,10 +177,13 @@ function getMissingVideoData(data, response) {
 						infosEpisode.year = year;
 					}
 					//debugger;
-					return resolve(infosEpisode);
+					return resolve({
+						video: infosEpisode,
+						data: data
+					});
 				}
 			});
-			return resolve(false);
+			return resolve({ data: data });
 		});
 	});
 }
@@ -339,34 +342,24 @@ function saveEztvListInCollection(json, allJson) {
 			if (!data) {
 				throw 'There is not imdbcode for ' + title;
 			}
-			return new Promise((resolve, reject) => {
-				return resolve(getMissingVideoData(data, response));
-			}).then((video) => {
-				return {
-					video: video != false ? video : data,
-					data: data
-				};
-			});
-		})
-		.then((videoData) => {
-			// debugger;
-			if (!videoData.data.series) {
-				return videoData.data;
-			}
-			return new Promise((resolve, reject) => {
-				return resolve(getMissingEpisodeDataForVideo(videoData.video));
-			}).then((video) => {
-				// debugger;
-				return {
-					video: video,
-					data: data
-				};
+			getMissingVideoData(data, response).done((videoData) => {
+				return videoData;
 			});
 		})
 		.then((videoData) => {
 			debugger;
+			if (!videoData.data.series) {
+				return videoData.data;
+			}
+			getMissingEpisodeDataForVideo(videoData.data, videoData.video).done((videoData) => {
+				return videoData;
+			});
+		})
+		.then((videoData) => {
+			debugger;
+			createVideo(response, videoData.data, videoData.video);
 			return {
-				video: createVideo(response, videoData.data, videoData.video),
+				video: videoData.video,
 				data: videoData.data
 			};
 		})
