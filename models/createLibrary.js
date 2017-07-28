@@ -130,8 +130,11 @@ function getCover(response, data) {
 
 function getMissingEpisodeDataForVideo(data, video) {
 	return new Promise((resolve, reject) => {
-		const imdb_code = video.imdb_code ? video.imdb_code : video.imdbid;
+		const imdb_code = video.imdb_code || video.imdbid;
 
+		if (!imdb_code) {
+			return resolve({ video: video, data: data });
+		}
 		imdb(imdb_code, (err, data) => {
 			if (err || !data) {
 				return resolve(video);
@@ -140,13 +143,16 @@ function getMissingEpisodeDataForVideo(data, video) {
 			if (data.rating && data.rating != video.rating && data.rating !== 'N/A') {
 				video.rating = parseInt(data.rating, 10);
 			}
-			if (data.description && (!video.summary || video.summary !== data.description)) {
+			if (
+				data.description &&
+				data.description !== 'Add a Plot »' &&
+				(!video.summary || video.summary !== data.description)
+			) {
 				video.summary = data.description;
 			}
 			if (data.poster && video.cover === video.background && data.poster !== video.cover) {
 				video.cover = addMissingHttps('ezimg.ch', data.poster);
 			}
-			// debugger;
 			return resolve({ video: video, data: data });
 		});
 	});
@@ -155,57 +161,62 @@ function getMissingEpisodeDataForVideo(data, video) {
 function getMissingVideoData(data, response) {
 	return new Promise((resolve, reject) => {
 		if (!data.series) {
-			return resolve({ data: data });
+			return resolve({
+				video: {},
+				data: data
+			});
 		}
 
-		data.episodes((err, dataEpisode) => {
+		data.episodes((err, dataEpisodes) => {
 			if (err) {
 				return reject(err);
 			}
-			dataEpisode.map((episode) => {
-				if (episode.season == response.season && episode.episode == response.episode) {
-					// return nouvel objet pour completé les donnees manquante avant le createVideo
-					const infosEpisode = {
-						imdb_code: episode.imdbid,
-						title: episode.name,
-						episode: response.episode,
-						rating: episode.rating && episode.rating !== 'N/A' ? episode.rating : -1
-					};
-					const date = new Date(episode.released);
-					const year = date.getFullYear();
-					if (year) {
-						infosEpisode.year = year;
-					}
-					//debugger;
-					return resolve({
-						video: infosEpisode,
-						data: data
-					});
-				}
+
+			let saisonEpisode = dataEpisodes.find((e) => {
+				let test = e.season == response.season && e.episode == response.episode;
+				return test;
 			});
-			return resolve({ data: data });
+
+			if (!saisonEpisode) {
+				return resolve({
+					video: {},
+					data: data
+				});
+			}
+			const infosEpisode = {
+					imdb_code: saisonEpisode.imdbid,
+					title: saisonEpisode.name,
+					episode: response.episode,
+					rating: saisonEpisode.rating && saisonEpisode.rating !== 'N/A' ? saisonEpisode.rating : -1
+				},
+				date = new Date(saisonEpisode.released),
+				year = date.getFullYear();
+			infosEpisode.year = year && year !== 'NaN' ? year : -1;
+
+			return resolve({
+				video: infosEpisode,
+				data: data
+			});
 		});
 	});
 }
 
-function fillIfMovie(response, data, video) {
-	//debugger;
+function fillMovie(response, data, video) {
 	video.imdb_code = data.imdbid;
 	video.title = response.title;
-	video.year = data.year ? data.year : response.year;
-	video.rating = data.rating !== 'N/A' ? data.rating : -1;
+	video.rating = data.rating && data.rating !== 'N/A' ? data.rating : -1;
 	video.summary = data.plot ? data.plot : '';
 
 	return video;
 }
 
-function fillIfEpisode(data, video) {
-	//debugger;
-	video.imdb_code = data.imdb_code;
+function fillEpisode(data, video, response) {
+	video.imdb_code = data.imdb_code || data.imdbid;
 	video.title = data.title;
-	video.episode = data.episode;
-	video.rating = data.rating;
-	video.summary = data.summary;
+	video.episode = data.episode || response.episode;
+	video.rating = data.rating && data.rating !== 'N/A' ? data.rating : -1;
+	video.summary = data.summary || data.plot;
+	video.year = data.year != -1 ? data.year : video.year;
 
 	return video;
 }
@@ -224,85 +235,94 @@ function createVideo(response, data, infosEpisode) {
 		genres: data.genres ? data.genres.split(',') : '',
 		background: addMissingHttps('ezimg.ch', data.poster),
 		magnet: response.magnet,
-		quality: response.quality
+		quality: response.quality,
+		year:
+			data.year && data.year !== 'NaN'
+				? parseInt(data.year, 10)
+				: response.year && response.year !== 'NaN' ? parseInt(response.year, 10) : -1
 	});
 
-	if (!isSerie) {
-		//debugger;
-		return fillIfMovie(response, data, video);
-	}
-	//debugger;
-	return fillIfEpisode(infosEpisode, video);
+	return !isSerie
+		? fillMovie(response, data, video)
+		: infosEpisode.length ? fillEpisode(infosEpisode, video) : fillEpisode(data, video, response);
 }
 
 function createNewSerie(response, data, video) {
-	const serie = new Serie({
-		imdb_code: data.imdbid,
-		type: data.__proto__.constructor.name,
-		title: response.title,
-		cover: getCover(response, data),
-		year: data.year ? data.year : response.year,
-		rating: data.rating !== 'N/A' ? data.rating : -1,
-		actors: data.actors ? data.actors : '',
-		country: data.country ? data.country : '',
-		genres: data.genres ? data.genres.split(',') : '',
-		summary: data.plot ? data.plot : '',
-		background: addMissingHttps('ezimg.ch', data.poster)
-	});
+	return new Promise((resolve, reject) => {
+		const serie = new Serie({
+			imdb_code: data.imdbid,
+			type: data.__proto__.constructor.name,
+			title: response.title,
+			cover: getCover(response, data),
+			year:
+				data.year && data.year !== 'NaN'
+					? parseInt(data.year, 10)
+					: response.year && response.year !== 'NaN' ? parseInt(response.year, 10) : -1,
+			rating: data.rating !== 'N/A' ? data.rating : -1,
+			actors: data.actors ? data.actors : '',
+			country: data.country ? data.country : '',
+			genres: data.genres ? data.genres.split(',') : '',
+			summary: data.plot ? data.plot : '',
+			background: addMissingHttps('ezimg.ch', data.poster)
+		});
 
-	// Creer une nouvelle saison avec le numero de saison de la video
-	const season = new Season({
-		number: response.season
+		// Creer une nouvelle saison avec le numero de saison de la video
+		const season = new Season({
+			number: response.season
+		});
+		// ajoute le nouvel episode dans la saison
+		season.episodes.push(video);
+		// enregistre la saison
+		season.save();
+		// ajoute la nouvelle saison a la serie
+		serie.seasons.push(season);
+		// ajoute la serie dans la db
+		return resolve(serie.save());
 	});
-	debugger;
-	// ajoute le nouvel episode dans la saison
-	season.episodes.push(video);
-	// enregistre la saison
-	season.save();
-	// ajoute la nouvelle saison a la serie
-	serie.seasons.push(season);
-	// ajoute la serie dans la db
-	return serie.save();
 }
 
-function saveNewSaison(response, serie, video) {
-	const season = new Season({
-		number: response.season
+function saveNewSaison(serie, response, video) {
+	return new Promise((resolve) => {
+		const season = new Season({
+			number: response.season
+		});
+		// ajoute la video dans la saison
+		season.episodes.push(video);
+		// enregistre la saison
+		season.save();
+		// ajoute la saison dans la serie
+		serie.seasons.push(season);
+		return resolve(serie.save());
 	});
-	debugger;
-	// ajoute la video dans la saison
-	season.episodes.push(video);
-	// enregistre la saison
-	season.save();
-	// ajoute la saison dans la serie
-	return serie.seasons.push(season);
 }
 
 function updateSaison(serie, indexSeasonNumber, video) {
-	let differenteQuality = true,
-		newEpisode = true;
+	return new Promise((resolve) => {
+		let differenteQuality = true,
+			newEpisode = true;
 
-	// check dans tous les episodes si la video existe et si oui, check si quality est differente
-	serie.seasons[indexSeasonNumber].episodes.map((episode) => {
-		if (episode.episode == video.episode) {
-			newEpisode = false;
-			episode.quality.map((qualEpisode) => {
-				video.quality.map((qualVideo) => {
-					if (qualEpisode === qualVideo) {
-						differenteQuality = false;
-					}
+		// check dans tous les episodes si la video existe et si oui, check si quality est differente
+		serie.seasons[indexSeasonNumber].episodes.map((episode) => {
+			if (episode.episode == video.episode) {
+				newEpisode = false;
+				episode.quality.map((qualEpisode) => {
+					video.quality.map((qualVideo) => {
+						if (qualEpisode === qualVideo) {
+							differenteQuality = false;
+						}
+					});
 				});
-			});
+			}
+		});
+		// Ajoute l'episode si la l'episode n'existe pas ou la qualite de la video n'est pas presente dans la db
+		if (differenteQuality || newEpisode) {
+			// Ajoute dans la serie, a la saison correspondante le nouvel episode
+			serie.seasons[indexSeasonNumber].episodes.push(video);
+			return resolve(serie.save());
+		} else {
+			return resolve(false);
 		}
 	});
-	// Ajoute l'episode si la l'episode n'existe pas ou la qualite de la video n'est pas presente dans la db
-	if (differenteQuality || newEpisode) {
-		// Ajoute dans la serie, a la saison correspondante le nouvel episode
-		debugger;
-		return serie.seasons[indexSeasonNumber].episodes.push(video);
-	}
-	debugger;
-	return false;
 }
 
 function createOrUpdateSeason(serie, response, video) {
@@ -318,12 +338,11 @@ function createOrUpdateSeason(serie, response, video) {
 		} else if (season.number == response.season && !find) {
 			find = true;
 			indexSeasonNumber = index;
-			seasonId = season._id;
-			serieId = res._id;
+			// seasonId = season._id;
+			// serieId = res._id;
 		}
 	});
 	// Si pas presente, creer une nouvelle saisons avec le number de la saison de la video et sauvegarde la tout dans la db
-	//debugger;
 	if (!find && response.season > 0) {
 		return saveNewSaison(serie, response, video);
 	} else {
@@ -342,64 +361,76 @@ function saveEztvListInCollection(json, allJson) {
 			if (!data) {
 				throw 'There is not imdbcode for ' + title;
 			}
-			getMissingVideoData(data, response).done((videoData) => {
-				return videoData;
-			});
+
+			return getMissingVideoData(data, response);
 		})
 		.then((videoData) => {
-			debugger;
 			if (!videoData.data.series) {
-				return videoData.data;
-			}
-			getMissingEpisodeDataForVideo(videoData.data, videoData.video).done((videoData) => {
 				return videoData;
-			});
+			}
+
+			return getMissingEpisodeDataForVideo(videoData.data, videoData.video);
 		})
 		.then((videoData) => {
-			debugger;
-			createVideo(response, videoData.data, videoData.video);
+			if (response.season && response.season > 0 && !videoData.data.series) {
+				return false;
+			}
+
 			return {
-				video: videoData.video,
+				video: createVideo(response, videoData.data, videoData.video),
 				data: videoData.data
 			};
 		})
 		.then((videoData) => {
-			debugger;
+			if (!videoData || !videoData.video.imdb_code) {
+				return false;
+			}
+
+			if (!videoData.video.year || videoData.video.year === 'NaN') {
+				videoData.video.year = -1;
+			}
+
 			videoData.video.save();
+
 			return videoData;
 		})
 		.then((videoData) => {
-			debugger;
-			if (!videoData.data.series) {
+			if (!videoData || !videoData.data.series || response.season < 1) {
 				return false;
 			}
 			// Cherche par l'imdb_code si la serie existe deja dans la db
-			Serie.findOne({ imdb_code: videoData.data.imdb_code })
-				.populate({
-					path: 'seasons',
-					populate: {
-						path: 'episodes',
-						model: 'Video'
-					}
-				})
-				.exec()
-				.then((serie) => {
-					debugger;
-					// Si la serie n'existe pas, l'ajoute a la db
-					if (!serie && response.season > 0) {
-						return createNewSerie(response, videoData.data, video);
-					}
-					// Si la serie est deja presente
-					if (serie && response.season > 0) {
-						return createOrUpdateSeason(serie, response, video);
-					}
-					debugger;
-				});
+			debugger;
+			return new Promise((resolve) => {
+				Serie.findOne({ imdb_code: videoData.data.imdbid })
+					.populate({
+						path: 'seasons',
+						populate: {
+							path: 'episodes',
+							model: 'Video'
+						}
+					})
+					.exec()
+					.then((serie) => {
+						// Si la serie n'existe pas, l'ajoute a la db
+						if (!serie) {
+							return resolve(createNewSerie(response, videoData.data, videoData.video));
+						} else {
+							// Si la serie est deja presente
+							// if (serie) {
+							// 	return createOrUpdateSeason(serie, response, videoData.video);
+							// }
+							return resolve(false);
+						}
+					});
+			});
+		})
+		.then((status) => {
+			Promise.resolve();
 		})
 		.catch((err) => {
-			// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
-			// 	console.error(err);
-			// }
+			if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
+				console.error(err);
+			}
 		});
 }
 
@@ -441,7 +472,6 @@ function saveYtsListInCollection(json) {
 			video.summary = data.plot ? data.plot : 'N/A';
 			video.cover = video.cover === '/movies/not-available.png' ? data.poster : video.cover;
 			video.cover = video.cover !== 'N/A' ? video.cover : '/movies/not-available.png';
-			// movie.background = data.poster ? data.poster : 'N/A';
 
 			return video;
 		})
@@ -449,9 +479,9 @@ function saveYtsListInCollection(json) {
 			video.save();
 		})
 		.catch((err) => {
-			// if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
-			// 	console.error(err);
-			// }
+			if (err.name !== 'imdb api error' && err.name !== 'RequestError') {
+				console.error(err);
+			}
 		});
 }
 
