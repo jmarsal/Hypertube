@@ -1,5 +1,5 @@
-const express = require('express'),
-	router = express.Router();
+// const express = require('express'),
+// 	router = express.Router();
 // 	request = require('request'),
 // 	omdb = require('imdb-api'),
 // 	imdb = require('imdb'),
@@ -362,27 +362,27 @@ const express = require('express'),
 // });
 
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
-router.post('/getCollectionByTitleForClient', (req, res) => {
-	const title = { title: { $regex: req.body.title, $options: 'i' } };
+// router.post('/getCollectionByTitleForClient', (req, res) => {
+// 	const title = { title: { $regex: req.body.title, $options: 'i' } };
 
-	Library.paginate(
-		title,
-		{
-			page: req.body.page,
-			limit: req.body.limit,
-			sort: req.body.title === '' ? { rating: 'desc' } : { title: 'asc' }
-		},
-		(err, json) => {
-			if (err) {
-				console.error(err);
-				res.json({ status: 'error', content: err });
-			}
-			if (json) {
-				res.json({ status: 'success', payload: json });
-			} else {
-				res.json({ status: 'no_data' });
-			}
-		}
-	);
-});
-module.exports = router;
+// 	Library.paginate(
+// 		title,
+// 		{
+// 			page: req.body.page,
+// 			limit: req.body.limit,
+// 			sort: req.body.title === '' ? { rating: 'desc' } : { title: 'asc' }
+// 		},
+// 		(err, json) => {
+// 			if (err) {
+// 				console.error(err);
+// 				res.json({ status: 'error', content: err });
+// 			}
+// 			if (json) {
+// 				res.json({ status: 'success', payload: json });
+// 			} else {
+// 				res.json({ status: 'no_data' });
+// 			}
+// 		}
+// 	);
+// });
+// module.exports = router;

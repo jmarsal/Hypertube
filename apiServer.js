@@ -47,12 +47,12 @@ passport.deserializeUser(User.deserializeUser());
 // ROUTES API
 app.use('/users', require('./API/users'));
 app.use('/auth', require('./API/auth'));
-app.use('/collection', require('./API/collection'));
-app.use('/torrent', require('./API/torrent'));
+// app.use('/collection', require('./API/collection'));
+// app.use('/torrent', require('./API/torrent'));
 
 // GET LIST MOVIES IN DB
-const createLibrary = require('./models/createLibrary');
-createLibrary();
+const importLibrary = require('./models/importLibrary');
+importLibrary();
 
 // END APIs
 
