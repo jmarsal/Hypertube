@@ -22,7 +22,8 @@ const moviesListSchema = mongoose.Schema({
 	quality: String,
 	actors: String,
 	magnet: String,
-	country: String
+	country: String,
+	comments: Array
 });
 
 moviesListSchema.plugin(mongoosePaginate);

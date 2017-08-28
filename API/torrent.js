@@ -47,9 +47,13 @@ function streamFile(res, file, start, end, mimetype) {
 			.audioBitrate(128)
 			.videoBitrate(1024)
 			.outputOptions([ '-threads 8', '-deadline realtime', '-error-resilient 1' ])
+			.on('progress', (progress) => {
+				//console.log('Converting ' + progress.percent + '% done');
+			})
 			.on('end', () => {
 				console.log('Converting is done !');
 			});
+
 		pump(stream, res);
 	}
 }

@@ -49,6 +49,7 @@ app.use('/users', require('./API/users'));
 app.use('/auth', require('./API/auth'));
 app.use('/collection', require('./API/collection'));
 app.use('/torrent', require('./API/torrent'));
+app.use('/comments', require('./API/comments'));
 
 // GET LIST MOVIES IN DB
 const createLibrary = require('./models/createLibrary');
