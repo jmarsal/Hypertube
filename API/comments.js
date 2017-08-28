@@ -30,6 +30,7 @@ router.get('/:_id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
+	console.log(req.body);
 	findMovie(req.body.movieId)
 		.then((movie) => {
 			let newComment = new Object();

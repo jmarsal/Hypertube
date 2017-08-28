@@ -23,7 +23,7 @@ export function commentsReducers(
 		case 'ADD_COMMENT':
 			return {
 				...state,
-				comments: action.payload
+				comments: action.payload.content
 			};
 
 		case 'ADD_COMMENT_REJECTED':
