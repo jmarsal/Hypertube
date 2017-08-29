@@ -54,6 +54,7 @@ class MoviePage extends React.Component {
 							width="800"
 							height="600"
 							src={'/api/torrent/' + this.props.location.query.id}
+							preload="none"
 							controls
 							autoPlay
 						>

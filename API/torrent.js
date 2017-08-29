@@ -69,7 +69,8 @@ router.get('/:_id', (req, res) => {
 				const engine = torrentStream(movie.magnet, {
 					connections: 100,
 					uploads: 10,
-					path: 'public/movies',
+					path: '/sgoinfre/goinfre/Perso/pwortham', //'public/movies',
+					verify: true,
 					trackers: [
 						'udp://tracker.leechers-paradise.org:6969/announce',
 						'udp://tracker.pirateparty.gr:6969/announce',
@@ -157,9 +158,12 @@ router.get('/:_id', (req, res) => {
 							}
 						});
 					})
+					.on('download', () => {
+						console.log(engine.swarm.downloaded);
+					})
 					.on('idle', () => {
 						console.log('Download is done !');
-						movie.filePath = 'public/movies/' + fileName + fileExt;
+						movie.filePath = '/sgoinfre/goinfre/Perso/pwortham/' + fileName + fileExt; //'public/movies/' + fileName + fileExt;
 						movie.downloadDate = new Date();
 						movie.save();
 					});

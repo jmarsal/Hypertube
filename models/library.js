@@ -13,6 +13,7 @@ const moviesListSchema = mongoose.Schema({
 	torrent: [],
 	filePath: String,
 	downloadDate: String,
+	isDownloading: { type: Boolean, default: false },
 	id_movie_eztv: Number,
 	title_episode: String,
 	original_title: String,
