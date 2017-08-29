@@ -46,9 +46,12 @@ function streamFile(res, file, start, end, mimetype) {
 			.format('webm')
 			.audioBitrate(128)
 			.videoBitrate(1024)
-			.outputOptions([ '-threads 8', '-deadline realtime', '-error-resilient 1' ])
+			.outputOptions([ '-deadline realtime', '-error-resilient 1' ])
 			.on('progress', (progress) => {
 				//console.log('Converting ' + progress.percent + '% done');
+			})
+			.on('error', (err, stdout, stderr) => {
+				console.log('Cannot process video: ' + err.message);
 			})
 			.on('end', () => {
 				console.log('Converting is done !');
@@ -144,7 +147,7 @@ router.get('/:_id', (req, res) => {
 									'Accept-Ranges': 'bytes',
 									'Content-Length': chunksize,
 									'Content-Type': mimetype,
-									Connection: 'keep-alive'
+									'Connection': 'keep-alive'
 								});
 
 								streamFile(res, file, start, end, mimetype);
@@ -157,9 +160,6 @@ router.get('/:_id', (req, res) => {
 								streamFile(res, file, start, end, mimetype);
 							}
 						});
-					})
-					.on('download', () => {
-						console.log(engine.swarm.downloaded);
 					})
 					.on('idle', () => {
 						console.log('Download is done !');
