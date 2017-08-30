@@ -23,9 +23,7 @@ const withModal = (Content, title) => (WrappedComponent) => {
 			return (
 				<Modal show={showModal} onHide={() => this.showModal(false)}>
 					<Modal.Header closeButton>
-						<Modal.Title>
-							{title}
-						</Modal.Title>
+						<Modal.Title>{title}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						<Content
