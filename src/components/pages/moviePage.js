@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Row, Col, Form, FormGroup, FormControl, Button, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Grid, Row, Col, Form, FormGroup, FormControl, Button, ListGroup, ListGroupItem, Label } from 'react-bootstrap';
+import ModalUser from 'components/modals/modalUser';
 
 import { addComment, getComments } from '../../actions/commentsActions';
 
@@ -41,7 +42,8 @@ class MoviePage extends React.Component {
 		const commentList = this.props.comments.map((comment) => {
 			return (
 				<ListGroupItem key={comment.date}>
-					{comment.username}: {comment.comment}
+					<Label>{comment.username}</Label>
+					{comment.comment}
 				</ListGroupItem>
 			);
 		});
@@ -53,7 +55,7 @@ class MoviePage extends React.Component {
 						<video
 							width="800"
 							height="600"
-							src={'/api/torrent/' + this.props.location.query.id}
+							//src={'/api/torrent/' + this.props.location.query.id}
 							preload="none"
 							controls
 							autoPlay
