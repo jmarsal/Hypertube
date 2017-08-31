@@ -9,11 +9,11 @@ const GitHubStrategy = require('passport-github2').Strategy;
 const OAuth2Strategy = require('passport-oauth2').Strategy;
 const User = require('../models/user.js');
 
-passport.serializeUser(function(user, done) {
+passport.serializeUser(function (user, done) {
 	done(null, user);
 });
 
-passport.deserializeUser(function(user, done) {
+passport.deserializeUser(function (user, done) {
 	done(null, user);
 });
 
@@ -37,14 +37,14 @@ passport.use(
 			clientID: '122480595025478',
 			clientSecret: '28f0c656529abb43a369c615bef489e4',
 			callbackURL: 'http://localhost:3000/api/auth/facebook/callback',
-			profileFields: [ 'id', 'emails', 'name', 'picture.type(large)', 'displayName' ]
+			profileFields: ['id', 'emails', 'name', 'picture.type(large)', 'displayName']
 		},
-		function(accessToken, refreshToken, profile, done) {
+		function (accessToken, refreshToken, profile, done) {
 			User.findOne(
 				{
 					oauthID: profile.id
 				},
-				function(err, user) {
+				function (err, user) {
 					if (err) {
 						return done(err);
 					}
@@ -63,7 +63,7 @@ passport.use(
 							oauthID: profile.id,
 							facebook: profile._json ? profile._json : {}
 						});
-						user.save(function(err) {
+						user.save(function (err) {
 							if (err) console.log(err);
 							return done(err, user);
 						});
@@ -76,7 +76,7 @@ passport.use(
 	)
 );
 
-router.get('/facebook', passport.authenticate('facebook', { scope: [ 'email' ] }));
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
 router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }), (req, res) => {
 	saveToSession(req, res);
@@ -91,17 +91,16 @@ passport.use(
 			callbackURL: 'http://localhost:3000/api/auth/twitter/callback',
 			includeEmail: true
 		},
-		function(token, tokenSecret, profile, done) {
+		function (token, tokenSecret, profile, done) {
 			User.findOne(
 				{
 					oauthID: profile.id
 				},
-				function(err, user) {
+				function (err, user) {
 					if (err) {
 						return done(err);
 					}
 					if (!user) {
-						console.log('WRONG');
 						let randomKey =
 							Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
@@ -116,7 +115,7 @@ passport.use(
 							oauthID: profile.id,
 							twitter: profile._json ? profile._json : {}
 						});
-						user.save(function(err) {
+						user.save(function (err) {
 							if (err) console.log(err);
 							return done(err, user);
 						});
@@ -143,12 +142,12 @@ passport.use(
 			clientSecret: 'U0zfQdwS0S8rpNNCHdpLIJsd',
 			callbackURL: 'http://localhost:3000/api/auth/google/callback'
 		},
-		function(token, tokenSecret, profile, done) {
+		function (token, tokenSecret, profile, done) {
 			User.findOne(
 				{
 					oauthID: profile.id
 				},
-				function(err, user) {
+				function (err, user) {
 					if (err) {
 						return done(err);
 					}
@@ -167,7 +166,7 @@ passport.use(
 							oauthID: profile.id,
 							google: profile._json ? profile._json : {}
 						});
-						user.save(function(err) {
+						user.save(function (err) {
 							if (err) console.log(err);
 							return done(err, user);
 						});
@@ -190,7 +189,7 @@ router.get(
 	})
 );
 
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function(req, res) {
+router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login' }), function (req, res) {
 	saveToSession(req, res);
 });
 
@@ -201,14 +200,14 @@ passport.use(
 			clientID: 'e57a80157a15dbda44df',
 			clientSecret: 'bc56f1b247d4f25c8c8615606a27970357eb2115',
 			callbackURL: 'http://localhost:3000/api/auth/github/callback',
-			scope: [ 'user:email' ]
+			scope: ['user:email']
 		},
-		function(accessToken, refreshToken, profile, done) {
+		function (accessToken, refreshToken, profile, done) {
 			User.findOne(
 				{
 					oauthID: profile.id
 				},
-				function(err, user) {
+				function (err, user) {
 					if (err) {
 						return done(err);
 					}
@@ -227,7 +226,7 @@ passport.use(
 							oauthID: profile.id,
 							github: profile._json ? profile._json : ''
 						});
-						user.save(function(err) {
+						user.save(function (err) {
 							if (err) console.log(err);
 							return done(err, user);
 						});
@@ -240,9 +239,9 @@ passport.use(
 	)
 );
 
-router.get('/github', passport.authenticate('github', { scope: [ 'user' ] }));
+router.get('/github', passport.authenticate('github', { scope: ['user'] }));
 
-router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function(req, res) {
+router.get('/github/callback', passport.authenticate('github', { failureRedirect: '/login' }), function (req, res) {
 	saveToSession(req, res);
 });
 
@@ -256,7 +255,7 @@ passport.use(
 			clientSecret: 'f712697df47b81cd7cd62dcb71141c8d6c28bbdd8f23fe3be0dfce4ce15ef743',
 			callbackURL: 'http://localhost:3000/api/auth/42/callback'
 		},
-		function(accessToken, refreshToken, profile, done) {
+		function (accessToken, refreshToken, profile, done) {
 			var options = {
 				url: 'https://api.intra.42.fr/v2/me',
 				headers: {
@@ -264,7 +263,7 @@ passport.use(
 				}
 			};
 
-			request(options, function(error, response, profile) {
+			request(options, function (error, response, profile) {
 				if (!error && response.statusCode == 200) {
 					profile = JSON.parse(profile);
 
@@ -272,7 +271,7 @@ passport.use(
 						{
 							oauthID: profile.id
 						},
-						function(err, user) {
+						function (err, user) {
 							if (err) {
 								return done(err);
 							}
@@ -292,7 +291,7 @@ passport.use(
 									oauthID: profile.id,
 									42: profile ? profile : {}
 								});
-								user.save(function(err) {
+								user.save(function (err) {
 									if (err) console.log(err);
 									return done(err, user);
 								});
@@ -309,7 +308,7 @@ passport.use(
 
 router.get('/42', passport.authenticate('oauth2'));
 
-router.get('/42/callback', passport.authenticate('oauth2', { failureRedirect: '/login' }), function(req, res) {
+router.get('/42/callback', passport.authenticate('oauth2', { failureRedirect: '/login' }), function (req, res) {
 	saveToSession(req, res);
 });
 

@@ -11,7 +11,7 @@ const Library = require('../models/library.js');
 
 function findMovie(_id) {
 	return new Promise((resolve, reject) => {
-		Library.findOne({ _id: _id }, function(err, movie) {
+		Library.findOne({ _id: _id }, function (err, movie) {
 			if (movie) {
 				console.log('Found on Library');
 
@@ -46,7 +46,7 @@ function streamFile(res, file, start, end, mimetype) {
 			.format('webm')
 			.audioBitrate(128)
 			.videoBitrate(1024)
-			.outputOptions([ '-deadline realtime', '-error-resilient 1' ])
+			.outputOptions(['-deadline realtime', '-error-resilient 1'])
 			.on('progress', (progress) => {
 				//console.log('Converting ' + progress.percent + '% done');
 			})
@@ -72,7 +72,7 @@ router.get('/:_id', (req, res) => {
 				const engine = torrentStream(movie.magnet, {
 					connections: 100,
 					uploads: 10,
-					path: '/sgoinfre/goinfre/Perso/pwortham', //'public/movies',
+					path: /*'/sgoinfre/goinfre/Perso/pwortham',*/ 'public/movies',
 					verify: true,
 					trackers: [
 						'udp://tracker.leechers-paradise.org:6969/announce',
@@ -103,7 +103,7 @@ router.get('/:_id', (req, res) => {
 
 				engine
 					.on('ready', () => {
-						engine.files.forEach(function(file) {
+						engine.files.forEach(function (file) {
 							if (
 								path.extname(file.name) !== '.mp4' &&
 								path.extname(file.name) !== '.avi' &&
@@ -163,7 +163,7 @@ router.get('/:_id', (req, res) => {
 					})
 					.on('idle', () => {
 						console.log('Download is done !');
-						movie.filePath = '/sgoinfre/goinfre/Perso/pwortham/' + fileName + fileExt; //'public/movies/' + fileName + fileExt;
+						movie.filePath = /*'/sgoinfre/goinfre/Perso/pwortham/' + fileName + fileExt;*/ 'public/movies/' + fileName + fileExt;
 						movie.downloadDate = new Date();
 						movie.save();
 					});
