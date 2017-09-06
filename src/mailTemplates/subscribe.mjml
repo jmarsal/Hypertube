@@ -1,0 +1,58 @@
+<mjml>
+  <mj-body>
+    <mj-container>
+
+      <!-- Company Header -->
+      <mj-section background-color="#202020">
+        <mj-column>
+            <mj-text  font-style="italic"
+                    font-size="20"
+                    color="#626262">
+            Hypertube Support
+            </mj-text>
+        </mj-column>
+        </mj-section>
+
+      <!-- Image Header -->
+      <mj-section background-url="http://www.3agiba.com/wp-content/uploads/2014/09/top10movies.jpg"
+              background-size="cover"
+              background-repeat="no-repeat">
+
+    <mj-column width="600">
+
+          <mj-text  align="center"
+                color="#fff"
+                font-size="40"
+                font-family="Helvetica Neue">^^title^^</mj-text>
+
+    </mj-column>
+
+  </mj-section>
+
+      <!-- Introduction Text -->
+      <mj-section background-color="#202020">
+        <mj-column width="400">
+
+          <mj-text font-style="italic"
+                   font-size="20"
+                   font-family="Helvetica Neue"
+                   color="#ffffff">Congratulation ^^login^^ !</mj-text>
+
+            <mj-text color="#ffffff">
+                You asked to register on Hypertube and we thank you. More than one step to start our new streaming experience!
+          </mj-text>
+          <mj-text color="#ffffff">
+                And for that, nothing more simple!
+          </mj-text>
+          <mj-text color="#ffffff">
+                Simply click on the button below.
+          </mj-text>
+
+            <mj-button background-color="#1b698e"
+                     href="http://^^link^^">Subscribe</mj-button>
+
+    </mj-column>
+  </mj-section>
+    </mj-container>
+  </mj-body>
+</mjml>

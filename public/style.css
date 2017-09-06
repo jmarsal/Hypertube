@@ -1,0 +1,127 @@
+body {
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.container {
+	width: auto;
+	max-width: 900px;
+	padding: 0 15px;
+}
+
+.container .footer-text {
+	margin: 20px 0;
+}
+
+.btn-toolbar .btn {
+	margin-right: 5px;
+}
+.btn-toolbar .btn:last-child {
+	margin-right: 0;
+}
+
+.logoOauth {
+	width: 60px;
+	height: 60px;
+	background-position: center;
+	background-size: cover;
+	border: 2px solid black;
+	border-radius: 50%;
+	cursor: pointer;
+}
+.logoOauth:hover {
+	-webkit-filter: drop-shadow(0px 5px 10px #00babc); /* Safari */
+	filter: drop-shadow(0px 5px 10px #00babc);
+	border: 2px solid #00babc;
+}
+.logoOauth.active {
+	-webkit-filter: drop-shadow(0px 5px 10px gold); /* Safari */
+	filter: drop-shadow(0px 5px 10px gold);
+	border: 2px solid gold;
+}
+.logoOauth.school42 {
+	background-image: url('/img_connect_oauth/42.png');
+	background-color: #00babc;
+}
+.logoOauth.facebook {
+	background-image: url('/img_connect_oauth/facebook.png');
+}
+.logoOauth.google {
+	background-image: url('/img_connect_oauth/google-plus.png');
+}
+.logoOauth.twitter {
+	background-image: url('/img_connect_oauth/twitter.png');
+}
+.logoOauth.github {
+	background-image: url('/img_connect_oauth/github.png');
+}
+.logoOauth.croupier {
+	background-image: url('/avatars/croupier.png');
+}
+.logoOauth.diver {
+	background-image: url('/avatars/diver.png');
+}
+.logoOauth.doctor {
+	background-image: url('/avatars/doctor.png');
+}
+.logoOauth.doctor2 {
+	background-image: url('/avatars/doctor2.png');
+}
+.logoOauth.farmer {
+	background-image: url('/avatars/farmer.png');
+}
+.logoOauth.firefighter {
+	background-image: url('/avatars/firefighter.png');
+}
+.logoOauth.man {
+	background-image: url('/avatars/man.png');
+}
+.logoOauth.nun {
+	background-image: url('/avatars/nun.png');
+}
+.logoOauth.showman {
+	background-image: url('/avatars/showman.png');
+}
+.logoOauth.stewardess {
+	background-image: url('/avatars/stewardess.png');
+}
+.logoOauth.welder {
+	background-image: url('/avatars/welder.png');
+}
+.logoOauth.woman {
+	background-image: url('/avatars/woman.png');
+}
+
+.profilImage {
+	width: 160px;
+	height: 160px;
+	border-radius: 50%;
+	background-position: center;
+	background-size: cover;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+h4,
+h5 {
+	text-align: center;
+}
+
+.title-collection {
+	color: white;
+	font-size: 30px;
+	margin: 0px 320px;
+	width: 100%;
+	padding: 0;
+}
+
+.img-collection {
+	margin-top: 10px;
+	margin-left: 300px;
+	margin-bottom: 40px;
+}
+.year-collection {
+	margin-top: 10px;
+	margin-left: 400px;
+	margin-bottom: 0px;
+}
