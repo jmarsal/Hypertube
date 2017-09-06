@@ -60,8 +60,8 @@ const createLibrary = require('./models/createLibrary');
 createLibrary('yts');
 createLibrary('eztv');
 
-// PARSE MOVIES OLDER THAN 1 MONTH FOR DELETING THEM (Everyday at 11:59:59 PM)
-schedule.scheduleJob('59 59 23 * * *', () => {
+// PARSE MOVIES OLDER THAN 1 MONTH FOR DELETING THEM (Everyday at 11:59 PM)
+schedule.scheduleJob('00 59 23 * * *', () => {
 	console.log('Old movies cleaning begins...');
 
 	let count = 0;
@@ -72,6 +72,9 @@ schedule.scheduleJob('59 59 23 * * *', () => {
 			movies.map((movie) => {
 				if (movie.filePath) {
 					fs.unlink(movie.filePath);
+					movie.filePath = undefined;
+					movie.lastWatchingDate = undefined;
+					movie.save();
 					count++;
 				}
 			});
