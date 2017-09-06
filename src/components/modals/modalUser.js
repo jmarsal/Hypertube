@@ -1,11 +1,11 @@
 import React from 'react';
 import { Button, NavItem } from 'react-bootstrap';
-import ProfilPage from 'components/pages/userPage';
+import UserPage from 'components/pages/userPage';
 import withModal from 'components/modals/withModal';
 
 // Inject showModal et getModal qui permette d'afficher une Modal
-@withModal(ProfilPage, 'User')
-class ModalProfil extends React.Component {
+@withModal(UserPage, 'User')
+class ModalUser extends React.Component {
 	render() {
 		const { showModal, getModal, showModalForget } = this.props;
 
@@ -17,4 +17,4 @@ class ModalProfil extends React.Component {
 		);
 	}
 }
-export default ModalProfil;
+export default ModalUser;
