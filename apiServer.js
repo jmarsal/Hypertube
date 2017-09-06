@@ -7,6 +7,10 @@ const MongoStore = require('connect-mongo')(session);
 const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const schedule = require('node-schedule');
+const fs = require('fs');
+
+const Library = require('./models/library.js');
 
 let app = express();
 
@@ -55,6 +59,27 @@ app.use('/comments', require('./API/comments'));
 const createLibrary = require('./models/createLibrary');
 createLibrary('yts');
 createLibrary('eztv');
+
+// PARSE MOVIES OLDER THAN 1 MONTH FOR DELETING THEM (Everyday at 11:59:59 PM)
+schedule.scheduleJob('59 59 23 * * *', () => {
+	console.log('Old movies cleaning begins...');
+
+	let count = 0;
+
+	Library.find(
+		{ lastWatchingDate: { $lte: Date.now() - 2629800000 /* 1 month in milliseconds */ } },
+		(err, movies) => {
+			movies.map((movie) => {
+				if (movie.filePath) {
+					fs.unlink(movie.filePath);
+					count++;
+				}
+			});
+
+			console.log('End of cleaning, ' + count + ' movies deleted.');
+		}
+	);
+});
 
 // END APIs
 
