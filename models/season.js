@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+	mongoosePaginate = require('mongoose-paginate');
 
 const seasonShema = mongoose.Schema({
 	number: {
@@ -14,5 +15,6 @@ const seasonShema = mongoose.Schema({
 	]
 });
 
+seasonShema.plugin(mongoosePaginate);
 const Season = mongoose.model('Season', seasonShema);
 module.exports = Season;

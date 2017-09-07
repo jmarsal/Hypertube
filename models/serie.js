@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+	mongoosePaginate = require('mongoose-paginate');
 
 const serieShema = mongoose.Schema({
 	imdb_code: {
@@ -53,5 +54,6 @@ const serieShema = mongoose.Schema({
 	}
 });
 
+serieShema.plugin(mongoosePaginate);
 const Serie = mongoose.model('Serie', serieShema);
 module.exports = Serie;

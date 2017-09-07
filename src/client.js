@@ -17,10 +17,6 @@ const store = createStore(
 	compose(middleware, window.devToolsExtension ? window.devToolsExtension() : (f) => f)
 );
 
-// // GET LIST MOVIES IN DB
-// import axios from 'axios';
-// axios.post('API/collection/getMovies');
-
 import HomePage from './components/pages/homePage';
 import ActivationPage from './components/pages/activationPage';
 import ReinitPage from './components/pages/forgetPasswdUsernamePage';
