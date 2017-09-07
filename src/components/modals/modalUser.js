@@ -9,12 +9,7 @@ class ModalUser extends React.Component {
 	render() {
 		const { showModal, getModal, showModalForget } = this.props;
 
-		return (
-			<NavItem onClick={() => showModal(true)}>
-				User
-				{getModal()}
-			</NavItem>
-		);
+		return showModal(true), getModal();
 	}
 }
 export default ModalUser;

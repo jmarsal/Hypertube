@@ -16,7 +16,7 @@ import { bindActionCreators } from 'redux';
 
 class UserPage extends React.Component {
 	render() {
-		return <Panel />;
+		return <Panel>gfgf</Panel>;
 	}
 }
 

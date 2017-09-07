@@ -75,7 +75,7 @@ router.get('/:_id', (req, res) => {
 				const engine = torrentStream(movie.magnet, {
 					connections: 100,
 					uploads: 10,
-					path: /*'/sgoinfre/goinfre/Perso/pwortham',*/ 'public/movies',
+					path: '/goinfre', //'public/movies',
 					verify: true,
 					trackers: [
 						'udp://tracker.leechers-paradise.org:6969/announce',
@@ -167,7 +167,7 @@ router.get('/:_id', (req, res) => {
 					.on('idle', () => {
 						console.log('Download is done !');
 						movie.filePath =
-							/*'/sgoinfre/goinfre/Perso/pwortham/' + fileName + fileExt;*/ 'public/movies/' +
+							'/goinfre/' + fileName + fileExt; //'public/movies/' +
 							fileName +
 							fileExt;
 						movie.downloadDate = new Date();
