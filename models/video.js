@@ -14,9 +14,24 @@ const videoShema = mongoose.Schema({
 		type: String,
 		trim: true
 	},
+	director: {
+		type: String,
+		trim: true
+	},
+	producer: {
+		type: String,
+		trim: true
+	},
 	title: {
 		type: String,
 		trim: true
+	},
+	title2: {
+		type: String,
+		trim: true
+	},
+	season: {
+		type: Number
 	},
 	episode: {
 		type: Number
@@ -76,6 +91,9 @@ const videoShema = mongoose.Schema({
 	downloadDate: {
 		type: String,
 		trim: true
+	},
+	seeds: {
+		type: Number
 	}
 });
 
