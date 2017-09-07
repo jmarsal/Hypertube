@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+	mongoosePaginate = require('mongoose-paginate');
 
 const videoShema = mongoose.Schema({
 	type: {
@@ -62,10 +63,12 @@ const videoShema = mongoose.Schema({
 		trim: true
 	},
 	torrent: [],
-	magnet: {
-		type: String,
-		trim: true
-	},
+	magnet: [
+		{
+			type: String,
+			trim: true
+		}
+	],
 	filePath: {
 		type: String,
 		trim: true
@@ -75,5 +78,7 @@ const videoShema = mongoose.Schema({
 		trim: true
 	}
 });
+
+videoShema.plugin(mongoosePaginate);
 const Video = mongoose.model('Video', videoShema);
 module.exports = Video;

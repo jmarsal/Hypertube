@@ -47,7 +47,7 @@ passport.deserializeUser(User.deserializeUser());
 // ROUTES API
 app.use('/users', require('./API/users'));
 app.use('/auth', require('./API/auth'));
-// app.use('/collection', require('./API/collection'));
+app.use('/collection', require('./API/collection'));
 // app.use('/torrent', require('./API/torrent'));
 
 // GET LIST MOVIES IN DB
