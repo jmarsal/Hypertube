@@ -92,6 +92,16 @@ const videoShema = mongoose.Schema({
 		type: String,
 		trim: true
 	},
+	lastWatchingDate: {
+		type: Number
+	},
+	isDownloading: {
+		type: Boolean,
+		default: false
+	},
+	comments: {
+		type: Array
+	},
 	seeds: {
 		type: Number
 	}

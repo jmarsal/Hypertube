@@ -7,17 +7,22 @@ const ffmpeg = require('fluent-ffmpeg');
 const pump = require('pump');
 const mime = require('mime');
 
-const Library = require('../models/library.js');
+const Library = require('../models/video.js');
 
 function findMovie(_id) {
 	return new Promise((resolve, reject) => {
 		Library.findOne({ _id: _id }, function(err, movie) {
 			if (movie) {
 				console.log('Found on Library');
+				let magnet = undefined;
 
-				if (!movie.magnet) {
-					movie.magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
+				if (!movie.magnet[0]) {
+					magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
+				} else {
+					magnet = movie.magnet[0];
 				}
+
+				movie.magnet = magnet;
 
 				resolve(movie);
 			} else {
@@ -71,8 +76,8 @@ router.get('/:_id', (req, res) => {
 
 			if (!movie.filePath) {
 				console.log('No file path yet, preparing to download...');
-				console.log('Magnet: ' + movie.magnet);
-				const engine = torrentStream(movie.magnet, {
+				console.log('Magnet: ' + movie.magnet[0]);
+				const engine = torrentStream(movie.magnet[0], {
 					connections: 100,
 					uploads: 10,
 					path: '/goinfre', //'public/movies',

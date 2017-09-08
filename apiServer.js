@@ -10,7 +10,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const schedule = require('node-schedule');
 const fs = require('fs');
 
-const Library = require('./models/library.js');
+const Library = require('./models/video.js');
 
 let app = express();
 
