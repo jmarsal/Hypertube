@@ -21,6 +21,7 @@ import HomePage from './components/pages/homePage';
 import ActivationPage from './components/pages/activationPage';
 import ReinitPage from './components/pages/forgetPasswdUsernamePage';
 import MoviePage from './components/pages/moviePage';
+import TheBig404Page from './components/pages/TheBig404Page';
 import Main from './main';
 
 const Routes = (
@@ -31,6 +32,7 @@ const Routes = (
 				<Route path="/activation" component={ActivationPage} />
 				<Route path="/reinitialisation" component={ReinitPage} />
 				<Route path="/movie" component={MoviePage} />
+				<Route path='*' exact={true} component={TheBig404Page} />
 			</Route>
 		</Router>
 	</Provider>
