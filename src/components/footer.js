@@ -5,7 +5,7 @@ class Foot extends React.Component {
         return(
             <footer className="footer text-center">
                 <div className="container">
-                    <p className="footer-text">jmarsal & pwortham © Hypertube 2017</p>
+                    <p className="footer-text">jmarsal & pwortham & jkeuleya © Hypertube 2017</p>
                 </div>
             </footer>
         );
