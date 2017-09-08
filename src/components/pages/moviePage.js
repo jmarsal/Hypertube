@@ -1,10 +1,57 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { Grid, Row, Col, Form, FormGroup, FormControl, Button, ListGroup, ListGroupItem, Label } from 'react-bootstrap';
-import ModalUser from 'components/modals/modalUser';
+import {
+	Grid,
+	Row,
+	Col,
+	Form,
+	FormGroup,
+	FormControl,
+	Button,
+	ListGroup,
+	ListGroupItem,
+	Label,
+	Modal
+} from 'react-bootstrap';
 
 import { addComment, getComments } from '../../actions/commentsActions';
+import { getOneUser } from '../../actions/usersActions';
+
+class ModalUser extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			showModal: true
+		};
+	}
+
+	componentWillReceiveProps(nextProps) {
+		nextProps.show === true ? this.setState({ showModal: true }) : null;
+	}
+
+	close() {
+		this.setState({ showModal: false });
+	}
+
+	render() {
+		return (
+			<div>
+				<Modal show={this.state.showModal} onHide={() => this.close()}>
+					<Modal.Header closeButton>
+						<Modal.Title>Modal heading</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<h1>{this.props.user}</h1>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button onClick={() => this.close()}>Close</Button>
+					</Modal.Footer>
+				</Modal>
+			</div>
+		);
+	}
+}
 
 class MoviePage extends React.Component {
 	constructor(props) {
@@ -27,6 +74,12 @@ class MoviePage extends React.Component {
 		}
 	}
 
+	handleClickOnUser(user) {
+		this.setState({ currentProfilUser: user });
+		console.log(user);
+		this.props.getOneUser(user);
+	}
+
 	submitForm() {
 		let commentData = new Object();
 
@@ -42,7 +95,7 @@ class MoviePage extends React.Component {
 		const commentList = this.props.comments.map((comment) => {
 			return (
 				<ListGroupItem key={comment.date}>
-					<Label>{comment.username}</Label>
+					<Label onClick={() => this.handleClickOnUser(comment.username)}>{comment.username}</Label>
 					{comment.comment}
 				</ListGroupItem>
 			);
@@ -92,6 +145,7 @@ class MoviePage extends React.Component {
 						</Form>
 					</Col>
 				</Row>
+				{this.state.currentProfilUser ? <ModalUser show={true} user={this.state.currentProfilUser} /> : null}
 			</Grid>
 		);
 	}
@@ -108,7 +162,8 @@ function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			addComment,
-			getComments
+			getComments,
+			getOneUser
 		},
 		dispatch
 	);

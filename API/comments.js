@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const Library = require('../models/library.js');
+const Library = require('../models/video.js');
 
 function findMovie(_id) {
 	return new Promise((resolve, reject) => {
