@@ -75,7 +75,7 @@ class HomePage extends React.Component {
 	}
 
 	handleScroll(event) {
-		if (event.srcElement.body.scrollTop >= this.state.scrollHeight - 1000) {
+		if (event.srcElement.documentElement.scrollTop >= this.state.scrollHeight - 1000) {
 			this.getNewPageMovies();
 		}
 	}
@@ -98,69 +98,73 @@ class HomePage extends React.Component {
 	render() {
 		const { collection } = this.props;
 
-		return !this.props.sessionUser
-			? <Grid>
-					<Row>Blablabla</Row>
-				</Grid>
-			: <Grid>
-					<Row>
-						<PageHeader>Collections Movies and TV Show</PageHeader>
-						<Form horizontal>
-							<FormGroup>
-								<Col smOffset={2} xs={8} md={8} lg={8}>
-									<FormControl
-										id="formControlsText"
-										type="text"
-										label="Text"
-										placeholder="Find Movies, TV Show..."
-										autoFocus="true"
-										onChange={(e) => this.getMovies(e)}
-									/>
-								</Col>
-							</FormGroup>
-							<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
-								{collection
-									? collection.map((movie, index) => {
-											return (
-												<ListGroup key={index}>
-													<ListGroupItem
-														id={movie._id}
-														onClick={() => this.openDetailMovie(movie._id)}
-													>
-														<Well>
-															{movie.title}
-															{movie.season && movie.season != -1
-																? '     Season : ' + movie.season
-																: ''}
-														</Well>
-														{movie.title_episode
-															? <Well bsSize="small">
-																	{movie.title_episode}
-																</Well>
-															: ''}
-														<div className="year-collection">
-															<span>
-																{movie.year}
-															</span>
-														</div>
-														<div className="img-collection">
-															<Image key={movie.cover} src={movie.cover} responsive />
-														</div>
-
-														<Well>
-															{movie.episode ? '     Episode: ' + movie.episode : ''}
-															{movie.quality ? '     Quality : ' + movie.quality : ''}
-															{movie.rating ? '     Rating : ' + movie.rating + '/10' : ''}
-														</Well>
-													</ListGroupItem>
-												</ListGroup>
-											);
-										})
-									: 'rien'}
+		return !this.props.sessionUser ? (
+			<Grid>
+				<Row>Blablabla</Row>
+			</Grid>
+		) : (
+			<Grid>
+				<Row>
+					<PageHeader>Collections Movies and TV Show</PageHeader>
+					<Form horizontal>
+						<FormGroup>
+							<Col smOffset={2} xs={8} md={8} lg={8}>
+								<FormControl
+									id="formControlsText"
+									type="text"
+									label="Text"
+									placeholder="Find Movies, TV Show..."
+									autoFocus="true"
+									onChange={(e) => this.getMovies(e)}
+								/>
 							</Col>
-						</Form>
-					</Row>
-				</Grid>;
+						</FormGroup>
+						<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
+							{collection ? (
+								collection.map((movie, index) => {
+									return (
+										<ListGroup key={index}>
+											<ListGroupItem
+												id={movie._id}
+												onClick={() => this.openDetailMovie(movie._id)}
+											>
+												<Well>
+													{movie.title}
+													{movie.season && movie.season != -1 ? (
+														'     Season : ' + movie.season
+													) : (
+														''
+													)}
+												</Well>
+												{movie.title_episode ? (
+													<Well bsSize="small">{movie.title_episode}</Well>
+												) : (
+													''
+												)}
+												<div className="year-collection">
+													<span>{movie.year}</span>
+												</div>
+												<div className="img-collection">
+													<Image key={movie.cover} src={movie.cover} responsive />
+												</div>
+
+												<Well>
+													{movie.episode ? '     Episode: ' + movie.episode : ''}
+													{movie.quality ? '     Quality : ' + movie.quality : ''}
+													{movie.rating ? '     Rating : ' + movie.rating + '/10' : ''}
+												</Well>
+											</ListGroupItem>
+										</ListGroup>
+									);
+								})
+							) : (
+								'rien'
+							)}
+						</Col>
+					</Form>
+				</Row>
+			</Grid>
+		);
 	}
 }
 
