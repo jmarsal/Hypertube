@@ -16,6 +16,7 @@ import {
 } from 'react-bootstrap';
 
 import { addComment, getComments } from '../../actions/commentsActions';
+import { getOneUser } from '../../actions/usersActions';
 
 class ModalUser extends React.Component {
 	constructor(props) {
@@ -75,6 +76,8 @@ class MoviePage extends React.Component {
 
 	handleClickOnUser(user) {
 		this.setState({ currentProfilUser: user });
+		console.log(user);
+		this.props.getOneUser(user);
 	}
 
 	submitForm() {
@@ -142,7 +145,7 @@ class MoviePage extends React.Component {
 						</Form>
 					</Col>
 				</Row>
-				{this.state.currentProfilUser ? <ModalUser show={true} user={this.state.currentProfilUser}/> : null}
+				{this.state.currentProfilUser ? <ModalUser show={true} user={this.state.currentProfilUser} /> : null}
 			</Grid>
 		);
 	}
@@ -159,7 +162,8 @@ function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			addComment,
-			getComments
+			getComments,
+			getOneUser
 		},
 		dispatch
 	);
