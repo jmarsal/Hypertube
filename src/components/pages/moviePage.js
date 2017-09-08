@@ -12,10 +12,7 @@ import {
 	ListGroup,
 	ListGroupItem,
 	Label,
-	Modal,
-	OverlayTrigger,
-	Popover,
-	Tooltip
+	Modal
 } from 'react-bootstrap';
 
 import { addComment, getComments } from '../../actions/commentsActions';
@@ -28,23 +25,15 @@ class ModalUser extends React.Component {
 		};
 	}
 
-	componentDidMount() {
-		this.setState({ showModal: true });
+	componentWillReceiveProps(nextProps) {
+		nextProps.show === true ? this.setState({ showModal: true }) : null;
 	}
 
 	close() {
-		console.log(this);
 		this.setState({ showModal: false });
 	}
 
 	render() {
-		const popover = (
-			<Popover id="modal-popover" title="popover">
-				very popover. such engagement
-			</Popover>
-		);
-		const tooltip = <Tooltip id="modal-tooltip">wow.</Tooltip>;
-
 		return (
 			<div>
 				<Modal show={this.state.showModal} onHide={() => this.close()}>
@@ -52,66 +41,10 @@ class ModalUser extends React.Component {
 						<Modal.Title>Modal heading</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<h4>Text in a modal</h4>
-						<p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula.</p>
-
-						<h4>Popover in a modal</h4>
-						<p>there is a here</p>
-
-						<h4>Tooltips in a modal</h4>
-						<p>
-							there is a{' '}
-							<OverlayTrigger overlay={tooltip}>
-								<a href="#">tooltip</a>
-							</OverlayTrigger>{' '}
-							here
-						</p>
-
-						<hr />
-
-						<h4>Overflowing text to show scroll behavior</h4>
-						<p>
-							Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in,
-							egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-						</p>
-						<p>
-							Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus
-							vel augue laoreet rutrum faucibus dolor auctor.
-						</p>
-						<p>
-							Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-							scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-							auctor fringilla.
-						</p>
-						<p>
-							Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in,
-							egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-						</p>
-						<p>
-							Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus
-							vel augue laoreet rutrum faucibus dolor auctor.
-						</p>
-						<p>
-							Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-							scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-							auctor fringilla.
-						</p>
-						<p>
-							Cras mattis consectetur purus sit amet fermentum. Cras justo odio, dapibus ac facilisis in,
-							egestas eget quam. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-						</p>
-						<p>
-							Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Vivamus sagittis lacus
-							vel augue laoreet rutrum faucibus dolor auctor.
-						</p>
-						<p>
-							Aenean lacinia bibendum nulla sed consectetur. Praesent commodo cursus magna, vel
-							scelerisque nisl consectetur et. Donec sed odio dui. Donec ullamcorper nulla non metus
-							auctor fringilla.
-						</p>
+						<h1>{this.props.user}</h1>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button onClick={this.close}>Close</Button>
+						<Button onClick={() => this.close()}>Close</Button>
 					</Modal.Footer>
 				</Modal>
 			</div>
@@ -142,7 +75,6 @@ class MoviePage extends React.Component {
 
 	handleClickOnUser(user) {
 		this.setState({ currentProfilUser: user });
-		console.log('click');
 	}
 
 	submitForm() {
@@ -210,7 +142,7 @@ class MoviePage extends React.Component {
 						</Form>
 					</Col>
 				</Row>
-				{this.state.currentProfilUser ? <ModalUser /> : null}
+				{this.state.currentProfilUser ? <ModalUser show={true} user={this.state.currentProfilUser}/> : null}
 			</Grid>
 		);
 	}
