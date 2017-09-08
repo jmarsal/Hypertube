@@ -109,6 +109,10 @@ router.get('/:_id', (req, res) => {
 				let fileName = undefined;
 				let fileExt = undefined;
 
+				// POUR LES LOGS DE TELECHARGEMENT
+				// let fileSize = undefined;
+				//
+
 				engine
 					.on('ready', () => {
 						engine.files.forEach(function(file) {
@@ -132,6 +136,10 @@ router.get('/:_id', (req, res) => {
 							if (isVideo === 'video') {
 								file.select();
 							}
+
+							// POUR LES LOGS DE TELECHARGEMENT
+							// fileSize = file.length;
+							//
 
 							let total = file.length;
 							let start = 0;
@@ -169,6 +177,11 @@ router.get('/:_id', (req, res) => {
 							}
 						});
 					})
+					// POUR AFFICHER LES POURCENTAGES DU TELECHARGEMENT EN COURS
+					//.on('download', () => {
+					//	console.log(Math.round(engine.swarm.downloaded / fileSize * 100 * 100) / 100 + '%');
+					//})
+					//
 					.on('idle', () => {
 						console.log('Download is done !');
 						movie.filePath = '/goinfre/' + fileName + fileExt; //'public/movies/' +
