@@ -7,7 +7,7 @@ const ffmpeg = require('fluent-ffmpeg');
 const pump = require('pump');
 const mime = require('mime');
 
-const Library = require('../models/library.js');
+// // const Library = require('../models/library.js');
 
 function findMovie(_id) {
 	return new Promise((resolve, reject) => {
@@ -19,13 +19,13 @@ function findMovie(_id) {
 					movie.magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
 				}
 
-				resolve(movie);
-			} else {
-				reject('There is no movies with this ID');
-			}
-		});
-	});
-}
+// 				resolve(movie);
+// 			} else {
+// 				reject('There is no movies with this ID');
+// 			}
+// 		});
+// 	});
+// }
 
 function streamFile(res, file, start, end, mimetype) {
 	if (mimetype === 'video/ogg' || mimetype === 'video/mp4') {
@@ -101,8 +101,8 @@ router.get('/:_id', (req, res) => {
 					]
 				});
 
-				let fileName = undefined;
-				let fileExt = undefined;
+// 				let fileName = undefined;
+// 				let fileExt = undefined;
 
 				engine
 					.on('ready', () => {
@@ -122,11 +122,11 @@ router.get('/:_id', (req, res) => {
 							console.log('File type: ', mime.lookup(file.name));
 							console.log('Download started...');
 
-							let mimetype = mime.lookup(file.name);
-							let isVideo = mimetype.split('/')[0];
-							if (isVideo === 'video') {
-								file.select();
-							}
+// 							let mimetype = mime.lookup(file.name);
+// 							let isVideo = mimetype.split('/')[0];
+// 							if (isVideo === 'video') {
+// 								file.select();
+// 							}
 
 							let total = file.length;
 							let start = 0;
@@ -181,15 +181,15 @@ router.get('/:_id', (req, res) => {
 				let end = total - 1;
 				let mimetype = mime.lookup(movie.filePath);
 
-				if (req.headers.range) {
-					let range = req.headers.range;
-					let parts = range.replace(/bytes=/, '').split('-');
-					let newStart = parts[0];
-					let newEnd = parts[1];
+// 				if (req.headers.range) {
+// 					let range = req.headers.range;
+// 					let parts = range.replace(/bytes=/, '').split('-');
+// 					let newStart = parts[0];
+// 					let newEnd = parts[1];
 
-					start = parseInt(newStart, 10);
-					end = newEnd ? parseInt(newEnd, 10) : total - 1;
-					let chunksize = end - start + 1;
+// 					start = parseInt(newStart, 10);
+// 					end = newEnd ? parseInt(newEnd, 10) : total - 1;
+// 					let chunksize = end - start + 1;
 
 					console.log(start + ' : ' + end);
 

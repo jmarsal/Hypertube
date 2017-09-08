@@ -56,9 +56,8 @@ app.use('/torrent', require('./API/torrent'));
 app.use('/comments', require('./API/comments'));
 
 // GET LIST MOVIES IN DB
-const createLibrary = require('./models/createLibrary');
-createLibrary('yts');
-createLibrary('eztv');
+const importLibrary = require('./models/importLibrary');
+importLibrary();
 
 // PARSE MOVIES OLDER THAN 1 MONTH FOR DELETING THEM (Everyday at 11:59 PM)
 schedule.scheduleJob('00 59 23 * * *', () => {

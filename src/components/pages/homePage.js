@@ -75,7 +75,7 @@ class HomePage extends React.Component {
 	}
 
 	handleScroll(event) {
-		if (event.srcElement.body.scrollTop >= this.state.scrollHeight - 1000) {
+		if (event.srcElement.documentElement.scrollTop >= this.state.scrollHeight - 1000) {
 			this.getNewPageMovies();
 		}
 	}
