@@ -7,16 +7,18 @@ const express = require('express'),
 	Video = require('../models/video');
 
 function addMissingHttps(pattern, url) {
-	return url.search(pattern) > -1 ? 'https://' + url : url;
+	if (url.search('https:') > -1) {
+		debugger;
+		return url;
+	}
+	return url.search(pattern) > -1 ? 'https:' + url : url;
 }
 
 function getCover(response, data) {
 	let cover = '';
 
 	if (response.largeImage && response.largeImage.length && response.largeImage !== 'N/A') {
-		cover = response.largeImage.replace('//', '');
-	} else if (response.smallImage && response.smallImage.length && response.smallImage !== 'N/A') {
-		cover = response.smallImage.replace('//', '');
+		cover = response.largeImage; //.replace('//', '');
 	} else {
 		cover = !data || data.poster === 'N/A' ? '/movies/not-available.png' : data.poster;
 	}
@@ -43,7 +45,6 @@ function fillEpisode(data, video, response) {
 		numb = numb ? numb.join('') : -1;
 		video.runtime = numb;
 	}
-	debugger;
 	video.imdb_code = data.imdb_code || data.imdbid;
 	video.title2 =
 		video.title2 && video.title2.length
@@ -141,7 +142,7 @@ function parseJsonEztv(json) {
 
 	// // Recupere images
 	response.largeImage = json.large_screenshot;
-	response.smallImage = json.small_screenshot;
+	// response.smallImage = json.small_screenshot;
 
 	// Recupere le nb de seeds
 	response.peers = json.peers;
@@ -304,6 +305,21 @@ function saveVideoWithoutOmdbResponse(response, typeMovie) {
 	return false;
 }
 
+function checkIfValidImageInResponse(response, data) {
+	return new Promise((resolve, reject) => {
+		response.largeImage = getCover(response);
+		if (response.largeImage === '/movies/not-available.png') resolve(data);
+
+		request(response.largeImage, (err, res) => {
+			if (err || res.statusCode !== 200) {
+				response.largeImage = '/movies/not-available.png';
+				resolve(data);
+			}
+			resolve(data);
+		});
+	});
+}
+
 function saveEztvListInCollection(json) {
 	const response = parseJsonEztv(json),
 		title = response.title;
@@ -314,6 +330,12 @@ function saveEztvListInCollection(json) {
 			if (!data) {
 				return saveVideoWithoutOmdbResponse(response);
 			}
+			return data;
+		})
+		.then((data) => {
+			return checkIfValidImageInResponse(response, data);
+		})
+		.then((data) => {
 			return getMissingVideoData(data, response);
 		})
 		.then((videoData) => {
