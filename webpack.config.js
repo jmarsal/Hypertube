@@ -1,9 +1,24 @@
-let path = require('path');
+const path = require('path'),
+	ExtractTextPlugin = require('extract-text-webpack-plugin'),
+	UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
+	dev = process.env.NODE_ENV === 'dev';
 
-const webpack = require('webpack');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+let cssLoaders = [ 'style-loader', { loader: 'css-loader', options: { importLoaders: 1, minimize: !dev } } ];
 
-module.exports = {
+if (!dev) {
+	cssLoaders.push({
+		loader: 'postcss-loader',
+		options: {
+			plugins: (loader) => [
+				require('autoprefixer')({
+					browsers: [ 'chrome >= 46', 'firefox >= 41' ]
+				})
+			]
+		}
+	});
+}
+
+let config = {
 	entry: './src/client.js',
 	output: {
 		filename: 'bundle.js',
@@ -12,14 +27,45 @@ module.exports = {
 	resolve: {
 		modules: [ path.resolve(__dirname, 'src'), 'node_modules' ]
 	},
-	watch: true,
+	watch: dev,
+	devtool: dev ? 'cheap-module-eval-source-map' : false,
 	module: {
-		loaders: [
+		rules: [
 			{
 				test: /\.js$/,
-				exclude: /node_modules/,
-				loader: 'babel-loader'
+				exclude: /(node_modules|bower_components)/,
+				use: [ 'babel-loader' ]
+			},
+			{
+				test: /\.css$/,
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use: cssLoaders
+				})
+			},
+			{
+				test: /\.scss$/,
+				use: ExtractTextPlugin.extract({
+					fallback: 'style-loader',
+					use: [ ...cssLoaders, 'sass-loader' ]
+				})
 			}
 		]
-	}
+	},
+	plugins: [
+		new ExtractTextPlugin({
+			filename: '[name].css',
+			disable: dev
+		})
+	]
 };
+
+if (!dev) {
+	config.plugins.push(
+		new UglifyJSPlugin({
+			sourceMap: false
+		})
+	);
+}
+
+module.exports = config;
