@@ -12,7 +12,8 @@ import {
 	ListGroup,
 	ListGroupItem,
 	Well,
-	PageHeader
+	PageHeader,
+	Button
 } from 'react-bootstrap';
 
 import { getUserFromSession, disconnectUser } from '../../actions/usersActions';
@@ -114,6 +115,7 @@ class HomePage extends React.Component {
 									onChange={(e) => this.getMovies(e)}
 								/>
 							</Col>
+							<Button bsStyle="primary">Searching tools</Button>
 						</FormGroup>
 						<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
 							{collection ? (

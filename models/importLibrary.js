@@ -20,7 +20,7 @@ function getCover(response, data) {
 	if (response.largeImage && response.largeImage.length && response.largeImage !== 'N/A') {
 		cover = response.largeImage; //.replace('//', '');
 	} else {
-		cover = !data || data.poster === 'N/A' ? '/movies/not-available.png' : data.poster;
+		cover = !data || data.poster === 'N/A' ? '/library/not-available.png' : data.poster;
 	}
 	return addMissingHttps('ezimg.ch', cover);
 }
@@ -308,11 +308,11 @@ function saveVideoWithoutOmdbResponse(response, typeMovie) {
 function checkIfValidImageInResponse(response, data) {
 	return new Promise((resolve, reject) => {
 		response.largeImage = getCover(response);
-		if (response.largeImage === '/movies/not-available.png') resolve(data);
+		if (response.largeImage === '/library/not-available.png') resolve(data);
 
 		request(response.largeImage, (err, res) => {
 			if (err || res.statusCode !== 200) {
-				response.largeImage = '/movies/not-available.png';
+				response.largeImage = '/library/not-available.png';
 				resolve(data);
 			}
 			resolve(data);
@@ -444,8 +444,8 @@ function saveYtsListInCollection(json) {
 			video.country = data.country ? data.country : '';
 			video.genres = data.genres ? data.genres.split(',') : '';
 			video.summary = data.plot ? data.plot : '';
-			video.cover = video.cover === '/movies/not-available.png' ? data.poster : video.cover;
-			video.cover = video.cover !== 'N/A' ? video.cover : '/movies/not-available.png';
+			video.cover = video.cover === '/library/not-available.png' ? data.poster : video.cover;
+			video.cover = video.cover !== 'N/A' ? video.cover : '/library/not-available.png';
 
 			return video;
 		})
