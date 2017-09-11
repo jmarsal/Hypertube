@@ -5,6 +5,7 @@ import {
 	Grid,
 	Row,
 	Col,
+	Panel,
 	Form,
 	FormGroup,
 	FormControl,
@@ -16,7 +17,7 @@ import {
 } from 'react-bootstrap';
 
 import { addComment, getComments } from '../../actions/commentsActions';
-import { getOneUser } from '../../actions/usersActions';
+import { getOneUserByLogin } from '../../actions/usersActions';
 
 class ModalUser extends React.Component {
 	constructor(props) {
@@ -32,17 +33,30 @@ class ModalUser extends React.Component {
 
 	close() {
 		this.setState({ showModal: false });
+		this.props.handlerClose();
 	}
 
 	render() {
+		let image = this.props.img;
+		let style = {
+			backgroundImage: 'url(' + image + ')'
+		};
+
 		return (
 			<div>
 				<Modal show={this.state.showModal} onHide={() => this.close()}>
 					<Modal.Header closeButton>
-						<Modal.Title>Modal heading</Modal.Title>
+						<Modal.Title>{this.props.username}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
-						<h1>{this.props.user}</h1>
+						<Panel>
+							<Col smOffset={7} smPull={5} sm={8}>
+								<div className="profilImage" style={style} />
+							</Col>
+							<Col smOffset={4} sm={4}>
+								<h4>{this.props.firstname + ' ' + this.props.lastname}</h4>
+							</Col>
+						</Panel>
 					</Modal.Body>
 					<Modal.Footer>
 						<Button onClick={() => this.close()}>Close</Button>
@@ -56,6 +70,9 @@ class ModalUser extends React.Component {
 class MoviePage extends React.Component {
 	constructor(props) {
 		super(props);
+
+		this.handlerClose = this.handlerClose.bind(this);
+
 		this.state = {
 			comment: ''
 		};
@@ -77,7 +94,11 @@ class MoviePage extends React.Component {
 	handleClickOnUser(user) {
 		this.setState({ currentProfilUser: user });
 		console.log(user);
-		this.props.getOneUser(user);
+		this.props.getOneUserByLogin(user);
+	}
+
+	handlerClose() {
+		this.setState({ currentProfilUser: undefined });
 	}
 
 	submitForm() {
@@ -145,7 +166,17 @@ class MoviePage extends React.Component {
 						</Form>
 					</Col>
 				</Row>
-				{this.state.currentProfilUser ? <ModalUser show={true} user={this.state.currentProfilUser} /> : null}
+				{this.state.currentProfilUser && this.props.profilUser ? (
+					<ModalUser
+						show={true}
+						user={this.state.currentProfilUser}
+						firstname={this.props.profilUser.data.firstname}
+						lastname={this.props.profilUser.data.lastname}
+						username={this.props.profilUser.data.username}
+						img={this.props.profilUser.data.img}
+						handlerClose={this.handlerClose}
+					/>
+				) : null}
 			</Grid>
 		);
 	}
@@ -154,6 +185,7 @@ class MoviePage extends React.Component {
 function mapStateToProps(state) {
 	return {
 		user: state.users.sessionUser,
+		profilUser: state.users.user,
 		comments: state.comments.comments
 	};
 }
@@ -163,7 +195,7 @@ function mapDispatchToProps(dispatch) {
 		{
 			addComment,
 			getComments,
-			getOneUser
+			getOneUserByLogin
 		},
 		dispatch
 	);

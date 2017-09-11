@@ -155,10 +155,20 @@ router.post('/forget', (req, res) => {
 	});
 });
 
-//---->>> GET ONE USER <<<-----
+//---->>> GET ONE USER BY ID <<<-----
 router.get('/one/:userID', (req, res) => {
-	console.log(req.params.userID);
 	User.findOne({ _id: req.params.userID }, function(err, user) {
+		if (user) {
+			res.json({ status: 'success', data: user });
+		} else {
+			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+		}
+	});
+});
+
+//---->>> GET ONE USER BY LOGIN <<<-----
+router.get('/onebylogin/:userLogin', (req, res) => {
+	User.findOne({ username: req.params.userLogin }, function(err, user) {
 		if (user) {
 			res.json({ status: 'success', data: user });
 		} else {

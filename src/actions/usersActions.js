@@ -14,11 +14,25 @@ export function getUsers() {
 	};
 }
 
-// GET AN SPECIFIC USER
+// GET AN SPECIFIC USER BY ID
 export function getOneUser(userID) {
 	return (dispatch) => {
 		axios
 			.get('/api/users/one/' + userID)
+			.then((response) => {
+				dispatch({ type: 'GET_ONE_USER', payload: response.data });
+			})
+			.catch((err) => {
+				dispatch({ type: 'GET_ONE_USER_REJECTED', payload: err });
+			});
+	};
+}
+
+// GET AN SPECIFIC USER BY LOGIN
+export function getOneUserByLogin(userLogin) {
+	return (dispatch) => {
+		axios
+			.get('/api/users/onebylogin/' + userLogin)
 			.then((response) => {
 				dispatch({ type: 'GET_ONE_USER', payload: response.data });
 			})
