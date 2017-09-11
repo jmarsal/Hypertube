@@ -76,8 +76,20 @@ class HomePage extends React.Component {
 	}
 
 	handleScroll(event) {
-		if (event.srcElement.documentElement.scrollTop >= this.state.scrollHeight - 1000) {
-			this.getNewPageMovies();
+		// Firefox 1.0+
+		var isFirefox = typeof InstallTrigger !== 'undefined';
+
+		// Chrome 1+
+		var isChrome = !!window.chrome && !!window.chrome.webstore;
+
+		if (isChrome) {
+			if (event.srcElement.scrollingElement.scrollTop >= this.state.scrollHeight - 1000) {
+				this.getNewPageMovies();
+			}
+		} else {
+			if (event.pageY >= this.state.scrollHeight - 1000) {
+				this.getNewPageMovies();
+			}
 		}
 	}
 
