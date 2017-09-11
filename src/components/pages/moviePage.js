@@ -14,7 +14,8 @@ import {
 	ListGroup,
 	ListGroupItem,
 	Label,
-	Modal
+	Modal,
+	Jumbotron
 } from 'react-bootstrap';
 
 import { addComment, getComments } from '../../actions/commentsActions';
@@ -151,11 +152,11 @@ class MoviePage extends React.Component {
 						</Row>
 						<br />
 						<Row>
-							<Col xs={6} md={6}>
-								<Col xs={12} md={6}>
+							<Col xs={12} md={12}>
+								<Col xs={12} md={4}>
 									<Image src={this.props.movie.data.cover} responsive thumbnail />
 								</Col>
-								<Col xs={12} md={6}>
+								<Col xs={12} md={8}>
 									<Row>
 										<b>Year:</b> {this.props.movie.data.year}
 									</Row>
@@ -174,28 +175,32 @@ class MoviePage extends React.Component {
 									<Row>
 										<b>Casting:</b> {this.props.movie.data.actors}
 									</Row>
+									<br />
+									<Row>
+										<b>Synopsis:</b> {this.props.movie.data.summary}
+									</Row>
 								</Col>
 							</Col>
 						</Row>
 						<br />
 						<Row>
-							<Col xs={12} md={8}>
-								<div className="video-div">
-									<video
-										className="videoInsert"
-										src={'/api/torrent/' + this.props.location.query.id}
-										preload="none"
-										controls
-										autoPlay
-									>
-										Your browser does not support the video tag.
-									</video>
-								</div>
-							</Col>
-							<Col xs={12} md={4}>
-								<b>Synopsis:</b> {this.props.movie.data.summary}
+							<Col xs={12} md={12}>
+								<Jumbotron>
+									<div className="video-div">
+										<video
+											className="videoInsert"
+											src={'/api/torrent/' + this.props.location.query.id}
+											preload="none"
+											controls
+											autoPlay
+										>
+											Your browser does not support the video tag.
+										</video>
+									</div>
+								</Jumbotron>
 							</Col>
 						</Row>
+						<br />
 					</Panel>
 
 					<br />
