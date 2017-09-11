@@ -10,6 +10,7 @@ import {
 	FormGroup,
 	FormControl,
 	Button,
+	Image,
 	ListGroup,
 	ListGroupItem,
 	Label,
@@ -119,68 +120,138 @@ class MoviePage extends React.Component {
 			return (
 				<ListGroupItem key={comment.date}>
 					<Label onClick={() => this.handleClickOnUser(comment.username)}>{comment.username}</Label>
-					{comment.comment}
+					<div className="comment-text">{comment.comment}</div>
 				</ListGroupItem>
 			);
 		});
 
-		return (
-			<Grid>
-				<Row>
-					<Col smOffset={1} xs={11} md={11} lg={11}>
-						<video
-							width="800"
-							height="600"
-							src={'/api/torrent/' + this.props.location.query.id}
-							preload="none"
-							controls
-							autoPlay
-						>
-							Your browser does not support the video tag.
-						</video>
-					</Col>
-				</Row>
-				<br />
-				<Row>
-					<Col smOffset={1} xs={11} md={11} lg={11}>
-						<ListGroup>{commentList}</ListGroup>
-					</Col>
-					<Col smOffset={1} xs={11} md={11} lg={11}>
-						<Form
-							id="commentForm"
-							onSubmit={(e) => {
-								e.preventDefault();
-							}}
-						>
-							<FormGroup controlId="comment">
-								<Col sm={10}>
-									<FormControl
-										type="text"
-										placeholder="Write a comment..."
-										ref="comment"
-										onChange={(e) => this.handleChange(e)}
-									/>
+		if (this.props.movie) {
+			let image = this.props.movie.data.background;
+			let styleBackground = {
+				position: 'absolute',
+				zIndex: '-100',
+				left: '0',
+				width: '100%',
+				height: '400px',
+				backgroundImage: 'url(' + image + ')',
+				backgroundPosition: 'center top',
+				backgroundRepeat: 'no-repeat',
+				backgroundSize: 'cover',
+				opacity: '0.5'
+			};
+
+			return (
+				<Grid>
+					<div className="backgroundImage" style={styleBackground} />
+					<Panel className="panelMovie">
+						<Row>
+							<Col>
+								<h3>{this.props.movie.data.title}</h3>
+							</Col>
+						</Row>
+						<br />
+						<Row>
+							<Col xs={6} md={6}>
+								<Col xs={12} md={6}>
+									<Image src={this.props.movie.data.cover} responsive thumbnail />
 								</Col>
-								<Button bsStyle="primary" type="button" onClick={() => this.submitForm()}>
-									Submit
-								</Button>
-							</FormGroup>
-						</Form>
-					</Col>
-				</Row>
-				{this.state.currentProfilUser && this.props.profilUser ? (
-					<ModalUser
-						show={true}
-						user={this.state.currentProfilUser}
-						firstname={this.props.profilUser.data.firstname}
-						lastname={this.props.profilUser.data.lastname}
-						username={this.props.profilUser.data.username}
-						img={this.props.profilUser.data.img}
-						handlerClose={this.handlerClose}
-					/>
-				) : null}
-			</Grid>
-		);
+								<Col xs={12} md={6}>
+									<Row>
+										<b>Year:</b> {this.props.movie.data.year}
+									</Row>
+									<Row>
+										<b>Country:</b> {this.props.movie.data.country}
+									</Row>
+									<Row>
+										<b>Rating IMDb:</b> {this.props.movie.data.rating}/10
+									</Row>
+									<Row>
+										<b>Producer:</b> {this.props.movie.data.producer}
+									</Row>
+									<Row>
+										<b>Director:</b> {this.props.movie.data.director}
+									</Row>
+									<Row>
+										<b>Casting:</b> {this.props.movie.data.actors}
+									</Row>
+								</Col>
+							</Col>
+						</Row>
+						<br />
+						<Row>
+							<Col xs={12} md={8}>
+								<div className="video-div">
+									<video
+										className="videoInsert"
+										src={'/api/torrent/' + this.props.location.query.id}
+										preload="none"
+										controls
+										autoPlay
+									>
+										Your browser does not support the video tag.
+									</video>
+								</div>
+							</Col>
+							<Col xs={12} md={4}>
+								<b>Synopsis:</b> {this.props.movie.data.summary}
+							</Col>
+						</Row>
+					</Panel>
+
+					<br />
+					<Panel>
+						<Row>
+							<Col>
+								<ListGroup>{commentList}</ListGroup>
+							</Col>
+							<Col>
+								<Form
+									id="commentForm"
+									onSubmit={(e) => {
+										e.preventDefault();
+									}}
+								>
+									<FormGroup controlId="comment">
+										<Col md={12} mdOffset={1}>
+											<Col md={8}>
+												<FormControl
+													type="text"
+													placeholder="Write a comment..."
+													ref="comment"
+													onChange={(e) => this.handleChange(e)}
+												/>
+											</Col>
+											<Col md={4}>
+												<Button
+													bsStyle="primary"
+													type="button"
+													onClick={() => this.submitForm()}
+												>
+													Submit
+												</Button>
+											</Col>
+										</Col>
+									</FormGroup>
+								</Form>
+							</Col>
+						</Row>
+					</Panel>
+					{this.state.currentProfilUser && this.props.profilUser ? (
+						<ModalUser
+							show={true}
+							user={this.state.currentProfilUser}
+							firstname={this.props.profilUser.data.firstname}
+							lastname={this.props.profilUser.data.lastname}
+							username={this.props.profilUser.data.username}
+							img={this.props.profilUser.data.img}
+							handlerClose={this.handlerClose}
+						/>
+					) : null}
+				</Grid>
+			);
+		} else {
+			return null;
+		}
 	}
 }
 

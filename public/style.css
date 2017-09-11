@@ -4,8 +4,6 @@ body {
 }
 
 .container {
-	width: auto;
-	max-width: 900px;
 	padding: 0 15px;
 }
 
@@ -102,9 +100,28 @@ body {
 	margin-right: auto;
 }
 
+h3,
 h4,
 h5 {
 	text-align: center;
+}
+
+.panelMovie {
+	margin-top: 100px;
+}
+
+.comment-text {
+	word-wrap: break-word;
+}
+
+.video-div {
+	width: auto;
+	height: auto;
+	background-color: #000000;
+}
+
+.videoInsert {
+	width: 100%;
 }
 
 .title-collection {
