@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ModalFilters from 'components/modals/modalFilters';
 import {
 	Grid,
 	Row,
@@ -44,7 +45,8 @@ class HomePage extends React.Component {
 		this.state = {
 			searchRequest: '',
 			pageRequestDb: 1,
-			scrollHeight: 0
+			scrollHeight: 0,
+			modalFilterOn: false
 		};
 	}
 
@@ -106,8 +108,8 @@ class HomePage extends React.Component {
 	}
 
 	render() {
-		const { collection } = this.props;
-		const { intl } = this.props;
+		const { collection, showModal, intl } = this.props;
+		const { collection, showModal } = this.props;
 
 		return !this.props.sessionUser ? (
 			<Grid>
@@ -131,9 +133,7 @@ class HomePage extends React.Component {
 									onChange={(e) => this.getMovies(e)}
 								/>
 							</Col>
-							<Button bsStyle="primary">
-								<FormattedMessage id="searching_tools" />
-							</Button>
+							<ModalFilters />
 						</FormGroup>
 						<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
 							{collection ? (
