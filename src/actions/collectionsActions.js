@@ -36,10 +36,10 @@ export function getCollectionsListByName(requestTitle, page, requestAction) {
 export function getDetailMovie(idMovie) {
 	return (dispatch) => {
 		axios
-			.get('/api/torrent/' + idMovie)
+			.get('/api/collection/getmoviedetails/' + idMovie)
 			.then((response) => {
 				if (response.data.status === 'success') {
-					dispatch({ type: 'GET_DETAIL_SUCCESS' });
+					dispatch({ type: 'GET_DETAIL_SUCCESS', payload: response.data });
 				} else {
 					dispatch({ type: 'GET_DETAIL_FAIL' });
 				}

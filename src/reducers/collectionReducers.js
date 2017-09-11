@@ -34,9 +34,7 @@ export function collectionReducers(
 			};
 
 		case 'GET_DETAIL_SUCCESS':
-			return {
-				...state
-			};
+			return { ...state, movie: action.payload };
 	}
 	return state;
 }

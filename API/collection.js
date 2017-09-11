@@ -26,4 +26,16 @@ router.post('/getCollectionByTitleForClient', (req, res) => {
 			}
 		});
 });
+
+// GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
+router.get('/getmoviedetails/:movieID', (req, res) => {
+	Videos.findOne({ _id: req.params.movieID }, (err, movie) => {
+		if (movie) {
+			res.json({ status: 'success', data: movie });
+		} else {
+			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+		}
+	});
+});
+
 module.exports = router;

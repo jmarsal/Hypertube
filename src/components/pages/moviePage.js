@@ -18,6 +18,7 @@ import {
 
 import { addComment, getComments } from '../../actions/commentsActions';
 import { getOneUserByLogin } from '../../actions/usersActions';
+import { getDetailMovie } from '../../actions/collectionsActions';
 
 class ModalUser extends React.Component {
 	constructor(props) {
@@ -80,6 +81,7 @@ class MoviePage extends React.Component {
 
 	componentDidMount() {
 		this.props.getComments(this.props.location.query.id);
+		this.props.getDetailMovie(this.props.location.query.id);
 	}
 
 	handleChange(e) {
@@ -186,7 +188,8 @@ function mapStateToProps(state) {
 	return {
 		user: state.users.sessionUser,
 		profilUser: state.users.user,
-		comments: state.comments.comments
+		comments: state.comments.comments,
+		movie: state.collection.movie
 	};
 }
 
@@ -195,7 +198,8 @@ function mapDispatchToProps(dispatch) {
 		{
 			addComment,
 			getComments,
-			getOneUserByLogin
+			getOneUserByLogin,
+			getDetailMovie
 		},
 		dispatch
 	);
