@@ -17,6 +17,7 @@ import {
 	Modal,
 	Jumbotron
 } from 'react-bootstrap';
+import validator from 'validator';
 
 import { addComment, getComments } from '../../actions/commentsActions';
 import { getOneUserByLogin } from '../../actions/usersActions';
@@ -109,7 +110,7 @@ class MoviePage extends React.Component {
 		let commentData = new Object();
 
 		commentData.movieId = this.props.location.query.id;
-		commentData.comment = this.state.comment;
+		commentData.comment = validator.escape(this.state.comment).trim();
 		commentData.username = this.props.user.username;
 
 		this.props.addComment(commentData);
