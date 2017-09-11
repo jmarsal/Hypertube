@@ -1,4 +1,5 @@
 import React from 'react';
+import { browserHistory } from 'react-router';
 import { Nav, NavItem, Navbar, Button } from 'react-bootstrap';
 import ModalLogin from 'components/modals/modalLogin';
 import ModalSubscribe from 'components/modals/modalSubscribe';
@@ -16,6 +17,7 @@ class Menu extends React.Component {
 
 	handleDisconnect() {
 		this.props.disconnectUser();
+		browserHistory.push('/');
 	}
 
 	render() {
@@ -28,16 +30,18 @@ class Menu extends React.Component {
 					<Navbar.Toggle />
 				</Navbar.Header>
 				<Navbar.Collapse>
-					{!this.props.sessionUser
-						? <Nav pullRight>
-								<ModalLogin />
-								<ModalSubscribe />
-							</Nav>
-						: <Nav pullRight>
-								<NavItem href="/">Collections</NavItem>
-								<ModalProfil />
-								<NavItem onClick={this.handleDisconnect.bind(this)}>Disconnect</NavItem>
-							</Nav>}
+					{!this.props.sessionUser ? (
+						<Nav pullRight>
+							<ModalLogin />
+							<ModalSubscribe />
+						</Nav>
+					) : (
+						<Nav pullRight>
+							<NavItem href="/">Collections</NavItem>
+							<ModalProfil />
+							<NavItem onClick={this.handleDisconnect.bind(this)}>Disconnect</NavItem>
+						</Nav>
+					)}
 				</Navbar.Collapse>
 			</Navbar>
 		);
