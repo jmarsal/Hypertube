@@ -126,6 +126,23 @@ class MoviePage extends React.Component {
 			);
 		});
 
+		const seasonEpisode = () => {
+			if (this.props.movie.data.season && this.props.movie.data.episode) {
+				return (
+					<div>
+						<Row>
+							<b>Season: </b> {this.props.movie.data.season}
+						</Row>
+						<Row>
+							<b>Episode: </b> {this.props.movie.data.episode}
+						</Row>
+					</div>
+				);
+			} else {
+				return null;
+			}
+		};
+
 		if (this.props.movie) {
 			let image = this.props.movie.data.background;
 			let styleBackground = {
@@ -158,26 +175,62 @@ class MoviePage extends React.Component {
 								</Col>
 								<Col xs={12} md={8}>
 									<Row>
-										<b>Year:</b> {this.props.movie.data.year}
+										<b>Year: </b>
+										{this.props.movie.data.year ? (
+											this.props.movie.data.year
+										) : (
+											<i>Non disponible</i>
+										)}
 									</Row>
 									<Row>
-										<b>Country:</b> {this.props.movie.data.country}
+										<b>Country:</b>{' '}
+										{this.props.movie.data.country ? (
+											this.props.movie.data.country
+										) : (
+											<i>Non disponible</i>
+										)}
+									</Row>
+									{seasonEpisode()}
+									<Row>
+										<b>Rating IMDb:</b>{' '}
+										{this.props.movie.data.rating ? (
+											this.props.movie.data.rating + '/10'
+										) : (
+											<i>Non disponible</i>
+										)}
 									</Row>
 									<Row>
-										<b>Rating IMDb:</b> {this.props.movie.data.rating}/10
+										<b>Producer:</b>{' '}
+										{this.props.movie.data.producer ? (
+											this.props.movie.data.producer
+										) : (
+											<i>Non disponible</i>
+										)}
 									</Row>
 									<Row>
-										<b>Producer:</b> {this.props.movie.data.producer}
+										<b>Director:</b>{' '}
+										{this.props.movie.data.director ? (
+											this.props.movie.data.director
+										) : (
+											<i>Non disponible</i>
+										)}
 									</Row>
 									<Row>
-										<b>Director:</b> {this.props.movie.data.director}
-									</Row>
-									<Row>
-										<b>Casting:</b> {this.props.movie.data.actors}
+										<b>Casting:</b>{' '}
+										{this.props.movie.data.actors ? (
+											this.props.movie.data.actors
+										) : (
+											<i>Non disponible</i>
+										)}
 									</Row>
 									<br />
 									<Row>
-										<b>Synopsis:</b> {this.props.movie.data.summary}
+										<b>Synopsis:</b>{' '}
+										{this.props.movie.data.summary ? (
+											this.props.movie.data.summary
+										) : (
+											<i>Non disponible</i>
+										)}
 									</Row>
 								</Col>
 							</Col>
