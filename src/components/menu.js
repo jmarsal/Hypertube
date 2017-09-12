@@ -7,7 +7,7 @@ import ModalProfil from 'components/modals/modalProfil';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { getUserFromSession, disconnectUser } from '../actions/usersActions';
+import { getUserFromSession, disconnectUser, changeUserLanguage } from '../actions/usersActions';
 import ReinitPage from './pages/forgetPasswdUsernamePage';
 
 class Menu extends React.Component {
@@ -18,6 +18,10 @@ class Menu extends React.Component {
 	handleDisconnect() {
 		this.props.disconnectUser();
 		browserHistory.push('/');
+	}
+
+	handleLanguage(language) {
+		this.props.changeUserLanguage(language);
 	}
 
 	render() {
@@ -40,6 +44,11 @@ class Menu extends React.Component {
 							<NavItem href="/">Collections</NavItem>
 							<ModalProfil />
 							<NavItem onClick={this.handleDisconnect.bind(this)}>Disconnect</NavItem>
+							<NavItem>
+								<a onClick={() => this.handleLanguage('fr')}>FR </a>
+								|
+								<a onClick={() => this.handleLanguage('en')}> EN</a>
+							</NavItem>
 						</Nav>
 					)}
 				</Navbar.Collapse>
@@ -60,7 +69,8 @@ function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			getUserFromSession,
-			disconnectUser
+			disconnectUser,
+			changeUserLanguage
 		},
 		dispatch
 	);

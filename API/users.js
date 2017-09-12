@@ -351,4 +351,18 @@ router.post('/reinitialisation', (req, res) => {
 	});
 });
 
+//UPDATE USER'S LANGUAGE
+router.post('/lang', (req, res) => {
+	User.findOne({ _id: req.session.user._id }, (err, user) => {
+		if (user) {
+			console.log(req.body);
+			user.language = req.body.data.language;
+			user.save();
+			res.json({ status: 'success' });
+		} else {
+			res.json({ status: 'error' });
+		}
+	});
+});
+
 module.exports = router;
