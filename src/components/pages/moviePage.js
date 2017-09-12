@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { FormattedMessage } from 'react-intl';
 import {
 	Grid,
 	Row,
@@ -22,7 +23,6 @@ import validator from 'validator';
 import { addComment, getComments } from '../../actions/commentsActions';
 import { getOneUserByLogin } from '../../actions/usersActions';
 import { getDetailMovie } from '../../actions/collectionsActions';
-
 class ModalUser extends React.Component {
 	constructor(props) {
 		super(props);
@@ -63,7 +63,9 @@ class ModalUser extends React.Component {
 						</Panel>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button onClick={() => this.close()}>Close</Button>
+						<Button onClick={() => this.close()}>
+							<FormattedMessage id="close" defaultMessage="Close" />
+						</Button>
 					</Modal.Footer>
 				</Modal>
 			</div>

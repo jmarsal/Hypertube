@@ -2,7 +2,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 import { Router, Route, IndexRoute, browserHistory } from 'react-router';
-
 import { applyMiddleware, createStore, compose } from 'redux';
 import logger from 'redux-logger';
 import thunk from 'redux-thunk';
@@ -32,7 +31,7 @@ const Routes = (
 				<Route path="/activation" component={ActivationPage} />
 				<Route path="/reinitialisation" component={ReinitPage} />
 				<Route path="/movie" component={MoviePage} />
-				<Route path='*' exact={true} component={TheBig404Page} />
+				<Route path="*" exact={true} component={TheBig404Page} />
 			</Route>
 		</Router>
 	</Provider>

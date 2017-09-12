@@ -116,7 +116,10 @@ router.get('/disconnect', (req, res) => {
 // GET SESSION
 router.get('/session', (req, res) => {
 	if (typeof req.session.user !== 'undefined') {
-		res.json(req.session.user);
+		User.findOne({ _id: req.session.user._id }, function(err, user) {
+			if (user) req.session.user.language = user.language;
+			res.json(req.session.user);
+		});
 	}
 });
 
