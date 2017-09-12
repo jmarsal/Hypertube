@@ -2,6 +2,8 @@ const express = require('express'),
 	router = express.Router(),
 	Videos = require('../models/video.js');
 
+const Check = require('../models/check.js');
+
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
 router.post('/getCollectionByTitleForClient', (req, res) => {
 	// Voir comment gerer les movies yts et eztv avec les series eztv
@@ -29,13 +31,27 @@ router.post('/getCollectionByTitleForClient', (req, res) => {
 
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
 router.get('/getmoviedetails/:movieID', (req, res) => {
-	Videos.findOne({ _id: req.params.movieID }, (err, movie) => {
-		if (movie) {
-			res.json({ status: 'success', data: movie });
-		} else {
-			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
-		}
-	});
+	if (req.user) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					Videos.findOne({ _id: req.params.movieID }, (err, movie) => {
+						if (movie) {
+							res.json({ status: 'success', data: movie });
+						} else {
+							res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+						}
+					});
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : Not logged.');
+	}
 });
 
 module.exports = router;
