@@ -193,6 +193,14 @@ class MoviePage extends React.Component {
 									</Row>
 									{seasonEpisode()}
 									<Row>
+										<b>Duration:</b>{' '}
+										{this.props.movie.data.runtime ? (
+											this.props.movie.data.runtime + ' min'
+										) : (
+											<i>Non disponible</i>
+										)}
+									</Row>
+									<Row>
 										<b>Rating IMDb:</b>{' '}
 										{this.props.movie.data.rating ? (
 											this.props.movie.data.rating + '/10'
