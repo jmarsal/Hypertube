@@ -6,27 +6,41 @@ const Check = require('../models/check.js');
 
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
 router.post('/getCollectionByTitleForClient', (req, res) => {
-	// Voir comment gerer les movies yts et eztv avec les series eztv
-	const title = { title: { $regex: req.body.title, $options: 'i' } };
+	if (req.user) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					// Voir comment gerer les movies yts et eztv avec les series eztv
+					const title = { title: { $regex: req.body.title, $options: 'i' } };
 
-	Videos.paginate(title, {
-		page: req.body.page,
-		limit: req.body.limit,
-		sort: req.body.title === '' ? { seeds: 'desc' } : { title: 'asc' }
-	})
-		.then((json) => {
-			if (json) {
-				res.json({ status: 'success', payload: json });
-			} else {
-				res.json({ status: 'no_data' });
-			}
-		})
-		.catch((err) => {
-			if (err) {
+					Videos.paginate(title, {
+						page: req.body.page,
+						limit: req.body.limit,
+						sort: req.body.title === '' ? { seeds: 'desc' } : { title: 'asc' }
+					})
+						.then((json) => {
+							if (json) {
+								res.json({ status: 'success', payload: json });
+							} else {
+								res.json({ status: 'no_data' });
+							}
+						})
+						.catch((err) => {
+							if (err) {
+								console.error(err);
+								res.json({ status: 'error', content: err });
+							}
+						});
+				}
+			})
+			.catch((err) => {
 				console.error(err);
-				res.json({ status: 'error', content: err });
-			}
-		});
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : Not logged.');
+	}
 });
 
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
