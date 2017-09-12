@@ -198,7 +198,7 @@ class ProfilPage extends React.Component {
 	}
 
 	render() {
-		if (this.props.profilUser) {
+		if (this.props.profilUser && this.props.sessionUser) {
 			const { showModal, updateSuccess } = this.props;
 
 			let image = this.props.profilUser.data.img;

@@ -144,7 +144,7 @@ class MoviePage extends React.Component {
 			}
 		};
 
-		if (this.props.movie) {
+		if (this.props.movie && this.props.user) {
 			let image = this.props.movie.data.background;
 			let styleBackground = {
 				position: 'absolute',
