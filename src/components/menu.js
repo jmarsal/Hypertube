@@ -1,6 +1,6 @@
 import React from 'react';
 import { browserHistory } from 'react-router';
-import { Nav, NavItem, Navbar, Button } from 'react-bootstrap';
+import { Nav, NavItem, Navbar, Button, NavDropdown, MenuItem } from 'react-bootstrap';
 import ModalLogin from 'components/modals/modalLogin';
 import ModalSubscribe from 'components/modals/modalSubscribe';
 import ModalProfil from 'components/modals/modalProfil';
@@ -47,11 +47,19 @@ class Menu extends React.Component {
 							<NavItem onClick={this.handleDisconnect.bind(this)}>
 								<FormattedMessage id="disconnect" />
 							</NavItem>
-							<NavItem>
-								<a onClick={() => this.handleLanguage('fr')}>FR </a>
-								|
-								<a onClick={() => this.handleLanguage('en')}> EN</a>
-							</NavItem>
+							<NavDropdown
+								title={
+									this.props.language ? (
+										this.props.language.toUpperCase()
+									) : (
+										this.props.sessionUser.language.toUpperCase()
+									)
+								}
+								id="choose-language"
+							>
+								<MenuItem onClick={() => this.handleLanguage('fr')}>FR</MenuItem>
+								<MenuItem onClick={() => this.handleLanguage('en')}>EN</MenuItem>
+							</NavDropdown>
 						</Nav>
 					)}
 				</Navbar.Collapse>
