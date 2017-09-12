@@ -15,7 +15,9 @@ let language = 'en';
 
 class Main extends React.Component {
 	render() {
-		if (this.props.user) {
+		if (this.props.language) {
+			language = this.props.language;
+		} else if (this.props.user) {
 			language = this.props.user.language;
 		}
 		const messages = localeData[language];
@@ -34,7 +36,8 @@ class Main extends React.Component {
 
 function mapStateToProps(state) {
 	return {
-		user: state.users.sessionUser
+		user: state.users.sessionUser,
+		language: state.users.language
 	};
 }
 

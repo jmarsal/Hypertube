@@ -6,6 +6,7 @@ import ModalSubscribe from 'components/modals/modalSubscribe';
 import ModalProfil from 'components/modals/modalProfil';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { FormattedMessage } from 'react-intl';
 
 import { getUserFromSession, disconnectUser, changeUserLanguage } from '../actions/usersActions';
 import ReinitPage from './pages/forgetPasswdUsernamePage';
@@ -41,9 +42,11 @@ class Menu extends React.Component {
 						</Nav>
 					) : (
 						<Nav pullRight>
-							<NavItem href="/">Collections</NavItem>
+							<NavItem href="/">Collection</NavItem>
 							<ModalProfil />
-							<NavItem onClick={this.handleDisconnect.bind(this)}>Disconnect</NavItem>
+							<NavItem onClick={this.handleDisconnect.bind(this)}>
+								<FormattedMessage id="disconnect" />
+							</NavItem>
 							<NavItem>
 								<a onClick={() => this.handleLanguage('fr')}>FR </a>
 								|
@@ -61,7 +64,8 @@ function mapStateToProps(state) {
 	return {
 		sessionUser: state.users.sessionUser,
 		msg: state.users.msg,
-		style: state.users.style
+		style: state.users.style,
+		language: state.users.language
 	};
 }
 

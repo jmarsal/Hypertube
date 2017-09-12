@@ -256,7 +256,8 @@ export function changeUserLanguage(language) {
 		axios
 			.post('/api/users/lang', data)
 			.then((response) => {
-				dispatch({ type: 'USER_LANGUAGE' });
+				console.log(response.data);
+				dispatch({ type: 'USER_LANGUAGE', payload: response.data });
 			})
 			.catch((err) => {
 				dispatch({ type: 'USER_LANGUAGE_REJECTED' });

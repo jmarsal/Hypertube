@@ -134,7 +134,8 @@ export function usersReducers(
 
 		case 'USER_LANGUAGE':
 			return {
-				...state
+				...state,
+				language: action.payload.content
 			};
 
 		case 'USER_LANGUAGE_REJECTED':

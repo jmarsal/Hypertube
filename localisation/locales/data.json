@@ -1,8 +1,10 @@
 {
 	"en": {
+		"disconnect": "Disconnect",
 		"close": "Close"
 	},
 	"fr": {
+		"disconnect": "Se déconnecter",
 		"close": "Fermer"
 	}
 }

@@ -64,7 +64,7 @@ class ModalUser extends React.Component {
 					</Modal.Body>
 					<Modal.Footer>
 						<Button onClick={() => this.close()}>
-							<FormattedMessage id="close" defaultMessage="Close" />
+							<FormattedMessage id="close" />
 						</Button>
 					</Modal.Footer>
 				</Modal>
