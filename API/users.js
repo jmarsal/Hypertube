@@ -31,6 +31,8 @@ router.post('/', (req, res) => {
 				if (response.status === 'success') {
 					let randomKey =
 						Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+					let gen_token =
+						'0' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 					User.register(
 						new User({
@@ -40,7 +42,8 @@ router.post('/', (req, res) => {
 							lastname: req.body.lastname,
 							img: req.body.img,
 							activationKey: randomKey,
-							active: false
+							active: false,
+							token: gen_token
 						}),
 						req.body.password,
 						function(err, user) {
