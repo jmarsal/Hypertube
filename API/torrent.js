@@ -17,7 +17,11 @@ function findMovie(_id) {
 				let magnet = undefined;
 
 				if (!movie.magnet[0]) {
-					magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
+					if (movie.torrent[0].quality !== "3D") {
+						magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
+					} else {
+						magnet = 'magnet:?xt=urn:btih:' + movie.torrent[1].hash;
+					}
 				} else {
 					magnet = movie.magnet[0];
 				}
