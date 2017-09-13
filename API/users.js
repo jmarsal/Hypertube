@@ -204,7 +204,7 @@ router.get('/onebylogin/:userLogin', (req, res) => {
 				console.error(err);
 			});
 	} else {
-		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+		return res.status(401).send('HTTP401 Unauthorized : Not logged.');
 	}
 });
 
@@ -242,74 +242,89 @@ router.get('/', (req, res) => {
 
 //---->>> UPDATE USER <<<-----
 router.put('/:_id', (req, res) => {
-	const user = req.body;
-	let query = {};
-	query._id = req.params._id;
-	let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-	User.findOne({ _id: req.params._id }, (err, userToUpdate) => {
-		if (!userToUpdate) {
-			res.json({ status: 'error' });
-		}
-
-		Check.userExistsForUpdate(req.body.username, userToUpdate)
+	if (req.user.admin || '/users/' + req.user.id == req._parsedOriginalUrl.pathname) {
+		Check.tokenExists(req.user.token)
 			.then((response) => {
-				if (response.status === 'success') {
-					return Check.mailExistsForUpdate(req.body.email, userToUpdate);
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
 				} else {
-					res.json({ status: 'error', content: response.data });
-				}
-			})
-			.then((response) => {
-				if (response.status === 'success') {
-					return Check.subscribeInputsForUpdate(req);
-				} else {
-					res.json({ status: 'error', content: response.data });
-				}
-			})
-			.then((response) => {
-				if (response) {
-					if (response.status === 'success') {
-						let update = {
-							$set: {
-								username: user.username,
-								email: user.email,
-								img: user.img,
-								firstname: user.firstname,
-								lastname: user.lastname,
-								activationKey: randomKey,
-								active: true
-							}
-						};
+					const user = req.body;
+					let query = {};
+					query._id = req.params._id;
+					let randomKey =
+						Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
-						let options = { new: true };
+					User.findOne({ _id: req.params._id }, (err, userToUpdate) => {
+						if (!userToUpdate) {
+							res.json({ status: 'error' });
+						}
 
-						User.findOneAndUpdate(query, update, options, (err, userUpdated) => {
-							if (err) throw err;
-							const payload = {
-								_id: userUpdated._id,
-								username: userUpdated.username
-							};
-							req.session.user = payload;
+						Check.userExistsForUpdate(req.body.username, userToUpdate)
+							.then((response) => {
+								if (response.status === 'success') {
+									return Check.mailExistsForUpdate(req.body.email, userToUpdate);
+								} else {
+									res.json({ status: 'error', content: response.data });
+								}
+							})
+							.then((response) => {
+								if (response.status === 'success') {
+									return Check.subscribeInputsForUpdate(req);
+								} else {
+									res.json({ status: 'error', content: response.data });
+								}
+							})
+							.then((response) => {
+								if (response) {
+									if (response.status === 'success') {
+										let update = {
+											$set: {
+												username: user.username,
+												email: user.email,
+												img: user.img,
+												firstname: user.firstname,
+												lastname: user.lastname,
+												activationKey: randomKey,
+												active: true
+											}
+										};
 
-							req.session.save((err) => {
-								if (err) throw err;
+										let options = { new: true };
 
-								userToUpdate.setPassword(user.password, () => {
-									userToUpdate.save();
-									return res.json({ status: 'success', user: payload });
-								});
+										User.findOneAndUpdate(query, update, options, (err, userUpdated) => {
+											if (err) throw err;
+											const payload = {
+												_id: userUpdated._id,
+												username: userUpdated.username
+											};
+											req.session.user = payload;
+
+											req.session.save((err) => {
+												if (err) throw err;
+
+												userToUpdate.setPassword(user.password, () => {
+													userToUpdate.save();
+													return res.json({ status: 'success', user: payload });
+												});
+											});
+										});
+									} else {
+										res.json({ status: 'error', content: response.data });
+									}
+								}
+							})
+							.catch((err) => {
+								console.error(err);
 							});
-						});
-					} else {
-						res.json({ status: 'error', content: response.data });
-					}
+					});
 				}
 			})
 			.catch((err) => {
 				console.error(err);
 			});
-	});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+	}
 });
 
 //---->>> UPLOAD USER'S IMAGE <<<-----
