@@ -160,7 +160,7 @@ router.post('/forget', (req, res) => {
 
 //---->>> GET ONE USER BY ID <<<-----
 router.get('/one/:userID', (req, res) => {
-	if (req.user && req.user.token[0] === '0') {
+	if ((req.user && req.user.admin) || '/users/one/' + req.user.id == req._parsedOriginalUrl.pathname) {
 		Check.tokenExists(req.user.token)
 			.then((response) => {
 				if (response.status === 'error') {
@@ -185,7 +185,7 @@ router.get('/one/:userID', (req, res) => {
 
 //---->>> GET ONE USER BY LOGIN <<<-----
 router.get('/onebylogin/:userLogin', (req, res) => {
-	if (req.user && req.user.token[0] === '0') {
+	if (req.user) {
 		Check.tokenExists(req.user.token)
 			.then((response) => {
 				if (response.status === 'error') {
@@ -210,21 +210,35 @@ router.get('/onebylogin/:userLogin', (req, res) => {
 
 //---->>> GET USERS <<<-----
 router.get('/', (req, res) => {
-	User.find((err, users) => {
-		if (err) throw err;
-		res.json(users);
-	});
+	if (req.user && req.user.admin) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					User.find((err, users) => {
+						if (err) throw err;
+						res.json(users);
+					});
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+	}
 });
 
-//---->>> DELETE USER <<<-----
-router.delete('/:_id', (req, res) => {
-	let query = { _id: req.params._id };
+// //---->>> DELETE USER <<<-----
+// router.delete('/:_id', (req, res) => {
+// 	let query = { _id: req.params._id };
 
-	User.remove(query, (err, user) => {
-		if (err) throw err;
-		res.json(user);
-	});
-});
+// 	User.remove(query, (err, user) => {
+// 		if (err) throw err;
+// 		res.json(user);
+// 	});
+// });
 
 //---->>> UPDATE USER <<<-----
 router.put('/:_id', (req, res) => {
