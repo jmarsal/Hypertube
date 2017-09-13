@@ -4,8 +4,8 @@
 	"private": true,
 	"scripts": {
 		"start": "node ./bin/www & node --inspect apiServer.js",
-		"dev": "NODE_ENV=dev webpack & node ./bin/www & node --inspect apiServer.js",
-		"prod": "webpack & node ./bin/www & node --inspect apiServer.js"
+		"dev": "NODE_ENV=dev webpack & nodemon ./bin/www & nodemon --inspect apiServer.js",
+		"prod": "webpack & node ./bin/www & nodemon --inspect apiServer.js"
 	},
 	"devDependencies": {
 		"autoprefixer": "^7.1.4",
