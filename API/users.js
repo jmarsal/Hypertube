@@ -160,24 +160,52 @@ router.post('/forget', (req, res) => {
 
 //---->>> GET ONE USER BY ID <<<-----
 router.get('/one/:userID', (req, res) => {
-	User.findOne({ _id: req.params.userID }, function(err, user) {
-		if (user) {
-			res.json({ status: 'success', data: user });
-		} else {
-			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
-		}
-	});
+	if (req.user && req.user.token[0] === '0') {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					User.findOne({ _id: req.params.userID }, function(err, user) {
+						if (user) {
+							res.json({ status: 'success', data: user });
+						} else {
+							res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+						}
+					});
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+	}
 });
 
 //---->>> GET ONE USER BY LOGIN <<<-----
 router.get('/onebylogin/:userLogin', (req, res) => {
-	User.findOne({ username: req.params.userLogin }, function(err, user) {
-		if (user) {
-			res.json({ status: 'success', data: user });
-		} else {
-			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
-		}
-	});
+	if (req.user && req.user.token[0] === '0') {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					User.findOne({ username: req.params.userLogin }, function(err, user) {
+						if (user) {
+							res.json({ status: 'success', data: user });
+						} else {
+							res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+						}
+					});
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+	}
 });
 
 //---->>> GET USERS <<<-----
