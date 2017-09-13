@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Grid, Row, PageHeader } from 'react-bootstrap';
 
-class TheBig404Page extends React.Component {
+class notFoundPage extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -26,8 +26,8 @@ class TheBig404Page extends React.Component {
 
 function mapStateToProps(state) {
 	return {
-		user: state.users.sessionUser,
+		user: state.users.sessionUser
 	};
 }
 
-export default connect(mapStateToProps)(TheBig404Page);
+export default connect(mapStateToProps)(notFoundPage);
