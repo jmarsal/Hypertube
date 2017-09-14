@@ -15,6 +15,8 @@ import {
 } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { FormattedMessage, injectIntl } from 'react-intl';
+
 import { getOneUser, resetButton, selectBasicAvatar, updateUser } from '../../actions/usersActions';
 import { uploadDocumentRequest } from '../../actions/uploadActions';
 
@@ -189,7 +191,7 @@ class ProfilPage extends React.Component {
 	modifProfil() {
 		const { changeTitle } = this.props;
 
-		changeTitle('Edit your profil');
+		changeTitle(<FormattedMessage id="edit_profil" />);
 		this.setState({ modif: true });
 	}
 
@@ -206,283 +208,317 @@ class ProfilPage extends React.Component {
 				backgroundImage: 'url(' + image + ')'
 			};
 
-			return this.state.modif == false
-				? <Panel>
-						<Col smPush={9} sm={4}>
-							<Button onClick={() => this.modifProfil()}>Edit my profil</Button>
-						</Col>
-						<Col smOffset={7} smPull={5} sm={8}>
-							<div className="profilImage" style={style} />
-						</Col>
-						<Col smOffset={4} sm={4}>
-							<h4>
-								{this.props.profilUser.data.firstname + ' ' + this.props.profilUser.data.lastname}
-							</h4>
-						</Col>
-						<Col smOffset={4} sm={4}>
-							<h5>
-								{this.props.profilUser.data.username}
-							</h5>
-						</Col>
-					</Panel>
-				: <Form horizontal>
-						<FormGroup>
-							<Col sm={10}>
-								{this.props.errorsUsers
-									? this.props.errorsUsers.map((errorsArr, i) => {
-											return (
-												<Alert key={i} bsStyle="warning">
-													{errorsArr.msg}
-												</Alert>
-											);
-										})
-									: ''}
-								{this.props.errorsUpload
-									? this.props.errorsUpload.map((errorsArr, i) => {
-											return (
-												<Alert key={i} bsStyle="warning">
-													{errorsArr.msg}
-												</Alert>
-											);
-										})
-									: ''}
-								{this.state.sizeError
-									? <Alert key="sizeError" bsStyle="warning">
-											{this.state.sizeError}
+			return this.state.modif == false ? (
+				<Panel>
+					<Col smPush={9} sm={4}>
+						<Button onClick={() => this.modifProfil()}>
+							<FormattedMessage id="edit_profil" />
+						</Button>
+					</Col>
+					<Col smOffset={7} smPull={5} sm={8}>
+						<div className="profilImage" style={style} />
+					</Col>
+					<Col smOffset={4} sm={4}>
+						<h4>{this.props.profilUser.data.firstname + ' ' + this.props.profilUser.data.lastname}</h4>
+					</Col>
+					<Col smOffset={4} sm={4}>
+						<h5>{this.props.profilUser.data.username}</h5>
+					</Col>
+				</Panel>
+			) : (
+				<Form horizontal>
+					<FormGroup>
+						<Col sm={10}>
+							{this.props.errorsUsers ? (
+								this.props.errorsUsers.map((errorsArr, i) => {
+									return (
+										<Alert key={i} bsStyle="warning">
+											{errorsArr.msg}
 										</Alert>
-									: ''}
-							</Col>
-						</FormGroup>
-						<FormGroup controlId="username" validationState={this.state.usernameCheck}>
-							<Col componentClass={ControlLabel} sm={2}>
-								Login
-							</Col>
-							<Col sm={10}>
-								<FormControl
-									type="text"
-									placeholder="Enter your login"
-									ref="username"
-									autoFocus="true"
-									value={this.state.username}
-									onChange={(e) => this.handleChange(e)}
-								/>
-							</Col>
-						</FormGroup>
+									);
+								})
+							) : (
+								''
+							)}
+							{this.props.errorsUpload ? (
+								this.props.errorsUpload.map((errorsArr, i) => {
+									return (
+										<Alert key={i} bsStyle="warning">
+											{errorsArr.msg}
+										</Alert>
+									);
+								})
+							) : (
+								''
+							)}
+							{this.state.sizeError ? (
+								<Alert key="sizeError" bsStyle="warning">
+									{this.state.sizeError}
+								</Alert>
+							) : (
+								''
+							)}
+						</Col>
+					</FormGroup>
+					<FormGroup controlId="username" validationState={this.state.usernameCheck}>
+						<Col componentClass={ControlLabel} sm={2}>
+							<FormattedMessage id="login" />
+						</Col>
+						<Col sm={10}>
+							<FormControl
+								type="text"
+								placeholder="Enter your login"
+								ref="username"
+								autoFocus="true"
+								value={this.state.username}
+								onChange={(e) => this.handleChange(e)}
+							/>
+						</Col>
+					</FormGroup>
 
-						<FormGroup controlId="firstname" validationState={this.state.firstnameCheck}>
-							<Col componentClass={ControlLabel} sm={2}>
-								Firstname
-							</Col>
-							<Col sm={10}>
-								<FormControl
-									type="text"
-									placeholder="Enter your firstname"
-									ref="firstname"
-									value={this.state.firstname}
-									onChange={(e) => this.handleChange(e)}
-								/>
-							</Col>
-						</FormGroup>
+					<FormGroup controlId="firstname" validationState={this.state.firstnameCheck}>
+						<Col componentClass={ControlLabel} sm={2}>
+							<FormattedMessage id="firstname" />
+						</Col>
+						<Col sm={10}>
+							<FormControl
+								type="text"
+								placeholder="Enter your firstname"
+								ref="firstname"
+								value={this.state.firstname}
+								onChange={(e) => this.handleChange(e)}
+							/>
+						</Col>
+					</FormGroup>
 
-						<FormGroup controlId="lastname" validationState={this.state.lastnameCheck}>
-							<Col componentClass={ControlLabel} sm={2}>
-								Lastname
-							</Col>
-							<Col sm={10}>
-								<FormControl
-									type="text"
-									placeholder="Enter your lastname"
-									ref="lastname"
-									value={this.state.lastname}
-									onChange={(e) => this.handleChange(e)}
-								/>
-							</Col>
-						</FormGroup>
+					<FormGroup controlId="lastname" validationState={this.state.lastnameCheck}>
+						<Col componentClass={ControlLabel} sm={2}>
+							<FormattedMessage id="lastname" />
+						</Col>
+						<Col sm={10}>
+							<FormControl
+								type="text"
+								placeholder="Enter your lastname"
+								ref="lastname"
+								value={this.state.lastname}
+								onChange={(e) => this.handleChange(e)}
+							/>
+						</Col>
+					</FormGroup>
 
-						<FormGroup controlId="email" validationState={this.state.emailCheck}>
-							<Col componentClass={ControlLabel} sm={2}>
-								Email
-							</Col>
-							<Col sm={10}>
-								<FormControl
-									type="email"
-									placeholder="Enter your email"
-									ref="email"
-									value={this.state.email}
-									onChange={(e) => this.handleChange(e)}
-								/>
-							</Col>
-						</FormGroup>
+					<FormGroup controlId="email" validationState={this.state.emailCheck}>
+						<Col componentClass={ControlLabel} sm={2}>
+							Email
+						</Col>
+						<Col sm={10}>
+							<FormControl
+								type="email"
+								placeholder="Enter your email"
+								ref="email"
+								value={this.state.email}
+								onChange={(e) => this.handleChange(e)}
+							/>
+						</Col>
+					</FormGroup>
 
-						<FormGroup controlId="password" validationState={this.state.passwordCheck}>
-							<Col componentClass={ControlLabel} sm={2}>
-								Password
-							</Col>
-							<Col sm={10}>
-								<FormControl
-									type="password"
-									placeholder="Enter your password"
-									ref="password"
-									onChange={(e) => this.handleChange(e)}
-								/>
-							</Col>
-						</FormGroup>
+					<FormGroup controlId="password" validationState={this.state.passwordCheck}>
+						<Col componentClass={ControlLabel} sm={2}>
+							<FormattedMessage id="password" />
+						</Col>
+						<Col sm={10}>
+							<FormControl
+								type="password"
+								placeholder="Enter your password"
+								ref="password"
+								onChange={(e) => this.handleChange(e)}
+							/>
+						</Col>
+					</FormGroup>
 
-						<FormGroup controlId="avatar" validationState={this.state.imgCheck}>
-							<Col componentClass={ControlLabel} sm={2}>
-								Avatar
+					<FormGroup controlId="avatar" validationState={this.state.imgCheck}>
+						<Col componentClass={ControlLabel} sm={2}>
+							Avatar
+						</Col>
+						<Col sm={10}>
+							<h5>
+								<FormattedMessage id="avatar_upload" />
+							</h5>
+							<FormControl type="file" onChange={(e) => this.handleChange(e)} />
+						</Col>
+						<Col sm={10}>
+							<Col smOffset={2} sm={10}>
+								<h5>
+									<FormattedMessage id="avatar_choose" />
+								</h5>
 							</Col>
-							<Col sm={10}>
-								<h5>Upload your image...</h5>
-								<FormControl type="file" onChange={(e) => this.handleChange(e)} />
-							</Col>
-							<Col sm={10}>
-								<Col smOffset={2} sm={10}>
-									<h5>Or choose avatar here...</h5>
+							<Col smOffset={2} sm={12}>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'croupier' ? (
+												'logoOauth croupier active'
+											) : (
+												'logoOauth croupier'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/croupier.png')}
+									/>
 								</Col>
-								<Col smOffset={2} sm={12}>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'croupier'
-													? 'logoOauth croupier active'
-													: 'logoOauth croupier'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/croupier.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'diver'
-													? 'logoOauth diver active'
-													: 'logoOauth diver'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/diver.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'doctor'
-													? 'logoOauth doctor active'
-													: 'logoOauth doctor'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/doctor.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'doctor2'
-													? 'logoOauth doctor2 active'
-													: 'logoOauth doctor2'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/doctor2.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'farmer'
-													? 'logoOauth farmer active'
-													: 'logoOauth farmer'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/farmer.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'firefighter'
-													? 'logoOauth firefighter active'
-													: 'logoOauth firefighter'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/firefighter.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'man'
-													? 'logoOauth man active'
-													: 'logoOauth man'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/man.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'nun'
-													? 'logoOauth nun active'
-													: 'logoOauth nun'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/nun.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'showman'
-													? 'logoOauth showman active'
-													: 'logoOauth showman'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/showman.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'stewardess'
-													? 'logoOauth stewardess active'
-													: 'logoOauth stewardess'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/stewardess.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'welder'
-													? 'logoOauth welder active'
-													: 'logoOauth welder'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/welder.png')}
-										/>
-									</Col>
-									<Col xs={3}>
-										<div
-											className={
-												this.props.classActive && this.props.classActive === 'woman'
-													? 'logoOauth woman active'
-													: 'logoOauth woman'
-											}
-											onClick={(avatar) => this.selectAvatar('/avatars/woman.png')}
-										/>
-									</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'diver' ? (
+												'logoOauth diver active'
+											) : (
+												'logoOauth diver'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/diver.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'doctor' ? (
+												'logoOauth doctor active'
+											) : (
+												'logoOauth doctor'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/doctor.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'doctor2' ? (
+												'logoOauth doctor2 active'
+											) : (
+												'logoOauth doctor2'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/doctor2.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'farmer' ? (
+												'logoOauth farmer active'
+											) : (
+												'logoOauth farmer'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/farmer.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'firefighter' ? (
+												'logoOauth firefighter active'
+											) : (
+												'logoOauth firefighter'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/firefighter.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'man' ? (
+												'logoOauth man active'
+											) : (
+												'logoOauth man'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/man.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'nun' ? (
+												'logoOauth nun active'
+											) : (
+												'logoOauth nun'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/nun.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'showman' ? (
+												'logoOauth showman active'
+											) : (
+												'logoOauth showman'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/showman.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'stewardess' ? (
+												'logoOauth stewardess active'
+											) : (
+												'logoOauth stewardess'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/stewardess.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'welder' ? (
+												'logoOauth welder active'
+											) : (
+												'logoOauth welder'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/welder.png')}
+									/>
+								</Col>
+								<Col xs={3}>
+									<div
+										className={
+											this.props.classActive && this.props.classActive === 'woman' ? (
+												'logoOauth woman active'
+											) : (
+												'logoOauth woman'
+											)
+										}
+										onClick={(avatar) => this.selectAvatar('/avatars/woman.png')}
+									/>
 								</Col>
 							</Col>
-						</FormGroup>
+						</Col>
+					</FormGroup>
 
-						<FormGroup>
-							<Col sm={10}>
-								<ButtonToolbar>
-									<Button type="button" onClick={() => this.getBack()}>
-										Back
-									</Button>
-									<Button
-										bsStyle="primary"
-										type="button"
-										disabled={!this.state.sendOn}
-										onClick={() => this.submitForm()}
-									>
-										Change
-									</Button>
-								</ButtonToolbar>
-							</Col>
-						</FormGroup>
-					</Form>;
+					<FormGroup>
+						<Col sm={10}>
+							<ButtonToolbar>
+								<Button type="button" onClick={() => this.getBack()}>
+									<FormattedMessage id="back" />
+								</Button>
+								<Button
+									bsStyle="primary"
+									type="button"
+									disabled={!this.state.sendOn}
+									onClick={() => this.submitForm()}
+								>
+									<FormattedMessage id="submit" />
+								</Button>
+							</ButtonToolbar>
+						</Col>
+					</FormGroup>
+				</Form>
+			);
 		} else {
 			return null;
 		}
@@ -518,4 +554,4 @@ function mapDispatchToProps(dispatch) {
 	);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfilPage);
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ProfilPage));

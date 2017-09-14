@@ -3,6 +3,7 @@ import { Form, FormGroup, FormControl, Col, Alert, ControlLabel, ButtonToolbar, 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import validator from 'validator';
+import { FormattedMessage } from 'react-intl';
 
 import * as UsersActions from '../../actions/usersActions';
 
@@ -98,23 +99,15 @@ class ReinitPage extends React.Component {
 				<Form horizontal>
 					<FormGroup>
 						<Col smOffset={5} sm={2}>
-							{!mess
-								? <Alert bsStyle="success">
-										{messAlertSuccess}
-									</Alert>
-								: ''}
+							{!mess ? <Alert bsStyle="success">{messAlertSuccess}</Alert> : ''}
 
-							{mess
-								? <Alert bsStyle={successUpdatePassword ? 'success' : 'danger'}>
-										{mess}
-									</Alert>
-								: ''}
+							{mess ? <Alert bsStyle={successUpdatePassword ? 'success' : 'danger'}>{mess}</Alert> : ''}
 						</Col>
 					</FormGroup>
 
 					<FormGroup controlId="formHorizontalPassword" validationState={this.state.passwordCheck}>
 						<Col componentClass={ControlLabel} smOffset={3} sm={2}>
-							New Password
+							<FormattedMessage id="new_password" />
 						</Col>
 						<Col sm={2}>
 							<FormControl
@@ -132,7 +125,7 @@ class ReinitPage extends React.Component {
 						validationState={this.state.confirmPasswordCheck}
 					>
 						<Col componentClass={ControlLabel} smOffset={3} sm={2}>
-							Confirm Password
+							<FormattedMessage id="confirm_password" />
 						</Col>
 						<Col sm={2}>
 							<FormControl
@@ -147,16 +140,18 @@ class ReinitPage extends React.Component {
 
 					<FormGroup>
 						<Col smOffset={5} sm={10}>
-							{successUpdatePassword
-								? this.redirect()
-								: <Button
-										bsStyle="primary"
-										type="button"
-										onClick={() => this.submitValuesOfInputs()}
-										disabled={!this.state.sendOn}
-									>
-										Save new password
-									</Button>}
+							{successUpdatePassword ? (
+								this.redirect()
+							) : (
+								<Button
+									bsStyle="primary"
+									type="button"
+									onClick={() => this.submitValuesOfInputs()}
+									disabled={!this.state.sendOn}
+								>
+									<FormattedMessage id="save_password" />
+								</Button>
+							)}
 						</Col>
 					</FormGroup>
 				</Form>
@@ -166,11 +161,7 @@ class ReinitPage extends React.Component {
 				<Form horizontal>
 					<FormGroup>
 						<Col smOffset={5} sm={2}>
-							{!mess
-								? <Alert bsStyle="danger">
-										{messAlertFaillure}
-									</Alert>
-								: ''}
+							{!mess ? <Alert bsStyle="danger">{messAlertFaillure}</Alert> : ''}
 						</Col>
 					</FormGroup>
 				</Form>
