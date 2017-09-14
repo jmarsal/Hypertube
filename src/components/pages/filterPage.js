@@ -3,6 +3,7 @@ import { Panel, Col, Button, Form, FormControl, FormGroup, Radio, Checkbox, Cont
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as CollectionActions from '../../actions/collectionsActions';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import InputRange from 'react-input-range';
 

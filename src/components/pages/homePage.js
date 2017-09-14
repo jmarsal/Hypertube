@@ -142,7 +142,6 @@ class HomePage extends React.Component {
 
 	render() {
 		const { collection, showModal, intl } = this.props;
-		const { collection, showModal } = this.props;
 
 		return !this.props.sessionUser ? (
 			<Grid>
