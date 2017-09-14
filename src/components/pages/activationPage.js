@@ -3,6 +3,7 @@ import { Grid, Row, Panel } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { activateAccount } from '../../actions/usersActions';
+import { FormattedMessage } from 'react-intl';
 
 class ActivationPage extends React.Component {
 	componentDidMount() {
@@ -15,13 +16,15 @@ class ActivationPage extends React.Component {
 		return (
 			<Grid>
 				<Row>
-					{this.props.activation
-						? <Panel header="Activation success" bsStyle="success">
-								Activation success, you can now log in.
-							</Panel>
-						: <Panel header="Activation error" bsStyle="danger">
-								Something goes wrong... Please try again.
-							</Panel>}
+					{this.props.activation ? (
+						<Panel header="Activation success" bsStyle="success">
+							<FormattedMessage id="activation_success" />
+						</Panel>
+					) : (
+						<Panel header="Activation error" bsStyle="danger">
+							<FormattedMessage id="activation_error" />
+						</Panel>
+					)}
 				</Row>
 			</Grid>
 		);

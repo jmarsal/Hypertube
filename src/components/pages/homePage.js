@@ -15,6 +15,7 @@ import {
 	PageHeader,
 	Button
 } from 'react-bootstrap';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { getUserFromSession, disconnectUser } from '../../actions/usersActions';
 import * as Collections from '../../actions/collectionsActions';
@@ -106,6 +107,7 @@ class HomePage extends React.Component {
 
 	render() {
 		const { collection } = this.props;
+		const { intl } = this.props;
 
 		return !this.props.sessionUser ? (
 			<Grid>
@@ -114,7 +116,9 @@ class HomePage extends React.Component {
 		) : (
 			<Grid>
 				<Row>
-					<PageHeader>Collections Movies and TV Show</PageHeader>
+					<PageHeader>
+						<FormattedMessage id="title_home" />
+					</PageHeader>
 					<Form horizontal>
 						<FormGroup>
 							<Col smOffset={2} xs={8} md={8} lg={8}>
@@ -122,12 +126,14 @@ class HomePage extends React.Component {
 									id="formControlsText"
 									type="text"
 									label="Text"
-									placeholder="Find Movies, TV Show..."
+									placeholder={intl.formatMessage({ id: 'search_bar' })}
 									autoFocus="true"
 									onChange={(e) => this.getMovies(e)}
 								/>
 							</Col>
-							<Button bsStyle="primary">Searching tools</Button>
+							<Button bsStyle="primary">
+								<FormattedMessage id="searching_tools" />
+							</Button>
 						</FormGroup>
 						<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
 							{collection ? (
@@ -141,7 +147,7 @@ class HomePage extends React.Component {
 												<Well>
 													{movie.title}
 													{movie.season && movie.season != -1 ? (
-														'     Season : ' + movie.season
+														intl.formatMessage({ id: 'season_home' }) + movie.season
 													) : (
 														''
 													)}
@@ -159,9 +165,21 @@ class HomePage extends React.Component {
 												</div>
 
 												<Well>
-													{movie.episode ? '     Episode: ' + movie.episode : ''}
-													{movie.quality ? '     Quality : ' + movie.quality : ''}
-													{movie.rating ? '     Rating : ' + movie.rating + '/10' : ''}
+													{movie.episode ? (
+														intl.formatMessage({ id: 'episode_home' }) + movie.episode
+													) : (
+														''
+													)}
+													{movie.quality ? (
+														intl.formatMessage({ id: 'quality_home' }) + movie.quality
+													) : (
+														''
+													)}
+													{movie.rating ? (
+														intl.formatMessage({ id: 'rating_home' }) + movie.rating + '/10'
+													) : (
+														''
+													)}
 												</Well>
 											</ListGroupItem>
 										</ListGroup>
@@ -178,4 +196,4 @@ class HomePage extends React.Component {
 	}
 }
 
-export default HomePage;
+export default injectIntl(HomePage);

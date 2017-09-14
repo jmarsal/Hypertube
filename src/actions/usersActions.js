@@ -247,3 +247,20 @@ export function selectBasicAvatar(avatar) {
 		}
 	};
 }
+
+// CHANGE USER'S LANGUAGE
+export function changeUserLanguage(language) {
+	let data = new Object();
+	data.language = language;
+	return (dispatch) => {
+		axios
+			.post('/api/users/lang', data)
+			.then((response) => {
+				console.log(response.data);
+				dispatch({ type: 'USER_LANGUAGE', payload: response.data });
+			})
+			.catch((err) => {
+				dispatch({ type: 'USER_LANGUAGE_REJECTED' });
+			});
+	};
+}

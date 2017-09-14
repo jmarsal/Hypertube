@@ -15,6 +15,8 @@ import {
 } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { FormattedMessage, injectIntl } from 'react-intl';
+
 import { getOneUser, resetButton, selectBasicAvatar, updateUser } from '../../actions/usersActions';
 import { uploadDocumentRequest } from '../../actions/uploadActions';
 
@@ -189,7 +191,7 @@ class ProfilPage extends React.Component {
 	modifProfil() {
 		const { changeTitle } = this.props;
 
-		changeTitle('Edit your profil');
+		changeTitle(<FormattedMessage id="edit_profil" />);
 		this.setState({ modif: true });
 	}
 
@@ -198,7 +200,7 @@ class ProfilPage extends React.Component {
 	}
 
 	render() {
-		if (this.props.profilUser) {
+		if (this.props.profilUser && this.props.sessionUser) {
 			const { showModal, updateSuccess } = this.props;
 
 			let image = this.props.profilUser.data.img;
@@ -209,7 +211,9 @@ class ProfilPage extends React.Component {
 			return this.state.modif == false ? (
 				<Panel>
 					<Col smPush={9} sm={4}>
-						<Button onClick={() => this.modifProfil()}>Edit my profil</Button>
+						<Button onClick={() => this.modifProfil()}>
+							<FormattedMessage id="edit_profil" />
+						</Button>
 					</Col>
 					<Col smOffset={7} smPull={5} sm={8}>
 						<div className="profilImage" style={style} />
@@ -219,9 +223,6 @@ class ProfilPage extends React.Component {
 					</Col>
 					<Col smOffset={4} sm={4}>
 						<h5>{this.props.profilUser.data.username}</h5>
-					</Col>
-					<Col smOffset={3} sm={8}>
-						API_TOKEN: {this.props.profilUser.data.token}
 					</Col>
 				</Panel>
 			) : (
@@ -261,7 +262,7 @@ class ProfilPage extends React.Component {
 					</FormGroup>
 					<FormGroup controlId="username" validationState={this.state.usernameCheck}>
 						<Col componentClass={ControlLabel} sm={2}>
-							Login
+							<FormattedMessage id="login" />
 						</Col>
 						<Col sm={10}>
 							<FormControl
@@ -277,7 +278,7 @@ class ProfilPage extends React.Component {
 
 					<FormGroup controlId="firstname" validationState={this.state.firstnameCheck}>
 						<Col componentClass={ControlLabel} sm={2}>
-							Firstname
+							<FormattedMessage id="firstname" />
 						</Col>
 						<Col sm={10}>
 							<FormControl
@@ -292,7 +293,7 @@ class ProfilPage extends React.Component {
 
 					<FormGroup controlId="lastname" validationState={this.state.lastnameCheck}>
 						<Col componentClass={ControlLabel} sm={2}>
-							Lastname
+							<FormattedMessage id="lastname" />
 						</Col>
 						<Col sm={10}>
 							<FormControl
@@ -322,7 +323,7 @@ class ProfilPage extends React.Component {
 
 					<FormGroup controlId="password" validationState={this.state.passwordCheck}>
 						<Col componentClass={ControlLabel} sm={2}>
-							Password
+							<FormattedMessage id="password" />
 						</Col>
 						<Col sm={10}>
 							<FormControl
@@ -339,12 +340,16 @@ class ProfilPage extends React.Component {
 							Avatar
 						</Col>
 						<Col sm={10}>
-							<h5>Upload your image...</h5>
+							<h5>
+								<FormattedMessage id="avatar_upload" />
+							</h5>
 							<FormControl type="file" onChange={(e) => this.handleChange(e)} />
 						</Col>
 						<Col sm={10}>
 							<Col smOffset={2} sm={10}>
-								<h5>Or choose avatar here...</h5>
+								<h5>
+									<FormattedMessage id="avatar_choose" />
+								</h5>
 							</Col>
 							<Col smOffset={2} sm={12}>
 								<Col xs={3}>
@@ -499,7 +504,7 @@ class ProfilPage extends React.Component {
 						<Col sm={10}>
 							<ButtonToolbar>
 								<Button type="button" onClick={() => this.getBack()}>
-									Back
+									<FormattedMessage id="back" />
 								</Button>
 								<Button
 									bsStyle="primary"
@@ -507,7 +512,7 @@ class ProfilPage extends React.Component {
 									disabled={!this.state.sendOn}
 									onClick={() => this.submitForm()}
 								>
-									Change
+									<FormattedMessage id="submit" />
 								</Button>
 							</ButtonToolbar>
 						</Col>
@@ -549,4 +554,4 @@ function mapDispatchToProps(dispatch) {
 	);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfilPage);
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(ProfilPage));

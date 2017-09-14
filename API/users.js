@@ -119,7 +119,10 @@ router.get('/disconnect', (req, res) => {
 // GET SESSION
 router.get('/session', (req, res) => {
 	if (typeof req.session.user !== 'undefined') {
-		res.json(req.session.user);
+		User.findOne({ _id: req.session.user._id }, function(err, user) {
+			if (user) req.session.user.language = user.language;
+			res.json(req.session.user);
+		});
 	}
 });
 
@@ -422,6 +425,19 @@ router.post('/reinitialisation', (req, res) => {
 			userToUpdate.save();
 			res.status(200).json({ status: 'success' });
 		});
+	});
+});
+
+//UPDATE USER'S LANGUAGE
+router.post('/lang', (req, res) => {
+	User.findOne({ _id: req.session.user._id }, (err, user) => {
+		if (user) {
+			user.language = req.body.language;
+			user.save();
+			res.json({ status: 'success', content: user.language });
+		} else {
+			res.json({ status: 'error' });
+		}
 	});
 });
 

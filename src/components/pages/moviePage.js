@@ -18,11 +18,11 @@ import {
 	Jumbotron
 } from 'react-bootstrap';
 import validator from 'validator';
+import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { addComment, getComments } from '../../actions/commentsActions';
 import { getOneUserByLogin } from '../../actions/usersActions';
 import { getDetailMovie } from '../../actions/collectionsActions';
-
 class ModalUser extends React.Component {
 	constructor(props) {
 		super(props);
@@ -63,7 +63,9 @@ class ModalUser extends React.Component {
 						</Panel>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button onClick={() => this.close()}>Close</Button>
+						<Button onClick={() => this.close()}>
+							<FormattedMessage id="close" />
+						</Button>
 					</Modal.Footer>
 				</Modal>
 			</div>
@@ -118,6 +120,8 @@ class MoviePage extends React.Component {
 	}
 
 	render() {
+		const { intl } = this.props;
+
 		const commentList = this.props.comments.map((comment) => {
 			return (
 				<ListGroupItem key={comment.date}>
@@ -132,10 +136,16 @@ class MoviePage extends React.Component {
 				return (
 					<div>
 						<Row>
-							<b>Season: </b> {this.props.movie.data.season}
+							<b>
+								<FormattedMessage id="season_player" />
+							</b>{' '}
+							{this.props.movie.data.season}
 						</Row>
 						<Row>
-							<b>Episode: </b> {this.props.movie.data.episode}
+							<b>
+								<FormattedMessage id="episode_player" />
+							</b>{' '}
+							{this.props.movie.data.episode}
 						</Row>
 					</div>
 				);
@@ -144,7 +154,7 @@ class MoviePage extends React.Component {
 			}
 		};
 
-		if (this.props.movie) {
+		if (this.props.movie && this.props.user) {
 			let image = this.props.movie.data.background;
 			let styleBackground = {
 				position: 'absolute',
@@ -176,44 +186,76 @@ class MoviePage extends React.Component {
 								</Col>
 								<Col xs={12} md={8}>
 									<Row>
-										<b>Year: </b>
+										<b>
+											<FormattedMessage id="year_player" />
+										</b>{' '}
 										{this.props.movie.data.year ? (
 											this.props.movie.data.year
 										) : (
-											<i>Non disponible</i>
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
 										)}
 									</Row>
 									<Row>
-										<b>Country:</b>{' '}
+										<b>
+											<FormattedMessage id="country_player" />
+										</b>{' '}
 										{this.props.movie.data.country ? (
 											this.props.movie.data.country
 										) : (
-											<i>Non disponible</i>
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
 										)}
 									</Row>
 									{seasonEpisode()}
 									<Row>
-										<b>Rating IMDb:</b>{' '}
+										<b>
+											<FormattedMessage id="duration_player" />
+										</b>{' '}
+										{this.props.movie.data.runtime ? (
+											this.props.movie.data.runtime + ' min'
+										) : (
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
+										)}
+									</Row>
+									<Row>
+										<b>
+											<FormattedMessage id="rating_player" />
+										</b>{' '}
 										{this.props.movie.data.rating ? (
 											this.props.movie.data.rating + '/10'
 										) : (
-											<i>Non disponible</i>
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
 										)}
 									</Row>
 									<Row>
-										<b>Producer:</b>{' '}
+										<b>
+											<FormattedMessage id="producer_player" />
+										</b>{' '}
 										{this.props.movie.data.producer ? (
 											this.props.movie.data.producer
 										) : (
-											<i>Non disponible</i>
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
 										)}
 									</Row>
 									<Row>
-										<b>Director:</b>{' '}
+										<b>
+											<FormattedMessage id="director_player" />
+										</b>{' '}
 										{this.props.movie.data.director ? (
 											this.props.movie.data.director
 										) : (
-											<i>Non disponible</i>
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
 										)}
 									</Row>
 									<Row>
@@ -221,7 +263,9 @@ class MoviePage extends React.Component {
 										{this.props.movie.data.actors ? (
 											this.props.movie.data.actors
 										) : (
-											<i>Non disponible</i>
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
 										)}
 									</Row>
 									<br />
@@ -230,7 +274,9 @@ class MoviePage extends React.Component {
 										{this.props.movie.data.summary ? (
 											this.props.movie.data.summary
 										) : (
-											<i>Non disponible</i>
+											<i>
+												<FormattedMessage id="available_player" />
+											</i>
 										)}
 									</Row>
 								</Col>
@@ -275,7 +321,7 @@ class MoviePage extends React.Component {
 											<Col md={8}>
 												<FormControl
 													type="text"
-													placeholder="Write a comment..."
+													placeholder={intl.formatMessage({ id: 'comment_bar' })}
 													ref="comment"
 													onChange={(e) => this.handleChange(e)}
 												/>
@@ -286,7 +332,7 @@ class MoviePage extends React.Component {
 													type="button"
 													onClick={() => this.submitForm()}
 												>
-													Submit
+													<FormattedMessage id="submit" />
 												</Button>
 											</Col>
 										</Col>
@@ -335,4 +381,4 @@ function mapDispatchToProps(dispatch) {
 	);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MoviePage);
+export default injectIntl(connect(mapStateToProps, mapDispatchToProps)(MoviePage));

@@ -131,6 +131,17 @@ export function usersReducers(
 				...state,
 				classActive: action.payload
 			};
+
+		case 'USER_LANGUAGE':
+			return {
+				...state,
+				language: action.payload.content
+			};
+
+		case 'USER_LANGUAGE_REJECTED':
+			return {
+				...state
+			};
 	}
 	return state;
 }

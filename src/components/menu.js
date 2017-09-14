@@ -1,13 +1,14 @@
 import React from 'react';
 import { browserHistory } from 'react-router';
-import { Nav, NavItem, Navbar, Button } from 'react-bootstrap';
+import { Nav, NavItem, Navbar, Button, NavDropdown, MenuItem } from 'react-bootstrap';
 import ModalLogin from 'components/modals/modalLogin';
 import ModalSubscribe from 'components/modals/modalSubscribe';
 import ModalProfil from 'components/modals/modalProfil';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { FormattedMessage } from 'react-intl';
 
-import { getUserFromSession, disconnectUser } from '../actions/usersActions';
+import { getUserFromSession, disconnectUser, changeUserLanguage } from '../actions/usersActions';
 import ReinitPage from './pages/forgetPasswdUsernamePage';
 
 class Menu extends React.Component {
@@ -18,6 +19,10 @@ class Menu extends React.Component {
 	handleDisconnect() {
 		this.props.disconnectUser();
 		browserHistory.push('/');
+	}
+
+	handleLanguage(language) {
+		this.props.changeUserLanguage(language);
 	}
 
 	render() {
@@ -37,9 +42,24 @@ class Menu extends React.Component {
 						</Nav>
 					) : (
 						<Nav pullRight>
-							<NavItem href="/">Collections</NavItem>
+							<NavItem href="/">Collection</NavItem>
 							<ModalProfil />
-							<NavItem onClick={this.handleDisconnect.bind(this)}>Disconnect</NavItem>
+							<NavItem onClick={this.handleDisconnect.bind(this)}>
+								<FormattedMessage id="disconnect" />
+							</NavItem>
+							<NavDropdown
+								title={
+									this.props.language ? (
+										this.props.language.toUpperCase()
+									) : (
+										this.props.sessionUser.language.toUpperCase()
+									)
+								}
+								id="choose-language"
+							>
+								<MenuItem onClick={() => this.handleLanguage('fr')}>FR</MenuItem>
+								<MenuItem onClick={() => this.handleLanguage('en')}>EN</MenuItem>
+							</NavDropdown>
 						</Nav>
 					)}
 				</Navbar.Collapse>
@@ -52,7 +72,8 @@ function mapStateToProps(state) {
 	return {
 		sessionUser: state.users.sessionUser,
 		msg: state.users.msg,
-		style: state.users.style
+		style: state.users.style,
+		language: state.users.language
 	};
 }
 
@@ -60,7 +81,8 @@ function mapDispatchToProps(dispatch) {
 	return bindActionCreators(
 		{
 			getUserFromSession,
-			disconnectUser
+			disconnectUser,
+			changeUserLanguage
 		},
 		dispatch
 	);
