@@ -8,7 +8,6 @@ const express = require('express'),
 
 function addMissingHttps(pattern, url) {
 	if (url.search('https:') > -1) {
-		debugger;
 		return url;
 	}
 	return url.search(pattern) > -1 ? 'https:' + url : url;

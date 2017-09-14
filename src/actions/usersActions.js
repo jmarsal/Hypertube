@@ -169,7 +169,6 @@ export function resetButton() {
 
 // UPDATE PASSWORD AFTER REINIT
 export function updatePassword(user) {
-	// debugger;
 	return (dispatch) => {
 		axios
 			.post('/api/users/reinitialisation', user)
@@ -216,7 +215,6 @@ export function disconnectUser() {
 
 // SELECT BASIC AVATAR
 export function selectBasicAvatar(avatar) {
-	// debugger;
 	return (dispatch) => {
 		if (avatar === '/avatars/croupier.png') {
 			dispatch({ type: 'SELECT_BASIC_AVATAR', payload: 'croupier' });

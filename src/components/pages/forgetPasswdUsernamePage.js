@@ -78,7 +78,6 @@ class ReinitPage extends React.Component {
 			username: user,
 			password: validator.escape(this.state.password).trim()
 		};
-		// debugger;
 		updatePassword(userToUpdate);
 	}
 
