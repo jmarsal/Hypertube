@@ -116,6 +116,18 @@ class Check {
 			});
 		});
 	}
+
+	static tokenExists(token) {
+		return new Promise((resolve, reject) => {
+			User.findOne({ token: token }, function(err, user) {
+				if (user) {
+					resolve({ status: 'success' });
+				} else {
+					resolve({ status: 'error', data: [ { msg: 'Invalid token.' } ] });
+				}
+			});
+		});
+	}
 }
 
 module.exports = Check;

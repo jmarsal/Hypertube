@@ -10,6 +10,8 @@ const usersSchema = mongoose.Schema({
 	activationKey: String,
 	active: Boolean,
 	language: { type: String, default: 'en' },
+	admin: { type: Boolean, default: false },
+	token: String,
 	oauthID: String,
 	facebook: JSON,
 	twitter: JSON,

@@ -2,6 +2,8 @@ const express = require('express'),
 	router = express.Router(),
 	Videos = require('../models/video.js');
 
+const Check = require('../models/check.js');
+
 function getSort(title, filters) {
 	if (title === '') {
 		if (filters === 'desc') {
@@ -87,30 +89,44 @@ function queryMongoose(title, filters) {
 
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
 router.post('/getCollectionByTitleForClient', (req, res) => {
-	let filters = req.body.filters,
-		query = queryMongoose(req.body.title, filters),
-		sort =
-			filters && filters.titleOrder !== ''
-				? getSort(req.body.title, filters.titleOrder)
-				: getSort(req.body.title, '');
-	Videos.paginate(query, {
-		page: req.body.page ? req.body.page : 1,
-		limit: req.body.limit ? req.body.limit : 10,
-		sort: sort
-	})
-		.then((json) => {
-			if (json) {
-				res.json({ status: 'success', payload: json });
-			} else {
-				res.json({ status: 'no_data' });
-			}
-		})
-		.catch((err) => {
-			if (err) {
+	if (req.user) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					let filters = req.body.filters,
+						query = queryMongoose(req.body.title, filters),
+						sort =
+							filters && filters.titleOrder !== ''
+								? getSort(req.body.title, filters.titleOrder)
+								: getSort(req.body.title, '');
+					Videos.paginate(query, {
+						page: req.body.page ? req.body.page : 1,
+						limit: req.body.limit ? req.body.limit : 10,
+						sort: sort
+					})
+						.then((json) => {
+							if (json) {
+								res.json({ status: 'success', payload: json });
+							} else {
+								res.json({ status: 'no_data' });
+							}
+						})
+						.catch((err) => {
+							if (err) {
+								console.error(err);
+								res.json({ status: 'error', content: err });
+							}
+						});
+				}
+			})
+			.catch((err) => {
 				console.error(err);
-				res.json({ status: 'error', content: err });
-			}
-		});
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : Not logged.');
+	}
 });
 
 // GET ALL GENRES IN DB FOR FILTERS

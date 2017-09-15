@@ -31,6 +31,8 @@ router.post('/', (req, res) => {
 				if (response.status === 'success') {
 					let randomKey =
 						Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+					let gen_token =
+						'0' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 
 					User.register(
 						new User({
@@ -40,7 +42,8 @@ router.post('/', (req, res) => {
 							lastname: req.body.lastname,
 							img: req.body.img,
 							activationKey: randomKey,
-							active: false
+							active: false,
+							token: gen_token
 						}),
 						req.body.password,
 						function(err, user) {
@@ -160,150 +163,224 @@ router.post('/forget', (req, res) => {
 
 //---->>> GET ONE USER BY ID <<<-----
 router.get('/one/:userID', (req, res) => {
-	User.findOne({ _id: req.params.userID }, function(err, user) {
-		if (user) {
-			res.json({ status: 'success', data: user });
-		} else {
-			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
-		}
-	});
-});
-
-//---->>> GET ONE USER BY LOGIN <<<-----
-router.get('/onebylogin/:userLogin', (req, res) => {
-	User.findOne({ username: req.params.userLogin }, function(err, user) {
-		if (user) {
-			res.json({ status: 'success', data: user });
-		} else {
-			res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
-		}
-	});
-});
-
-//---->>> GET USERS <<<-----
-router.get('/', (req, res) => {
-	User.find((err, users) => {
-		if (err) throw err;
-		res.json(users);
-	});
-});
-
-//---->>> DELETE USER <<<-----
-router.delete('/:_id', (req, res) => {
-	let query = { _id: req.params._id };
-
-	User.remove(query, (err, user) => {
-		if (err) throw err;
-		res.json(user);
-	});
-});
-
-//---->>> UPDATE USER <<<-----
-router.put('/:_id', (req, res) => {
-	const user = req.body;
-	let query = {};
-	query._id = req.params._id;
-	let randomKey = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-
-	User.findOne({ _id: req.params._id }, (err, userToUpdate) => {
-		if (!userToUpdate) {
-			res.json({ status: 'error' });
-		}
-
-		Check.userExistsForUpdate(req.body.username, userToUpdate)
+	if ((req.user && req.user.admin) || '/users/one/' + req.user.id == req._parsedOriginalUrl.pathname) {
+		Check.tokenExists(req.user.token)
 			.then((response) => {
-				if (response.status === 'success') {
-					return Check.mailExistsForUpdate(req.body.email, userToUpdate);
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
 				} else {
-					res.json({ status: 'error', content: response.data });
-				}
-			})
-			.then((response) => {
-				if (response.status === 'success') {
-					return Check.subscribeInputsForUpdate(req);
-				} else {
-					res.json({ status: 'error', content: response.data });
-				}
-			})
-			.then((response) => {
-				if (response) {
-					if (response.status === 'success') {
-						let update = {
-							$set: {
-								username: user.username,
-								email: user.email,
-								img: user.img,
-								firstname: user.firstname,
-								lastname: user.lastname,
-								activationKey: randomKey,
-								active: true
-							}
-						};
-
-						let options = { new: true };
-
-						User.findOneAndUpdate(query, update, options, (err, userUpdated) => {
-							if (err) throw err;
-							const payload = {
-								_id: userUpdated._id,
-								username: userUpdated.username
-							};
-							req.session.user = payload;
-
-							req.session.save((err) => {
-								if (err) throw err;
-
-								userToUpdate.setPassword(user.password, () => {
-									userToUpdate.save();
-									return res.json({ status: 'success', user: payload });
-								});
-							});
-						});
-					} else {
-						res.json({ status: 'error', content: response.data });
-					}
+					User.findOne({ _id: req.params.userID }, function(err, user) {
+						if (user) {
+							res.json({ status: 'success', data: user });
+						} else {
+							res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+						}
+					});
 				}
 			})
 			.catch((err) => {
 				console.error(err);
 			});
-	});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+	}
+});
+
+//---->>> GET ONE USER BY LOGIN <<<-----
+router.get('/onebylogin/:userLogin', (req, res) => {
+	if (req.user) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					User.findOne({ username: req.params.userLogin }, function(err, user) {
+						if (user) {
+							res.json({ status: 'success', data: user });
+						} else {
+							res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
+						}
+					});
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : Not logged.');
+	}
+});
+
+//---->>> GET USERS <<<-----
+router.get('/', (req, res) => {
+	if (req.user && req.user.admin) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					User.find((err, users) => {
+						if (err) throw err;
+						res.json(users);
+					});
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+	}
+});
+
+// //---->>> DELETE USER <<<-----
+// router.delete('/:_id', (req, res) => {
+// 	let query = { _id: req.params._id };
+
+// 	User.remove(query, (err, user) => {
+// 		if (err) throw err;
+// 		res.json(user);
+// 	});
+// });
+
+//---->>> UPDATE USER <<<-----
+router.put('/:_id', (req, res) => {
+	if (req.user.admin || '/users/' + req.user.id == req._parsedOriginalUrl.pathname) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
+				} else {
+					const user = req.body;
+					let query = {};
+					query._id = req.params._id;
+					let randomKey =
+						Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+
+					User.findOne({ _id: req.params._id }, (err, userToUpdate) => {
+						if (!userToUpdate) {
+							res.json({ status: 'error' });
+						}
+
+						Check.userExistsForUpdate(req.body.username, userToUpdate)
+							.then((response) => {
+								if (response.status === 'success') {
+									return Check.mailExistsForUpdate(req.body.email, userToUpdate);
+								} else {
+									res.json({ status: 'error', content: response.data });
+								}
+							})
+							.then((response) => {
+								if (response.status === 'success') {
+									return Check.subscribeInputsForUpdate(req);
+								} else {
+									res.json({ status: 'error', content: response.data });
+								}
+							})
+							.then((response) => {
+								if (response) {
+									if (response.status === 'success') {
+										let update = {
+											$set: {
+												username: user.username,
+												email: user.email,
+												img: user.img,
+												firstname: user.firstname,
+												lastname: user.lastname,
+												activationKey: randomKey,
+												active: true
+											}
+										};
+
+										let options = { new: true };
+
+										User.findOneAndUpdate(query, update, options, (err, userUpdated) => {
+											if (err) throw err;
+											const payload = {
+												_id: userUpdated._id,
+												username: userUpdated.username
+											};
+											req.session.user = payload;
+
+											req.session.save((err) => {
+												if (err) throw err;
+
+												userToUpdate.setPassword(user.password, () => {
+													userToUpdate.save();
+													return res.json({ status: 'success', user: payload });
+												});
+											});
+										});
+									} else {
+										res.json({ status: 'error', content: response.data });
+									}
+								}
+							})
+							.catch((err) => {
+								console.error(err);
+							});
+					});
+				}
+			})
+			.catch((err) => {
+				console.error(err);
+			});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : What are you doing?');
+	}
 });
 
 //---->>> UPLOAD USER'S IMAGE <<<-----
 router.post('/upload', (req, res) => {
-	mkdirp('./public/upload', function(err) {
-		if (!err) {
-			let Storage = multer.diskStorage({
-				destination: function(req, file, callback) {
-					callback(null, './public/upload');
-				},
-				filename: function(req, file, callback) {
-					callback(null, req.body.name);
-				}
-			});
-
-			let upload = multer({
-				storage: Storage,
-				fileFilter: (req, file, cb) => {
-					if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
-						res.json({ status: 'error', content: [ { msg: 'Avatar: Wrong format.' } ] });
-					} else {
-						cb(null, true);
-					}
-				}
-			}).single('file');
-
-			upload(req, res, function(err) {
-				if (err || !req.file) {
-					console.error(err);
-					res.json({ status: 'error', content: [ { msg: 'Avatar: Please, choose a file.' } ] });
+	if (req.user) {
+		Check.tokenExists(req.user.token)
+			.then((response) => {
+				if (response.status === 'error') {
+					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
 				} else {
-					res.json({ status: 'success', content: '' });
+					mkdirp('./public/upload', function(err) {
+						if (!err) {
+							let Storage = multer.diskStorage({
+								destination: function(req, file, callback) {
+									callback(null, './public/upload');
+								},
+								filename: function(req, file, callback) {
+									callback(null, req.body.name);
+								}
+							});
+
+							let upload = multer({
+								storage: Storage,
+								fileFilter: (req, file, cb) => {
+									if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+										res.json({ status: 'error', content: [ { msg: 'Avatar: Wrong format.' } ] });
+									} else {
+										cb(null, true);
+									}
+								}
+							}).single('file');
+
+							upload(req, res, function(err) {
+								if (err || !req.file) {
+									console.error(err);
+									res.json({
+										status: 'error',
+										content: [ { msg: 'Avatar: Please, choose a file.' } ]
+									});
+								} else {
+									res.json({ status: 'success', content: '' });
+								}
+							});
+						} else throw err;
+					});
 				}
+			})
+			.catch((err) => {
+				console.error(err);
 			});
-		} else throw err;
-	});
+	} else {
+		return res.status(401).send('HTTP401 Unauthorized : Not logged.');
+	}
 });
 
 // ACCOUNT ACTIVATION
