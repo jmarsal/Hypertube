@@ -196,7 +196,12 @@ router.get('/onebylogin/:userLogin', (req, res) => {
 				} else {
 					User.findOne({ username: req.params.userLogin }, function(err, user) {
 						if (user) {
-							res.json({ status: 'success', data: user });
+							let userInfos = {};
+							userInfos.username = user.username;
+							userInfos.firstname = user.firstname;
+							userInfos.lastname = user.lastname;
+							userInfos.img = user.img;
+							res.json({ status: 'success', data: userInfos });
 						} else {
 							res.json({ status: 'error', data: [ { msg: 'An error occured.' } ] });
 						}
