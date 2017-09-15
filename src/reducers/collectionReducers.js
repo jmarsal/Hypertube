@@ -83,6 +83,9 @@ export function collectionReducers(
 
 		case 'GET_DETAIL_SUCCESS':
 			return { ...state, movie: action.payload };
+
+		case 'GET_SUBTITLES_SUCCESS':
+			return { ...state, movie: action.payload };
 	}
 	return state;
 }

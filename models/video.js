@@ -104,6 +104,12 @@ const videoShema = mongoose.Schema({
 	},
 	seeds: {
 		type: Number
+	},
+	subtitleFr: {
+		type: String
+	},
+	subtitleEn: {
+		type: String
 	}
 });
 

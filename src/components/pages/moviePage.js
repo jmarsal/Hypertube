@@ -22,7 +22,7 @@ import { FormattedMessage, injectIntl } from 'react-intl';
 
 import { addComment, getComments } from '../../actions/commentsActions';
 import { getOneUserByLogin } from '../../actions/usersActions';
-import { getDetailMovie } from '../../actions/collectionsActions';
+import { getDetailMovie, getSubtitles } from '../../actions/collectionsActions';
 class ModalUser extends React.Component {
 	constructor(props) {
 		super(props);
@@ -87,6 +87,7 @@ class MoviePage extends React.Component {
 	componentDidMount() {
 		this.props.getComments(this.props.location.query.id);
 		this.props.getDetailMovie(this.props.location.query.id);
+		this.props.getSubtitles(this.props.location.query.id);
 	}
 
 	handleChange(e) {
@@ -294,6 +295,22 @@ class MoviePage extends React.Component {
 											controls
 											autoPlay
 										>
+											{this.props.movie.data.subtitleEn ? (
+												<track
+													src={'subtitles' + this.props.movie.data.subtitleEn}
+													kind="subtitles"
+													srcLang="en"
+													label="English"
+												/>
+											) : null}
+											{this.props.movie.data.subtitleFr ? (
+												<track
+													src={'subtitles' + this.props.movie.data.subtitleFr}
+													kind="subtitles"
+													srcLang="fr"
+													label="French"
+												/>
+											) : null}
 											Your browser does not support the video tag.
 										</video>
 									</div>
@@ -375,7 +392,8 @@ function mapDispatchToProps(dispatch) {
 			addComment,
 			getComments,
 			getOneUserByLogin,
-			getDetailMovie
+			getDetailMovie,
+			getSubtitles
 		},
 		dispatch
 	);

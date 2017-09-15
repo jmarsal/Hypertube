@@ -6,6 +6,10 @@ const torrentStream = require('torrent-stream');
 const ffmpeg = require('fluent-ffmpeg');
 const pump = require('pump');
 const mime = require('mime');
+const download = require('download');
+const OS = require('opensubtitles-api');
+const OpenSubtitles = new OS('OSTestUserAgentTemp');
+const srt2vtt = require('srt-to-vtt');
 
 const Library = require('../models/video.js');
 
@@ -69,6 +73,56 @@ function streamFile(res, file, start, end, mimetype) {
 		pump(stream, res);
 	}
 }
+
+//GET SUBTITLES
+router.get('/subtitles/:_id', (req, res) => {
+	Library.findOne({ _id: req.params._id }, function(err, movie) {
+		if (movie) {
+			OpenSubtitles.search({
+				sublanguageid: [ 'fre', 'eng' ].join(),
+				extensions: 'srt',
+				season: movie.season ? movie.season : null,
+				episode: movie.episode ? movie.episode : null,
+				limit: 'all',
+				imdbid: movie.imdb_code
+			}).then((subtitles) => {
+				let subtitlesPath = __dirname + '/../public/subtitles';
+
+				if (subtitles.en && subtitles.en[0]) {
+					download(subtitles.en[0].url, subtitlesPath).then(() => {
+						movie.subtitleEn = '/' + path.basename(subtitles.en[0].filename, '.srt') + '.vtt';
+						fs
+							.createReadStream(subtitlesPath + '/' + subtitles.en[0].filename)
+							.pipe(srt2vtt())
+							.pipe(fs.createWriteStream(subtitlesPath + movie.subtitleEn));
+
+						fs.unlinkSync(subtitlesPath + '/' + subtitles.en[0].filename);
+						if (subtitles.fr && subtitles.fr[0].url) {
+							download(subtitles.fr[0].url, subtitlesPath).then(() => {
+								movie.subtitleFr = '/' + path.basename(subtitles.fr[0].filename, '.srt') + '.vtt';
+								fs
+									.createReadStream(subtitlesPath + '/' + subtitles.fr[0].filename)
+									.pipe(srt2vtt())
+									.pipe(fs.createWriteStream(subtitlesPath + movie.subtitleFr));
+
+								fs.unlinkSync(subtitlesPath + '/' + subtitles.fr[0].filename);
+								movie.save();
+								res.json({ status: 'success', data: movie });
+							});
+						} else {
+							movie.save();
+							res.json({ status: 'success', data: movie });
+						}
+					});
+				} else {
+					res.json({ status: 'success', data: movie });
+				}
+			});
+		} else {
+			res.json({ status: 'error' });
+		}
+	});
+});
 
 // DOWNLOAD A NEW MOVIE
 router.get('/:_id', (req, res) => {

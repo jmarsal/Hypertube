@@ -224,3 +224,20 @@ export function getDetailMovie(idMovie) {
 			});
 	};
 }
+
+export function getSubtitles(idMovie) {
+	return (dispatch) => {
+		axios
+			.get('/api/torrent/subtitles/' + idMovie)
+			.then((response) => {
+				if (response.data.status === 'success') {
+					dispatch({ type: 'GET_SUBTITLES_SUCCESS', payload: response.data });
+				} else {
+					dispatch({ type: 'GET_SUBTITLES_FAIL' });
+				}
+			})
+			.catch((err) => {
+				dispatch({ type: 'GET_SUBTITLES_ERROR', payload: err });
+			});
+	};
+}
