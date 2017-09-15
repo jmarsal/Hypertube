@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import ModalFilters from 'components/modals/modalFilters';
 import {
 	Grid,
 	Row,
@@ -25,7 +26,9 @@ import * as Collections from '../../actions/collectionsActions';
 		sessionUser: state.users.sessionUser,
 		msg: state.users.msg,
 		style: state.users.style,
-		collection: state.collection.collection
+		collection: state.collection.collection,
+		filters: state.filters,
+		page: state.collection.page
 	}),
 	(dispatch) =>
 		bindActionCreators(
@@ -43,32 +46,64 @@ class HomePage extends React.Component {
 
 		this.state = {
 			searchRequest: '',
-			pageRequestDb: 1,
-			scrollHeight: 0
+			scrollHeight: 0,
+			titleVideo: this.props.title
 		};
 	}
 
 	getMovies(e) {
-		const { getCollectionsListByName } = this.props,
+		const {
+				getCollectionsListByName,
+				getAllGenresInStore,
+				getAllQualityInStore,
+				getAllSeasonsInStore,
+				getMinMaxImdbNote,
+				getMinMaxYears,
+				filters,
+				page
+			} = this.props,
 			inputId = e.target.id,
 			val = e.target.value;
 
 		if (inputId === 'formControlsText') {
-			this.setState({ pageRequestDb: 1, searchRequest: val, scrollHeight: 0 });
-			getCollectionsListByName(val, this.state.pageRequestDb, 'input');
+			this.setState({ searchRequest: val, scrollHeight: 0 });
+
+			getAllGenresInStore(val);
+			getAllQualityInStore(val);
+			getAllSeasonsInStore(val);
+			getMinMaxImdbNote(val);
+			getMinMaxYears(val);
+
+			getCollectionsListByName(val, page, 'input', filters);
 		}
 	}
 
 	componentDidMount() {
-		const { getCollectionsListByName } = this.props;
+		const {
+			getCollectionsListByName,
+			getAllGenresInStore,
+			getAllQualityInStore,
+			getAllSeasonsInStore,
+			getMinMaxImdbNote,
+			getMinMaxYears
+		} = this.props;
+
+		getAllGenresInStore();
+		getAllQualityInStore();
+		getAllSeasonsInStore();
+		getMinMaxImdbNote();
+		getMinMaxYears();
 
 		getCollectionsListByName('', 1);
 		window.addEventListener('scroll', (e) => this.handleScroll(e));
 	}
 
-	componentDidUpdate() {
+	componentDidUpdate(prevProps, prevState) {
 		if (this.state.scrollHeight < document.getElementById('collectionListItems').scrollHeight) {
 			this.setState({ scrollHeight: document.getElementById('collectionListItems').scrollHeight });
+		}
+		if (prevProps.page > 1 && this.props.page === 1) {
+			this.setState({ scrollHeight: 0 });
 		}
 	}
 
@@ -84,21 +119,21 @@ class HomePage extends React.Component {
 		var isChrome = !!window.chrome && !!window.chrome.webstore;
 
 		if (isChrome) {
-			if (event.srcElement.scrollingElement.scrollTop >= this.state.scrollHeight - 1000) {
+			if (event.srcElement.scrollingElement.scrollTop >= this.state.scrollHeight - 1200) {
 				this.getNewPageMovies();
 			}
 		} else {
-			if (event.pageY >= this.state.scrollHeight - 1000) {
+			if (event.pageY >= this.state.scrollHeight - 1200) {
 				this.getNewPageMovies();
 			}
 		}
 	}
 
 	getNewPageMovies() {
-		const { getCollectionsListByName } = this.props;
+		const { getCollectionsListByName, addOnePage, filters } = this.props;
 
-		this.setState({ pageRequestDb: this.state.pageRequestDb + 1 });
-		getCollectionsListByName(this.state.searchRequest, this.state.pageRequestDb, 'scroll');
+		addOnePage();
+		getCollectionsListByName(this.state.searchRequest, this.props.page, 'scroll', filters);
 	}
 
 	openDetailMovie(id) {
@@ -106,8 +141,7 @@ class HomePage extends React.Component {
 	}
 
 	render() {
-		const { collection } = this.props;
-		const { intl } = this.props;
+		const { collection, showModal, intl } = this.props;
 
 		return !this.props.sessionUser ? (
 			<Grid>
@@ -131,9 +165,7 @@ class HomePage extends React.Component {
 									onChange={(e) => this.getMovies(e)}
 								/>
 							</Col>
-							<Button bsStyle="primary">
-								<FormattedMessage id="searching_tools" />
-							</Button>
+							<ModalFilters title={this.state.searchRequest} />
 						</FormGroup>
 						<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
 							{collection ? (
@@ -175,7 +207,7 @@ class HomePage extends React.Component {
 													) : (
 														''
 													)}
-													{movie.rating ? (
+													{movie.rating && movie.rating !== -1 ? (
 														intl.formatMessage({ id: 'rating_home' }) + movie.rating + '/10'
 													) : (
 														''
