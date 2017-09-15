@@ -110,6 +110,9 @@ const videoShema = mongoose.Schema({
 	},
 	subtitleEn: {
 		type: String
+	},
+	views: {
+		type: Array
 	}
 });
 

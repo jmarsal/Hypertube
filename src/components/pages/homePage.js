@@ -177,12 +177,25 @@ class HomePage extends React.Component {
 												onClick={() => this.openDetailMovie(movie._id)}
 											>
 												<Well>
-													{movie.title}
-													{movie.season && movie.season != -1 ? (
-														intl.formatMessage({ id: 'season_home' }) + movie.season
-													) : (
-														''
-													)}
+													<Col sm={11} xs={11}>
+														{movie.title}
+														{movie.season && movie.season != -1 ? (
+															intl.formatMessage({ id: 'season_home' }) + movie.season
+														) : (
+															''
+														)}
+													</Col>
+													<Col sm={1} xs={1}>
+														{movie.views.indexOf(this.props.sessionUser.username) >= 0 ? (
+															<Image
+																key={Math.random()}
+																src="/library/check.png"
+																width="20px"
+																responsive
+															/>
+														) : null}
+													</Col>
+													<br />
 												</Well>
 												{movie.title_episode ? (
 													<Well bsSize="small">{movie.title_episode}</Well>

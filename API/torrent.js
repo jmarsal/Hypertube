@@ -130,6 +130,12 @@ router.get('/:_id', (req, res) => {
 	findMovie(req.params._id)
 		.then((movie) => {
 			movie.lastWatchingDate = Date.now();
+
+			if (movie.views.indexOf(req.user.username) < 0) {
+				console.log(req.user.username);
+				movie.views.push(req.user.username);
+			}
+
 			movie.save();
 
 			if (!movie.filePath) {
