@@ -3,9 +3,10 @@
 	"version": "0.0.0",
 	"private": true,
 	"scripts": {
-		"start": "node ./bin/www & node --inspect apiServer.js",
-		"dev": "NODE_ENV=dev webpack & nodemon ./bin/www & nodemon --inspect apiServer.js",
-		"prod": "webpack & node ./bin/www & nodemon --inspect apiServer.js"
+		"prod": "NODE_ENV=production webpack && yarn run production",
+		"dev": "NODE_ENV=dev webpack && yarn run develop",
+		"production": "NODE_ENV=production node ./bin/www & NODE_ENV=production node apiServer.js",
+		"develop": "nodemon ./bin/www & nodemon --inspect apiServer.js"
 	},
 	"devDependencies": {
 		"autoprefixer": "^7.1.4",

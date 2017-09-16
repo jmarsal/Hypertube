@@ -27,7 +27,7 @@ let config = {
 	resolve: {
 		modules: [ path.resolve(__dirname, 'src'), 'node_modules' ]
 	},
-	watch: dev,
+	watch: false,
 	devtool: dev ? 'cheap-module-eval-source-map' : false,
 	module: {
 		rules: [
@@ -38,10 +38,8 @@ let config = {
 			},
 			{
 				test: /\.css$/,
-				use: ExtractTextPlugin.extract({
-					fallback: 'style-loader',
-					use: cssLoaders
-				})
+				// exclude: /(node_modules|bower_components)/,
+				use: [ 'style-loader', { loader: 'css-loader', options: { importLoaders: 1 } }, 'postcss-loader' ]
 			},
 			{
 				test: /\.scss$/,
