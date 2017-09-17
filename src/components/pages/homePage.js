@@ -14,7 +14,8 @@ import {
 	ListGroupItem,
 	Well,
 	PageHeader,
-	Button
+	Button,
+	Jumbotron
 } from 'react-bootstrap';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
@@ -145,7 +146,12 @@ class HomePage extends React.Component {
 
 		return !this.props.sessionUser ? (
 			<Grid>
-				<Row>Blablabla</Row>
+				<Row>
+					<Jumbotron>
+						<h1>Welcome to Hypertube !</h1>
+						<p>This is a web project from 42. Enjoy ;)</p>
+					</Jumbotron>
+				</Row>
 			</Grid>
 		) : (
 			<Grid>
