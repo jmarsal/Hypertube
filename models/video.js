@@ -85,7 +85,7 @@ const videoShema = mongoose.Schema({
 		}
 	],
 	filePath: {
-		type: String,
+		type: Object,
 		trim: true
 	},
 	downloadDate: {

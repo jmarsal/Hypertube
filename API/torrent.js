@@ -13,7 +13,7 @@ const srt2vtt = require('srt-to-vtt');
 
 const Library = require('../models/video.js');
 
-function findMovie(_id) {
+function findMovie(_id, quality) {
 	return new Promise((resolve, reject) => {
 		Library.findOne({ _id: _id }, function(err, movie) {
 			if (movie) {
@@ -21,16 +21,16 @@ function findMovie(_id) {
 				let magnet = undefined;
 
 				if (!movie.magnet[0]) {
-					if (movie.torrent[0].quality !== '3D') {
-						magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
-					} else {
-						magnet = 'magnet:?xt=urn:btih:' + movie.torrent[1].hash;
+					for (let k in movie.torrent) {
+						if (movie.torrent[k].quality === quality) {
+							magnet = 'magnet:?xt=urn:btih:' + movie.torrent[k].hash;
+						}
 					}
+
+					movie.magnet[0] = magnet;
 				} else {
 					magnet = movie.magnet[0];
 				}
-
-				movie.magnet = magnet;
 
 				resolve(movie);
 			} else {
@@ -125,20 +125,22 @@ router.get('/subtitles/:_id', (req, res) => {
 });
 
 // DOWNLOAD A NEW MOVIE
-router.get('/:_id', (req, res) => {
+router.get('/:_id/:quality', (req, res) => {
 	console.log('Torrent process begins...');
-	findMovie(req.params._id)
+
+	let quality = req.params.quality;
+
+	findMovie(req.params._id, quality)
 		.then((movie) => {
 			movie.lastWatchingDate = Date.now();
 
 			if (movie.views.indexOf(req.user.username) < 0) {
-				console.log(req.user.username);
 				movie.views.push(req.user.username);
 			}
 
 			movie.save();
 
-			if (!movie.filePath) {
+			if (!movie.filePath || (movie.filePath && !movie.filePath[quality])) {
 				console.log('No file path yet, preparing to download...');
 				console.log('Magnet: ' + movie.magnet[0]);
 				const engine = torrentStream(movie.magnet[0], {
@@ -169,6 +171,11 @@ router.get('/:_id', (req, res) => {
 						'http://tracker.electro-torrent.pl:80/announce'
 					]
 				});
+
+				if (movie.provider === 'yts') {
+					movie.magnet = undefined;
+					movie.save();
+				}
 
 				let fileName = undefined;
 				let fileExt = undefined;
@@ -248,18 +255,23 @@ router.get('/:_id', (req, res) => {
 					//
 					.on('idle', () => {
 						console.log('Download is done !');
-						movie.filePath = '/goinfre/' + fileName + fileExt; //'public/movies/' +
-						fileName + fileExt;
+						if (!movie.filePath) movie.filePath = new Object();
+						movie.filePath[quality] = '/goinfre/' + fileName + fileExt;
 						movie.downloadDate = new Date();
 						movie.save();
 					});
 			} else {
 				console.log('This movie is already downloaded');
-				let stats = fs.statSync(movie.filePath);
+				if (movie.provider === 'yts') {
+					movie.magnet = undefined;
+					movie.save();
+				}
+
+				let stats = fs.statSync(movie.filePath[quality]);
 				let total = stats['size'];
 				let start = 0;
 				let end = total - 1;
-				let mimetype = mime.lookup(movie.filePath);
+				let mimetype = mime.lookup(movie.filePath[quality]);
 
 				if (req.headers.range) {
 					let range = req.headers.range;
@@ -281,7 +293,7 @@ router.get('/:_id', (req, res) => {
 						Connection: 'keep-alive'
 					});
 
-					let stream = fs.createReadStream(movie.filePath, {
+					let stream = fs.createReadStream(movie.filePath[quality], {
 						start: start,
 						end: end
 					});
@@ -293,7 +305,7 @@ router.get('/:_id', (req, res) => {
 						'Content-Type': mimetype
 					});
 
-					let stream = fs.createReadStream(movie.filePath, {
+					let stream = fs.createReadStream(movie.filePath[quality], {
 						start: start,
 						end: end
 					});

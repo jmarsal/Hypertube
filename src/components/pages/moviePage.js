@@ -10,6 +10,7 @@ import {
 	FormGroup,
 	FormControl,
 	Button,
+	ButtonGroup,
 	Image,
 	ListGroup,
 	ListGroupItem,
@@ -80,7 +81,8 @@ class MoviePage extends React.Component {
 		this.handlerClose = this.handlerClose.bind(this);
 
 		this.state = {
-			comment: ''
+			comment: '',
+			currentQuality: '720p'
 		};
 	}
 
@@ -97,6 +99,10 @@ class MoviePage extends React.Component {
 		if (inputId === 'comment') {
 			this.setState({ comment: val });
 		}
+	}
+
+	handleQuality(quality) {
+		this.setState({ currentQuality: quality });
 	}
 
 	handleClickOnUser(user) {
@@ -152,6 +158,28 @@ class MoviePage extends React.Component {
 				);
 			} else {
 				return null;
+			}
+		};
+
+		const qualityMenu = () => {
+			console.log('1');
+			if (this.props.movie && this.props.movie.data && this.props.movie.data.torrent.length > 1) {
+				console.log('2');
+				return (
+					<ButtonGroup className="qualitySelection">
+						{this.props.movie.data.torrent.map((torrent) => {
+							return (
+								<Button
+									bsStyle={this.state.currentQuality === torrent.quality ? 'primary' : 'default'}
+									key={torrent.quality}
+									onClick={() => this.handleQuality(torrent.quality)}
+								>
+									{torrent.quality}
+								</Button>
+							);
+						})}
+					</ButtonGroup>
+				);
 			}
 		};
 
@@ -290,7 +318,12 @@ class MoviePage extends React.Component {
 									<div className="video-div">
 										<video
 											className="videoInsert"
-											src={'/api/torrent/' + this.props.location.query.id}
+											src={
+												'/api/torrent/' +
+												this.props.location.query.id +
+												'/' +
+												this.state.currentQuality
+											}
 											preload="none"
 											controls
 											autoPlay
@@ -314,6 +347,7 @@ class MoviePage extends React.Component {
 											Your browser does not support the video tag.
 										</video>
 									</div>
+									{qualityMenu()}
 								</Jumbotron>
 							</Col>
 						</Row>

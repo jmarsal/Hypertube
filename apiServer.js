@@ -70,11 +70,13 @@ schedule.scheduleJob('00 59 23 * * *', () => {
 		(err, movies) => {
 			movies.map((movie) => {
 				if (movie.filePath) {
-					fs.unlink(movie.filePath);
-					movie.filePath = undefined;
+					for (let key in movie.filePath) {
+						fs.unlinkSync(movie.filePath[key]);
+						movie.filePath[key] = undefined;
+						count++;
+					}
 					movie.lastWatchingDate = undefined;
 					movie.save();
-					count++;
 				}
 			});
 
