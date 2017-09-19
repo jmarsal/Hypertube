@@ -134,13 +134,12 @@ h5 {
 
 .img-collection {
 	margin-top: 10px;
-	margin-left: 300px;
+	/* margin-left: 300px; */
 	margin-bottom: 40px;
 }
-.year-collection {
-	margin-top: 10px;
-	margin-left: 400px;
-	margin-bottom: 0px;
+
+.thumbnail_normalization {
+	height: 500px;
 }
 
 .qualitySelection {
@@ -148,4 +147,15 @@ h5 {
 	align-items: center;
 	justify-content: center;
 	top: 20px;
+}
+
+.h5_normalized {
+	/* white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis; */
+	height: 44px;
+}
+
+.inline {
+	display: inline;
 }

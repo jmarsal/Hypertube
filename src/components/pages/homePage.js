@@ -15,7 +15,8 @@ import {
 	Well,
 	PageHeader,
 	Button,
-	Jumbotron
+	Jumbotron,
+	Thumbnail
 } from 'react-bootstrap';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
@@ -177,45 +178,39 @@ class HomePage extends React.Component {
 							{collection ? (
 								collection.map((movie, index) => {
 									return (
-										<ListGroup key={index}>
-											<ListGroupItem
+										<Col xs={12} md={4} sm={6}>
+											<Thumbnail
+												className={'thumbnail_normalization'}
+												key={index}
+												src={movie.cover}
 												id={movie._id}
 												onClick={() => this.openDetailMovie(movie._id)}
 											>
-												<Well>
-													<Col sm={11} xs={11}>
-														{movie.title}
-														{movie.season && movie.season != -1 ? (
-															intl.formatMessage({ id: 'season_home' }) + movie.season
-														) : (
-															''
-														)}
-													</Col>
-													<Col sm={1} xs={1}>
-														{movie.views.indexOf(this.props.sessionUser.username) >= 0 ? (
-															<Image
-																key={Math.random()}
-																src="/library/check.png"
-																width="20px"
-																responsive
-															/>
-														) : null}
-													</Col>
-													<br />
-												</Well>
-												{movie.title_episode ? (
-													<Well bsSize="small">{movie.title_episode}</Well>
-												) : (
-													''
-												)}
-												<div className="year-collection">
-													<span>{movie.year}</span>
-												</div>
-												<div className="img-collection">
-													<Image key={movie.cover} src={movie.cover} responsive />
-												</div>
-
-												<Well>
+												<h5 className={'h5_normalized'}>
+													{movie.title + ' '}
+													{movie.season && movie.season != -1 ? (
+														intl.formatMessage({ id: 'season_home' }) + movie.season
+													) : (
+														''
+													)}
+													{movie.title_episode ? (
+														<Well bsSize="small">{movie.title_episode}</Well>
+													) : (
+														''
+													)}
+													{movie.views.indexOf(this.props.sessionUser.username) >= 0 ? (
+														<Image
+															key={Math.random()}
+															src="/library/check.png"
+															width="15px"
+															className={'inline'}
+															responsive
+														/>
+													) : null}
+												</h5>
+												<br />
+												<p>
+													<span>{movie.year} - </span>
 													{movie.episode ? (
 														intl.formatMessage({ id: 'episode_home' }) + movie.episode
 													) : (
@@ -231,9 +226,9 @@ class HomePage extends React.Component {
 													) : (
 														''
 													)}
-												</Well>
-											</ListGroupItem>
-										</ListGroup>
+												</p>
+											</Thumbnail>
+										</Col>
 									);
 								})
 							) : (
