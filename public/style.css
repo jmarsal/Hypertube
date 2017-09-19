@@ -138,8 +138,14 @@ h5 {
 	margin-bottom: 40px;
 }
 
-.thumbnail_normalization {
+.thumbnail_class {
 	height: 500px;
+}
+
+.thumbnail_class:hover {
+	background-color: rgba(113, 113, 113, 0.68);
+	border: 1px solid white;
+	cursor: pointer;
 }
 
 .qualitySelection {

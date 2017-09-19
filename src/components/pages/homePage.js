@@ -180,7 +180,7 @@ class HomePage extends React.Component {
 									return (
 										<Col xs={12} md={4} sm={6}>
 											<Thumbnail
-												className={'thumbnail_normalization'}
+												className={'thumbnail_class'}
 												key={index}
 												src={movie.cover}
 												id={movie._id}
