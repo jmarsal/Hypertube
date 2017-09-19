@@ -142,3 +142,10 @@ h5 {
 	margin-left: 400px;
 	margin-bottom: 0px;
 }
+
+.qualitySelection {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	top: 20px;
+}
