@@ -40,7 +40,7 @@ function findMovie(_id, quality) {
 	});
 }
 
-function streamFile(res, file, start, end, mimetype) {
+function streamFile(res, file, start, end, mimetype, fileName) {
 	if (mimetype === 'video/ogg' || mimetype === 'video/mp4') {
 		let stream = file.createReadStream({
 			start: start,
@@ -48,6 +48,8 @@ function streamFile(res, file, start, end, mimetype) {
 		});
 		pump(stream, res);
 	} else {
+		console.log('Conversion starting...');
+
 		let torrent = file.createReadStream({
 			start: start,
 			end: end
@@ -56,19 +58,22 @@ function streamFile(res, file, start, end, mimetype) {
 		let stream = ffmpeg(torrent)
 			.videoCodec('libvpx')
 			.audioCodec('libvorbis')
-			.format('webm')
+			.format('mp4')
 			.audioBitrate(128)
 			.videoBitrate(1024)
-			.outputOptions([ '-deadline realtime', '-error-resilient 1' ])
+			.outputOptions([ '-deadline realtime', '-cpu-used -5' ])
 			.on('progress', (progress) => {
 				//console.log('Converting ' + progress.percent + '% done');
 			})
 			.on('error', (err, stdout, stderr) => {
 				console.log('Cannot process video: ' + err.message);
+				console.log('ffmpeg stdout: ' + stdout);
+				console.log('ffmpeg stderr: ' + stderr);
 			})
 			.on('end', () => {
 				console.log('Converting is done !');
-			});
+			})
+			.save('/goinfre/' + fileName + '.mp4');
 
 		pump(stream, res);
 	}
@@ -219,6 +224,11 @@ router.get('/:_id/:quality', (req, res) => {
 							fileName = file.path.replace(path.extname(file.name), '');
 							fileExt = path.extname(file.name);
 
+							if (mimetype !== 'video/ogg' && mimetype !== 'video/mp4') {
+								console.log('Changing mimetype ' + mimetype + ' to video/mp4...');
+								mimetype = 'video/mp4';
+							}
+
 							if (req.headers.range) {
 								let range = req.headers.range;
 								let parts = range.replace(/bytes=/, '').split('-');
@@ -237,14 +247,14 @@ router.get('/:_id/:quality', (req, res) => {
 									Connection: 'keep-alive'
 								});
 
-								streamFile(res, file, start, end, mimetype);
+								streamFile(res, file, start, end, mimetype, fileName);
 							} else {
 								res.writeHead(200, {
 									'Content-Length': total,
 									'Content-Type': mimetype
 								});
 
-								streamFile(res, file, start, end, mimetype);
+								streamFile(res, file, start, end, mimetype, fileName);
 							}
 						});
 					})
