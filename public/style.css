@@ -165,3 +165,38 @@ h5 {
 .inline {
 	display: inline;
 }
+.center_it {
+	text-align: center;
+}
+
+@media screen and (max-width: 1199px) {
+	h1 {
+		font-size: 30px;
+	}
+	.smaller {
+		width: 50%;
+	}
+}
+
+@media screen and (max-width: 991) {
+	.smaller {
+		width: 50%;
+	}
+}
+
+@media screen and (max-width: 727px) {
+	h1 {
+		font-size: 40px;
+	}
+}
+@media screen and (max-width: 767px) {
+	.smaller {
+		width: 50%;
+	}
+}
+
+@media screen and (max-width: 528px) {
+	h1 {
+		font-size: 30px;
+	}
+}

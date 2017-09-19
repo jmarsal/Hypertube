@@ -157,12 +157,12 @@ class HomePage extends React.Component {
 		) : (
 			<Grid>
 				<Row>
-					<PageHeader>
+					<PageHeader className={'center_it'}>
 						<FormattedMessage id="title_home" />
 					</PageHeader>
 					<Form horizontal>
 						<FormGroup>
-							<Col smOffset={2} xs={8} md={8} lg={8}>
+							<Col smOffset={2} xs={8} md={8} lg={6} className={'smaller'}>
 								<FormControl
 									id="formControlsText"
 									type="text"
@@ -174,11 +174,11 @@ class HomePage extends React.Component {
 							</Col>
 							<ModalFilters title={this.state.searchRequest} />
 						</FormGroup>
-						<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
+						<Col id="collectionListItems">
 							{collection ? (
 								collection.map((movie, index) => {
 									return (
-										<Col xs={12} md={4} sm={6}>
+										<Col key={movie._id} xs={12} md={4} sm={6}>
 											<Thumbnail
 												className={'thumbnail_class'}
 												key={index}
@@ -187,7 +187,16 @@ class HomePage extends React.Component {
 												onClick={() => this.openDetailMovie(movie._id)}
 											>
 												<h5 className={'h5_normalized'}>
-													{movie.title + ' '}
+													{movie.views.indexOf(this.props.sessionUser.username) >= 0 ? (
+														<Image
+															key={Math.random()}
+															src="/library/check.png"
+															width="15px"
+															className={'inline'}
+															responsive
+														/>
+													) : null}
+													{' ' + movie.title}
 													{movie.season && movie.season != -1 ? (
 														intl.formatMessage({ id: 'season_home' }) + movie.season
 													) : (
@@ -198,19 +207,13 @@ class HomePage extends React.Component {
 													) : (
 														''
 													)}
-													{movie.views.indexOf(this.props.sessionUser.username) >= 0 ? (
-														<Image
-															key={Math.random()}
-															src="/library/check.png"
-															width="15px"
-															className={'inline'}
-															responsive
-														/>
-													) : null}
 												</h5>
 												<br />
 												<p>
-													<span>{movie.year} - </span>
+													<span>
+														<b>{intl.formatMessage({ id: 'year_player' })} </b>
+														{movie.year}
+													</span>
 													{movie.episode ? (
 														intl.formatMessage({ id: 'episode_home' }) + movie.episode
 													) : (
