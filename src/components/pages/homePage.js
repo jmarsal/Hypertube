@@ -19,6 +19,7 @@ import {
 	Thumbnail
 } from 'react-bootstrap';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import Waypoint from 'react-waypoint';
 
 import { getUserFromSession, disconnectUser } from '../../actions/usersActions';
 import * as Collections from '../../actions/collectionsActions';
@@ -98,7 +99,6 @@ class HomePage extends React.Component {
 		getMinMaxYears();
 
 		getCollectionsListByName('', 1);
-		window.addEventListener('scroll', (e) => this.handleScroll(e));
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -110,28 +110,6 @@ class HomePage extends React.Component {
 		}
 		if (prevProps.page > 1 && this.props.page === 1) {
 			this.setState({ scrollHeight: 0 });
-		}
-	}
-
-	componentWillUnmount() {
-		window.removeEventListener('scroll', (e) => this.handleScroll(e));
-	}
-
-	handleScroll(event) {
-		// Firefox 1.0+
-		var isFirefox = typeof InstallTrigger !== 'undefined';
-
-		// Chrome 1+
-		var isChrome = !!window.chrome && !!window.chrome.webstore;
-
-		if (isChrome) {
-			if (event.srcElement.scrollingElement.scrollTop >= this.state.scrollHeight - 1200) {
-				this.getNewPageMovies();
-			}
-		} else {
-			if (event.pageY >= this.state.scrollHeight - 1200) {
-				this.getNewPageMovies();
-			}
 		}
 	}
 
@@ -183,7 +161,7 @@ class HomePage extends React.Component {
 							{collection ? (
 								collection.map((movie, index) => {
 									return (
-										<Col key={movie._id} xs={12} md={4} sm={6}>
+										<Col key={Math.random()} xs={12} md={4} sm={6}>
 											<Thumbnail
 												className={'thumbnail_class'}
 												key={index}
@@ -252,6 +230,7 @@ class HomePage extends React.Component {
 						</Col>
 					</Form>
 				</Row>
+				<Waypoint onEnter={() => this.getNewPageMovies()} />
 			</Grid>
 		);
 	}
