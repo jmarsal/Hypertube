@@ -217,7 +217,7 @@ class HomePage extends React.Component {
 												<p>
 													<span>
 														{intl.formatMessage({ id: 'year_player' })}
-														{movie.year}
+														{' ' + movie.year}
 													</span>
 													{movie.episode ? (
 														' | ' +
