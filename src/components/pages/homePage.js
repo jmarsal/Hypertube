@@ -211,21 +211,28 @@ class HomePage extends React.Component {
 												<br />
 												<p>
 													<span>
-														<b>{intl.formatMessage({ id: 'year_player' })} </b>
+														{intl.formatMessage({ id: 'year_player' })}
 														{movie.year}
 													</span>
 													{movie.episode ? (
-														intl.formatMessage({ id: 'episode_home' }) + movie.episode
+														' | ' +
+														intl.formatMessage({ id: 'episode_home' }) +
+														movie.episode
 													) : (
 														''
 													)}
 													{movie.quality ? (
-														intl.formatMessage({ id: 'quality_home' }) + movie.quality
+														' | ' +
+														intl.formatMessage({ id: 'quality_home' }) +
+														movie.quality
 													) : (
 														''
 													)}
 													{movie.rating && movie.rating !== -1 ? (
-														intl.formatMessage({ id: 'rating_home' }) + movie.rating + '/10'
+														' | ' +
+														intl.formatMessage({ id: 'rating_home' }) +
+														movie.rating +
+														'/10'
 													) : (
 														''
 													)}
