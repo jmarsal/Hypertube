@@ -189,7 +189,7 @@ export function addOnePage() {
 }
 
 export function getCollectionsListByName(requestTitle, page, requestAction, filters) {
-	const request = { title: requestTitle, page: page, limit: 10, filters: filters };
+	const request = { title: requestTitle, page: page, limit: 12, filters: filters };
 	return (dispatch) => {
 		axios
 			.post('/api/collection/getCollectionByTitleForClient', request)
