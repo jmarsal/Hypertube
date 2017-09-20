@@ -103,7 +103,7 @@ router.post('/getCollectionByTitleForClient', (req, res) => {
 								: getSort(req.body.title, '');
 					Videos.paginate(query, {
 						page: req.body.page ? req.body.page : 1,
-						limit: req.body.limit ? req.body.limit : 10,
+						limit: req.body.limit ? req.body.limit : 12,
 						sort: sort
 					})
 						.then((json) => {
