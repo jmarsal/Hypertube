@@ -146,149 +146,145 @@ class FormLogin extends Component {
 	render() {
 		const { showModal, errorsLogin, style, validEmailForget, messForget } = this.props;
 
-		return this.state.forget == false
-			? <Form horizontal>
-					<FormGroup>
-						<Col smOffset={2} sm={10}>
-							<h5>Login from 42, facebook, google, twitter, github</h5>
-							<Col xs={2}>
-								<a href="/api/auth/42">
-									<div className="logoOauth school42" />
-								</a>
-							</Col>
-							<Col xs={2}>
-								<a href="/api/auth/facebook">
-									<div className="logoOauth facebook" />
-								</a>
-							</Col>
-							<Col xs={2}>
-								<a href="/api/auth/google">
-									<div className="logoOauth google" />
-								</a>
-							</Col>
-							<Col xs={2}>
-								<a href="/api/auth/twitter">
-									<div className="logoOauth twitter" />
-								</a>
-							</Col>
-							<Col xs={2}>
-								<a href="/api/auth/github">
-									<div className="logoOauth github" />
-								</a>
-							</Col>
+		return this.state.forget == false ? (
+			<Form horizontal>
+				<FormGroup>
+					<Col smOffset={2} sm={10}>
+						<h5>Login from 42, Facebook, Google, Twitter, Github</h5>
+						<Col xs={2}>
+							<a href="/api/auth/42">
+								<div className="logoOauth school42" />
+							</a>
 						</Col>
-						<Col smOffset={5} sm={10}>
-							<h5>Or manuely</h5>
+						<Col xs={2}>
+							<a href="/api/auth/facebook">
+								<div className="logoOauth facebook" />
+							</a>
 						</Col>
-					</FormGroup>
-					<FormGroup controlId="formHorizontalLogin" validationState={this.state.loginCheck}>
-						<Col sm={12}>
-							{errorsLogin
-								? <Alert bsStyle={style}>
-										{errorsLogin}
-									</Alert>
-								: ''}
+						<Col xs={2}>
+							<a href="/api/auth/google">
+								<div className="logoOauth google" />
+							</a>
 						</Col>
-						<Col componentClass={ControlLabel} sm={2}>
-							Login
+						<Col xs={2}>
+							<a href="/api/auth/twitter">
+								<div className="logoOauth twitter" />
+							</a>
 						</Col>
-						<Col sm={10}>
-							<FormControl
-								type="text"
-								placeholder="Login"
-								ref="login"
-								value={this.state.login}
-								onChange={(e) => this.handleChange(e)}
-								autoFocus="true"
-							/>
+						<Col xs={2}>
+							<a href="/api/auth/github">
+								<div className="logoOauth github" />
+							</a>
 						</Col>
-					</FormGroup>
+					</Col>
+					<Col smOffset={5} sm={10}>
+						<h5>Or manually</h5>
+					</Col>
+				</FormGroup>
+				<FormGroup controlId="formHorizontalLogin" validationState={this.state.loginCheck}>
+					<Col sm={12}>{errorsLogin ? <Alert bsStyle={style}>{errorsLogin}</Alert> : ''}</Col>
+					<Col componentClass={ControlLabel} sm={2}>
+						Login
+					</Col>
+					<Col sm={10}>
+						<FormControl
+							type="text"
+							placeholder="Login"
+							ref="login"
+							value={this.state.login}
+							onChange={(e) => this.handleChange(e)}
+							autoFocus="true"
+						/>
+					</Col>
+				</FormGroup>
 
-					<FormGroup controlId="formHorizontalPassword" validationState={this.state.passwordCheck}>
-						<Col componentClass={ControlLabel} sm={2}>
-							Password
-						</Col>
-						<Col sm={10}>
-							<FormControl
-								type="password"
-								placeholder="Password"
-								ref="passwd"
-								value={this.state.passwd}
-								onChange={(e) => this.handleChange(e)}
-							/>
-						</Col>
-					</FormGroup>
+				<FormGroup controlId="formHorizontalPassword" validationState={this.state.passwordCheck}>
+					<Col componentClass={ControlLabel} sm={2}>
+						Password
+					</Col>
+					<Col sm={10}>
+						<FormControl
+							type="password"
+							placeholder="Password"
+							ref="passwd"
+							value={this.state.passwd}
+							onChange={(e) => this.handleChange(e)}
+						/>
+					</Col>
+				</FormGroup>
 
-					<FormGroup>
-						<Col smOffset={2} sm={10}>
-							<Checkbox>Remember me</Checkbox>
-						</Col>
-					</FormGroup>
+				<FormGroup>
+					<Col smOffset={2} sm={10}>
+						<Checkbox>Remember me</Checkbox>
+					</Col>
+				</FormGroup>
 
-					<FormGroup>
-						<Col smOffset={2} sm={10}>
-							<ButtonToolbar>
-								<Button type="button" onClick={() => showModal(false)}>
-									Close
-								</Button>
-								<Button
-									bsStyle="primary"
-									type="button"
-									onClick={() => this.submitValuesOfInputs()}
-									disabled={!this.state.sendOn}
-								>
-									Sign in
-								</Button>
-							</ButtonToolbar>
-						</Col>
-						<hr />
-						<Col smOffset={7} sm={12}>
-							<Button bsStyle="default" type="button" onClick={() => this.forgetPasswd()}>
-								Forget Login Or Password ?
+				<FormGroup>
+					<Col smOffset={2} sm={10}>
+						<ButtonToolbar>
+							<Button type="button" onClick={() => showModal(false)}>
+								Close
 							</Button>
-						</Col>
-					</FormGroup>
-				</Form>
-			: <Form horizontal>
-					<FormGroup controlId="formEmail" validationState={this.state.emailCheck}>
-						<Col sm={12}>
-							{messForget
-								? <Alert bsStyle={validEmailForget ? 'success' : 'danger'}>
-										{messForget}
-									</Alert>
-								: ''}
-						</Col>
-						<Col smOffset={2} sm={10}>
-							<h5>Enter your email and you will recept a mail for reinitialisation</h5>
-							<ControlLabel>Email</ControlLabel>
-							<FormControl
-								type="email"
-								placeholder="Enter your email"
-								ref="email"
-								onChange={(e) => this.handleChange(e)}
-								autoFocus="true"
-							/>
-							<FormControl.Feedback />
-						</Col>
-					</FormGroup>
-					<FormGroup>
-						<Col smOffset={2} sm={10}>
-							<ButtonToolbar>
-								<Button type="button" onClick={() => showModal(false)}>
-									Close
-								</Button>
-								<Button
-									bsStyle="primary"
-									type="button"
-									onClick={() => this.submitEmailForReinit()}
-									disabled={this.state.emailCheck === 'success' ? false : true}
-								>
-									Reinitialisation
-								</Button>
-							</ButtonToolbar>
-						</Col>
-					</FormGroup>
-				</Form>;
+							<Button
+								bsStyle="primary"
+								type="button"
+								onClick={() => this.submitValuesOfInputs()}
+								disabled={!this.state.sendOn}
+							>
+								Log in
+							</Button>
+						</ButtonToolbar>
+					</Col>
+					<hr />
+					<Col smOffset={7} sm={12}>
+						<Button bsStyle="default" type="button" onClick={() => this.forgetPasswd()}>
+							Forgot Login Or Password ?
+						</Button>
+					</Col>
+				</FormGroup>
+			</Form>
+		) : (
+			<Form horizontal>
+				<FormGroup controlId="formEmail" validationState={this.state.emailCheck}>
+					<Col sm={12}>
+						{messForget ? (
+							<Alert bsStyle={validEmailForget ? 'success' : 'danger'}>{messForget}</Alert>
+						) : (
+							''
+						)}
+					</Col>
+					<Col smOffset={2} sm={10}>
+						<h5>Enter your email and you will recept a mail for reinitialisation</h5>
+						<ControlLabel>Email</ControlLabel>
+						<FormControl
+							type="email"
+							placeholder="Enter your email"
+							ref="email"
+							onChange={(e) => this.handleChange(e)}
+							autoFocus="true"
+						/>
+						<FormControl.Feedback />
+					</Col>
+				</FormGroup>
+				<FormGroup>
+					<Col smOffset={2} sm={10}>
+						<ButtonToolbar>
+							<Button type="button" onClick={() => showModal(false)}>
+								Close
+							</Button>
+							<Button
+								bsStyle="primary"
+								type="button"
+								onClick={() => this.submitEmailForReinit()}
+								disabled={this.state.emailCheck === 'success' ? false : true}
+							>
+								Reinitialisation
+							</Button>
+						</ButtonToolbar>
+					</Col>
+				</FormGroup>
+			</Form>
+		);
 	}
 }
 export default FormLogin;

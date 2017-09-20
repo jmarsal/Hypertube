@@ -5,7 +5,7 @@ import FormLogin from 'components/forms/FormLogin';
 import withModal from 'components/modals/withModal';
 
 // Inject showModal et getModal qui permette d'afficher une Modal
-@withModal(FormLogin, 'Connection')
+@withModal(FormLogin, 'Login')
 class ModalLogin extends React.Component {
 	render() {
 		const { showModal, getModal, showModalForget } = this.props;

@@ -14,7 +14,9 @@ import {
 	ListGroupItem,
 	Well,
 	PageHeader,
-	Button
+	Button,
+	Jumbotron,
+	Thumbnail
 } from 'react-bootstrap';
 import { FormattedMessage, injectIntl } from 'react-intl';
 
@@ -145,17 +147,22 @@ class HomePage extends React.Component {
 
 		return !this.props.sessionUser ? (
 			<Grid>
-				<Row>Blablabla</Row>
+				<Row>
+					<Jumbotron>
+						<h1>Welcome to Hypertube !</h1>
+						<p>This is a web project from 42. Enjoy ;)</p>
+					</Jumbotron>
+				</Row>
 			</Grid>
 		) : (
 			<Grid>
 				<Row>
-					<PageHeader>
+					<PageHeader className={'center_it'}>
 						<FormattedMessage id="title_home" />
 					</PageHeader>
 					<Form horizontal>
 						<FormGroup>
-							<Col smOffset={2} xs={8} md={8} lg={8}>
+							<Col smOffset={2} xs={8} md={8} lg={6} className={'smaller'}>
 								<FormControl
 									id="formControlsText"
 									type="text"
@@ -167,67 +174,71 @@ class HomePage extends React.Component {
 							</Col>
 							<ModalFilters title={this.state.searchRequest} />
 						</FormGroup>
-						<Col smOffset={0} xs={12} md={12} lg={12} id="collectionListItems">
+						<Col id="collectionListItems">
 							{collection ? (
 								collection.map((movie, index) => {
 									return (
-										<ListGroup key={index}>
-											<ListGroupItem
+										<Col key={movie._id} xs={12} md={4} sm={6}>
+											<Thumbnail
+												className={'thumbnail_class'}
+												key={index}
+												src={movie.cover}
 												id={movie._id}
 												onClick={() => this.openDetailMovie(movie._id)}
 											>
-												<Well>
-													<Col sm={11} xs={11}>
-														{movie.title}
-														{movie.season && movie.season != -1 ? (
-															intl.formatMessage({ id: 'season_home' }) + movie.season
-														) : (
-															''
-														)}
-													</Col>
-													<Col sm={1} xs={1}>
-														{movie.views.indexOf(this.props.sessionUser.username) >= 0 ? (
-															<Image
-																key={Math.random()}
-																src="/library/check.png"
-																width="20px"
-																responsive
-															/>
-														) : null}
-													</Col>
-													<br />
-												</Well>
-												{movie.title_episode ? (
-													<Well bsSize="small">{movie.title_episode}</Well>
-												) : (
-													''
-												)}
-												<div className="year-collection">
-													<span>{movie.year}</span>
-												</div>
-												<div className="img-collection">
-													<Image key={movie.cover} src={movie.cover} responsive />
-												</div>
-
-												<Well>
+												<h5 className={'h5_normalized'}>
+													{movie.views.indexOf(this.props.sessionUser.username) >= 0 ? (
+														<Image
+															key={Math.random()}
+															src="/library/check.png"
+															width="15px"
+															className={'inline'}
+															responsive
+														/>
+													) : null}
+													{' ' + movie.title}
+													{movie.season && movie.season != -1 ? (
+														intl.formatMessage({ id: 'season_home' }) + movie.season
+													) : (
+														''
+													)}
+													{movie.title_episode ? (
+														<Well bsSize="small">{movie.title_episode}</Well>
+													) : (
+														''
+													)}
+												</h5>
+												<br />
+												<p>
+													<span>
+														{intl.formatMessage({ id: 'year_player' })}
+														{movie.year}
+													</span>
 													{movie.episode ? (
-														intl.formatMessage({ id: 'episode_home' }) + movie.episode
+														' | ' +
+														intl.formatMessage({ id: 'episode_home' }) +
+														movie.episode
 													) : (
 														''
 													)}
 													{movie.quality ? (
-														intl.formatMessage({ id: 'quality_home' }) + movie.quality
+														' | ' +
+														intl.formatMessage({ id: 'quality_home' }) +
+														movie.quality
 													) : (
 														''
 													)}
 													{movie.rating && movie.rating !== -1 ? (
-														intl.formatMessage({ id: 'rating_home' }) + movie.rating + '/10'
+														' | ' +
+														intl.formatMessage({ id: 'rating_home' }) +
+														movie.rating +
+														'/10'
 													) : (
 														''
 													)}
-												</Well>
-											</ListGroupItem>
-										</ListGroup>
+												</p>
+											</Thumbnail>
+										</Col>
 									);
 								})
 							) : (
