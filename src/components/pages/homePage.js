@@ -49,7 +49,8 @@ class HomePage extends React.Component {
 		this.state = {
 			searchRequest: '',
 			scrollHeight: 0,
-			titleVideo: this.props.title
+			titleVideo: this.props.title,
+			isCollection: false
 		};
 	}
 
@@ -80,7 +81,7 @@ class HomePage extends React.Component {
 		}
 	}
 
-	componentDidMount() {
+	getCollectionFirstTime() {
 		const {
 			getCollectionsListByName,
 			getAllGenresInStore,
@@ -101,7 +102,10 @@ class HomePage extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		if (this.state.scrollHeight < document.getElementById('collectionListItems').scrollHeight) {
+		if (
+			document.getElementById('collectionListItems') &&
+			this.state.scrollHeight < document.getElementById('collectionListItems').scrollHeight
+		) {
 			this.setState({ scrollHeight: document.getElementById('collectionListItems').scrollHeight });
 		}
 		if (prevProps.page > 1 && this.props.page === 1) {
@@ -156,6 +160,7 @@ class HomePage extends React.Component {
 			</Grid>
 		) : (
 			<Grid>
+				{this.props.collection[0] ? null : this.getCollectionFirstTime()}
 				<Row>
 					<PageHeader className={'center_it'}>
 						<FormattedMessage id="title_home" />

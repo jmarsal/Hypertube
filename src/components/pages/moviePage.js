@@ -107,7 +107,6 @@ class MoviePage extends React.Component {
 
 	handleClickOnUser(user) {
 		this.setState({ currentProfilUser: user });
-		console.log(user);
 		this.props.getOneUserByLogin(user);
 	}
 
@@ -116,14 +115,17 @@ class MoviePage extends React.Component {
 	}
 
 	submitForm() {
-		let commentData = new Object();
+		if (this.state.comment !== '') {
+			let commentData = new Object();
 
-		commentData.movieId = this.props.location.query.id;
-		commentData.comment = validator.escape(this.state.comment).trim();
-		commentData.username = this.props.user.username;
+			commentData.movieId = this.props.location.query.id;
+			commentData.comment = validator.escape(this.state.comment).trim();
+			commentData.username = this.props.user.username;
 
-		this.props.addComment(commentData);
-		document.getElementById('commentForm').reset();
+			this.props.addComment(commentData);
+			document.getElementById('commentForm').reset();
+			this.setState({ comment: '' });
+		}
 	}
 
 	render() {
@@ -162,9 +164,7 @@ class MoviePage extends React.Component {
 		};
 
 		const qualityMenu = () => {
-			console.log('1');
 			if (this.props.movie && this.props.movie.data && this.props.movie.data.torrent.length > 1) {
-				console.log('2');
 				return (
 					<ButtonGroup className="qualitySelection">
 						{this.props.movie.data.torrent.map((torrent) => {

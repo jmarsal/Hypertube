@@ -85,26 +85,21 @@ router.post('/login', (req, res, next) => {
 				return res.json({ status: 'error', msg: 'Error while logging in.' });
 			}
 
-			Check.isActive(user.username)
-				.then((response) => {
-					if (response.status === 'success') {
-						const payload = {
-							_id: user._id,
-							username: user.username
-						};
-						req.session.user = payload;
+			if (user.active === true) {
+				const payload = {
+					_id: user._id,
+					username: user.username,
+					language: user.language
+				};
+				req.session.user = payload;
 
-						req.session.save((err) => {
-							if (err) throw err;
-							return res.json({ status: 'success', user: payload });
-						});
-					} else {
-						return res.json({ status: 'error', msg: 'This account is not activated.' });
-					}
-				})
-				.catch((err) => {
-					console.error(err);
+				req.session.save((err) => {
+					if (err) throw err;
+					return res.json({ status: 'success', user: payload });
 				});
+			} else {
+				return res.json({ status: 'error', msg: 'This account is not activated.' });
+			}
 		});
 	})(req, res, next);
 });

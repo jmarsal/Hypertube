@@ -51,8 +51,10 @@ class Menu extends React.Component {
 								title={
 									this.props.language ? (
 										this.props.language.toUpperCase()
-									) : (
+									) : this.props.sessionUser.language ? (
 										this.props.sessionUser.language.toUpperCase()
+									) : (
+										'EN'
 									)
 								}
 								id="choose-language"

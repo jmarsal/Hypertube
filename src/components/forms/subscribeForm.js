@@ -157,40 +157,41 @@ class SubscribeForm extends React.Component {
 
 	render() {
 		const { showModal, messSuccess } = this.props;
-		console.log(this.props);
 
 		return (
 			<Form horizontal>
 				<FormGroup>
 					<Col sm={10}>
-						{this.props.errorsUsers
-							? this.props.errorsUsers.map((errorsArr, i) => {
-									return (
-										<Alert key={i} bsStyle="warning">
-											{errorsArr.msg}
-										</Alert>
-									);
-								})
-							: ''}
-						{this.props.errorsUpload
-							? this.props.errorsUpload.map((errorsArr, i) => {
-									return (
-										<Alert key={i} bsStyle="warning">
-											{errorsArr.msg}
-										</Alert>
-									);
-								})
-							: ''}
-						{this.state.sizeError
-							? <Alert key="sizeError" bsStyle="warning">
-									{this.state.sizeError}
-								</Alert>
-							: ''}
-						{messSuccess
-							? <Alert bsStyle="success">
-									{messSuccess + this.state.username + '!'}
-								</Alert>
-							: ''}
+						{this.props.errorsUsers ? (
+							this.props.errorsUsers.map((errorsArr, i) => {
+								return (
+									<Alert key={i} bsStyle="warning">
+										{errorsArr.msg}
+									</Alert>
+								);
+							})
+						) : (
+							''
+						)}
+						{this.props.errorsUpload ? (
+							this.props.errorsUpload.map((errorsArr, i) => {
+								return (
+									<Alert key={i} bsStyle="warning">
+										{errorsArr.msg}
+									</Alert>
+								);
+							})
+						) : (
+							''
+						)}
+						{this.state.sizeError ? (
+							<Alert key="sizeError" bsStyle="warning">
+								{this.state.sizeError}
+							</Alert>
+						) : (
+							''
+						)}
+						{messSuccess ? <Alert bsStyle="success">{messSuccess + this.state.username + '!'}</Alert> : ''}
 					</Col>
 				</FormGroup>
 				<FormGroup controlId="username" validationState={this.state.usernameCheck}>
@@ -283,9 +284,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'croupier'
-											? 'logoOauth croupier active'
-											: 'logoOauth croupier'
+										this.props.classActive && this.props.classActive === 'croupier' ? (
+											'logoOauth croupier active'
+										) : (
+											'logoOauth croupier'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/croupier.png')}
 								/>
@@ -293,9 +296,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'diver'
-											? 'logoOauth diver active'
-											: 'logoOauth diver'
+										this.props.classActive && this.props.classActive === 'diver' ? (
+											'logoOauth diver active'
+										) : (
+											'logoOauth diver'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/diver.png')}
 								/>
@@ -303,9 +308,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'doctor'
-											? 'logoOauth doctor active'
-											: 'logoOauth doctor'
+										this.props.classActive && this.props.classActive === 'doctor' ? (
+											'logoOauth doctor active'
+										) : (
+											'logoOauth doctor'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/doctor.png')}
 								/>
@@ -313,9 +320,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'doctor2'
-											? 'logoOauth doctor2 active'
-											: 'logoOauth doctor2'
+										this.props.classActive && this.props.classActive === 'doctor2' ? (
+											'logoOauth doctor2 active'
+										) : (
+											'logoOauth doctor2'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/doctor2.png')}
 								/>
@@ -323,9 +332,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'farmer'
-											? 'logoOauth farmer active'
-											: 'logoOauth farmer'
+										this.props.classActive && this.props.classActive === 'farmer' ? (
+											'logoOauth farmer active'
+										) : (
+											'logoOauth farmer'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/farmer.png')}
 								/>
@@ -333,9 +344,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'firefighter'
-											? 'logoOauth firefighter active'
-											: 'logoOauth firefighter'
+										this.props.classActive && this.props.classActive === 'firefighter' ? (
+											'logoOauth firefighter active'
+										) : (
+											'logoOauth firefighter'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/firefighter.png')}
 								/>
@@ -343,9 +356,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'man'
-											? 'logoOauth man active'
-											: 'logoOauth man'
+										this.props.classActive && this.props.classActive === 'man' ? (
+											'logoOauth man active'
+										) : (
+											'logoOauth man'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/man.png')}
 								/>
@@ -353,9 +368,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'nun'
-											? 'logoOauth nun active'
-											: 'logoOauth nun'
+										this.props.classActive && this.props.classActive === 'nun' ? (
+											'logoOauth nun active'
+										) : (
+											'logoOauth nun'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/nun.png')}
 								/>
@@ -363,9 +380,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'showman'
-											? 'logoOauth showman active'
-											: 'logoOauth showman'
+										this.props.classActive && this.props.classActive === 'showman' ? (
+											'logoOauth showman active'
+										) : (
+											'logoOauth showman'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/showman.png')}
 								/>
@@ -373,9 +392,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'stewardess'
-											? 'logoOauth stewardess active'
-											: 'logoOauth stewardess'
+										this.props.classActive && this.props.classActive === 'stewardess' ? (
+											'logoOauth stewardess active'
+										) : (
+											'logoOauth stewardess'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/stewardess.png')}
 								/>
@@ -383,9 +404,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'welder'
-											? 'logoOauth welder active'
-											: 'logoOauth welder'
+										this.props.classActive && this.props.classActive === 'welder' ? (
+											'logoOauth welder active'
+										) : (
+											'logoOauth welder'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/welder.png')}
 								/>
@@ -393,9 +416,11 @@ class SubscribeForm extends React.Component {
 							<Col xs={3}>
 								<div
 									className={
-										this.props.classActive && this.props.classActive === 'woman'
-											? 'logoOauth woman active'
-											: 'logoOauth woman'
+										this.props.classActive && this.props.classActive === 'woman' ? (
+											'logoOauth woman active'
+										) : (
+											'logoOauth woman'
+										)
 									}
 									onClick={(avatar) => this.selectAvatar('/avatars/woman.png')}
 								/>
@@ -410,16 +435,18 @@ class SubscribeForm extends React.Component {
 							<Button type="button" onClick={() => showModal(false)}>
 								Close
 							</Button>
-							{messSuccess
-								? ''
-								: <Button
-										bsStyle="primary"
-										type="button"
-										disabled={!this.state.sendOn}
-										onClick={() => this.submitForm()}
-									>
-										Sign in
-									</Button>}
+							{messSuccess ? (
+								''
+							) : (
+								<Button
+									bsStyle="primary"
+									type="button"
+									disabled={!this.state.sendOn}
+									onClick={() => this.submitForm()}
+								>
+									Sign in
+								</Button>
+							)}
 						</ButtonToolbar>
 					</Col>
 				</FormGroup>

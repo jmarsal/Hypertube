@@ -52,11 +52,11 @@ export function checkUserForConnect(user) {
 					dispatch({ type: 'LOGIN_USER', payload: response.data.user });
 				} else {
 					const error = response.data.msg;
-
 					dispatch({ type: 'LOGIN_USER_REJECTED', payload: error });
 				}
 			})
-			.catch(() => {
+			.catch((err) => {
+				console.error(err);
 				dispatch({ type: 'LOGIN_USER_REJECTED', payload: 'Problem with authentification.' });
 			});
 	};
