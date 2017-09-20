@@ -134,8 +134,10 @@ class MoviePage extends React.Component {
 		const commentList = this.props.comments.map((comment) => {
 			return (
 				<ListGroupItem key={comment.date}>
-					<Label onClick={() => this.handleClickOnUser(comment.username)}>{comment.username}</Label>
-					<div className="comment-text">{comment.comment}</div>
+					<Label className="commentUsername" onClick={() => this.handleClickOnUser(comment.username)}>
+						{comment.username}
+					</Label>
+					{' ' + comment.comment}
 				</ListGroupItem>
 			);
 		});
