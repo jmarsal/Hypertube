@@ -1,23 +1,20 @@
 const path = require('path'),
 	webpack = require('webpack'),
 	ExtractTextPlugin = require('extract-text-webpack-plugin'),
-	UglifyJSPlugin = require('uglifyjs-webpack-plugin'),
-	dev = process.env.NODE_ENV === 'dev';
+	UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
-let cssLoaders = [ 'style-loader', { loader: 'css-loader', options: { importLoaders: 1, minimize: !dev } } ];
+let cssLoaders = [ 'style-loader', { loader: 'css-loader', options: { importLoaders: 1, minimize: true } } ];
 
-if (!dev) {
-	cssLoaders.push({
-		loader: 'postcss-loader',
-		options: {
-			plugins: (loader) => [
-				require('autoprefixer')({
-					browsers: [ 'chrome >= 46', 'firefox >= 41' ]
-				})
-			]
-		}
-	});
-}
+cssLoaders.push({
+	loader: 'postcss-loader',
+	options: {
+		plugins: (loader) => [
+			require('autoprefixer')({
+				browsers: [ 'chrome >= 46', 'firefox >= 41' ]
+			})
+		]
+	}
+});
 
 let config = {
 	entry: './src/client.js',
@@ -28,8 +25,7 @@ let config = {
 	resolve: {
 		modules: [ path.resolve(__dirname, 'src'), 'node_modules' ]
 	},
-	watch: dev,
-	devtool: dev ? 'cheap-module-eval-source-map' : false,
+	devtool: false,
 	module: {
 		rules: [
 			{
@@ -54,23 +50,21 @@ let config = {
 	plugins: [
 		new ExtractTextPlugin({
 			filename: '[name].css',
-			disable: dev
+			disable: false
 		})
 	]
 };
 
-if (!dev) {
-	config.plugins.push(
-		new UglifyJSPlugin({
-			sourceMap: false
-		}),
-		new webpack.DefinePlugin({
-			'process.env': {
-				NODE_ENV: JSON.stringify('production')
-			}
-		}),
-		new webpack.optimize.UglifyJsPlugin()
-	);
-}
+config.plugins.push(
+	new UglifyJSPlugin({
+		sourceMap: false
+	}),
+	new webpack.DefinePlugin({
+		'process.env': {
+			NODE_ENV: JSON.stringify('production')
+		}
+	}),
+	new webpack.optimize.UglifyJsPlugin()
+);
 
 module.exports = config;

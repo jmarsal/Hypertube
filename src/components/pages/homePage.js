@@ -132,7 +132,7 @@ class HomePage extends React.Component {
 				<Row>
 					<Jumbotron>
 						<h1>Welcome to Hypertube !</h1>
-						<p>This is a web project from 42. Enjoys ;)</p>
+						<p>This is a web project from 42. Enjoy ;)</p>
 					</Jumbotron>
 				</Row>
 			</Grid>
