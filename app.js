@@ -2,6 +2,11 @@ let express = require('express');
 let path = require('path');
 let favicon = require('serve-favicon');
 let logger = require('morgan');
+import webpack from 'webpack';
+import webpackConfigDev from './webpack.development.js';
+import webpackConfigProd from './webpack.production.js';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
 
 // PROXY
 let httpProxy = require('http-proxy');
@@ -20,6 +25,41 @@ apiProxy.on('error', function(error) {
 	console.log(error);
 });
 // END PROXY
+
+/**
+ * ADD WEBPACK MIDDLEWARE
+ */
+if (process.env.NODE_ENV === 'development') {
+	const compiler = webpack(webpackConfigDev);
+
+	app.use(
+		webpackDevMiddleware(compiler, {
+			noInfo: true,
+			hot: true
+		})
+	);
+	app.use(
+		webpackHotMiddleware(compiler, {
+			log: console.log,
+			reload: true
+		})
+	);
+} else {
+	const compiler = webpack(webpackConfigProd);
+
+	app.use(
+		webpackDevMiddleware(compiler, {
+			noInfo: true,
+			hot: false
+		})
+	);
+	app.use(
+		webpackHotMiddleware(compiler, {
+			log: console.log,
+			reload: false
+		})
+	);
+}
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

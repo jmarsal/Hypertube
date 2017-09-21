@@ -23,6 +23,7 @@
 				"messagesDir": "./localisation/messages",
 				"enforceDescriptions": false
 			}
-		]
+		],
+		"react-hot-loader/babel"
 	]
 }
