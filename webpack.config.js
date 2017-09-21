@@ -27,7 +27,7 @@ let config = {
 	resolve: {
 		modules: [ path.resolve(__dirname, 'src'), 'node_modules' ]
 	},
-	watch: false,
+	watch: dev,
 	devtool: dev ? 'cheap-module-eval-source-map' : false,
 	module: {
 		rules: [

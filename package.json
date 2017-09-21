@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"prod": "NODE_ENV=production webpack && yarn run production",
-		"dev": "NODE_ENV=dev webpack && yarn run develop",
+		"dev": "NODE_ENV=dev webpack & yarn run develop",
 		"production": "NODE_ENV=production node ./bin/www & NODE_ENV=production node apiServer.js",
 		"develop": "nodemon ./bin/www & nodemon --inspect apiServer.js"
 	},
