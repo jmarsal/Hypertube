@@ -7,7 +7,7 @@ import reducers from './reducers/index';
 
 export default () => {
 	// CREATE THE STORE
-	const middleware = applyMiddleware(thunk, logger);
+	const middleware = process.env.NODE_ENV === 'development' ? applyMiddleware(thunk, logger) : applyMiddleware(thunk);
 
 	const store = createStore(
 		reducers,
