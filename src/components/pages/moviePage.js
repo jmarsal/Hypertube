@@ -137,7 +137,7 @@ class MoviePage extends React.Component {
 					<Label className="commentUsername" onClick={() => this.handleClickOnUser(comment.username)}>
 						{comment.username}
 					</Label>
-					{' ' + comment.comment}
+					{' ' + validator.unescape(comment.comment)}
 				</ListGroupItem>
 			);
 		});
