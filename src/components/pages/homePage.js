@@ -20,6 +20,7 @@ import {
 } from 'react-bootstrap';
 import { FormattedMessage, injectIntl } from 'react-intl';
 import Waypoint from 'react-waypoint';
+import { goToTop } from 'react-scrollable-anchor';
 
 import { getUserFromSession, disconnectUser } from '../../actions/usersActions';
 import * as Collections from '../../actions/collectionsActions';
@@ -51,7 +52,8 @@ class HomePage extends React.Component {
 			searchRequest: '',
 			scrollHeight: 0,
 			titleVideo: this.props.title,
-			isCollection: false
+			isCollection: false,
+			anchor: false
 		};
 	}
 
@@ -113,6 +115,16 @@ class HomePage extends React.Component {
 		}
 	}
 
+	componentDidMount() {
+		window.addEventListener('scroll', (e) => this.handleScroll(e));
+	}
+
+	handleScroll(event) {
+		if (event.srcElement.documentElement.scrollTop > 220) {
+			this.setState({ anchor: true });
+		}
+	}
+
 	getNewPageMovies() {
 		const { getCollectionsListByName, addOnePage, filters } = this.props;
 
@@ -158,6 +170,24 @@ class HomePage extends React.Component {
 							<ModalFilters title={this.state.searchRequest} />
 						</FormGroup>
 						<Col id="collectionListItems">
+							{this.state.anchor ? (
+								<div className="anchor-collection">
+									<span className="anchor-top-text">BACK TO TOP ?</span>
+									<div className="anchor-top">
+										<Image
+											key={Math.random()}
+											src="/library/anchor-top.png"
+											width="35px"
+											responsive
+											onClick={() => {
+												goToTop();
+												this.setState({ anchor: false });
+											}}
+										/>
+									</div>
+								</div>
+							) : null}
+
 							{collection ? (
 								collection.map((movie, index) => {
 									return (

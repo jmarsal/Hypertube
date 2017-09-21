@@ -7,7 +7,8 @@ let config = {
 		'react-hot-loader/patch',
 		'webpack-hot-middleware/client?noInfo=false',
 		'./src/client.js',
-		'./public/style.css'
+		'./public/style.css',
+		'./public/scss/main.scss'
 	],
 	output: {
 		filename: 'bundle.js',
