@@ -3,7 +3,7 @@ import { Panel, Col, Button, Form, FormControl, FormGroup, Radio, Checkbox, Cont
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import * as CollectionActions from '../../actions/collectionsActions';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 import InputRange from 'react-input-range';
 
@@ -153,7 +153,9 @@ class FilterPage extends React.Component {
 		return (
 			<Panel>
 				<FormGroup>
-					<ControlLabel>Name : </ControlLabel>
+					<ControlLabel>
+						<FormattedMessage id="filter-name" />
+					</ControlLabel>
 					<Form>
 						<Radio
 							name="name-sort"
@@ -236,7 +238,9 @@ class FilterPage extends React.Component {
 					</Form>
 				</FormGroup>
 				<FormGroup>
-					<ControlLabel>Year : </ControlLabel>
+					<ControlLabel>
+						<FormattedMessage id="filter-year" />
+					</ControlLabel>
 					<Form>
 						<Checkbox
 							checked={this.props.yearActive}
@@ -276,7 +280,9 @@ class FilterPage extends React.Component {
 				</FormGroup>
 				{(filters.type && filters.type !== 'movie') || !filters.type ? (
 					<FormGroup controlId="formControlsSelectMultipleSaisons">
-						<ControlLabel>Saisons :</ControlLabel>
+						<ControlLabel>
+							<FormattedMessage id="filter-seasons" />
+						</ControlLabel>
 						<FormControl
 							componentClass="select"
 							value={filters.season ? filters.season : 'None'}
@@ -300,7 +306,9 @@ class FilterPage extends React.Component {
 					</FormGroup>
 				) : null}
 				<FormGroup controlId="formControlsSelectQuality">
-					<ControlLabel>Quality :</ControlLabel>
+					<ControlLabel>
+						<FormattedMessage id="filter-quality" />
+					</ControlLabel>
 					<FormControl
 						componentClass="select"
 						value={filters.quality ? filters.quality : 'None'}
@@ -322,7 +330,7 @@ class FilterPage extends React.Component {
 				</FormGroup>
 				<Col smOffset={4} xs={12} md={10} lg={8}>
 					<Button bsStyle="danger" onClick={() => this.resetAllFilters()}>
-						Reset Filters
+						<FormattedMessage id="filter-reset" />{' '}
 					</Button>
 				</Col>
 			</Panel>

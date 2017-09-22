@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'react-bootstrap';
 import FilterPage from 'components/pages/filterPage';
 import withModal from 'components/modals/withModal';
-import { FormattedMessage, injectIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 
 // Inject showModal et getModal qui permette d'afficher une Modal
 @withModal(FilterPage, <FormattedMessage id="searching_tools" />)

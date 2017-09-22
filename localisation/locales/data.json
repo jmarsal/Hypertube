@@ -1,5 +1,11 @@
 {
 	"en": {
+		"filter-name": "Name : ",
+		"filter-year": "Year : ",
+		"filter-seasons": "Seasons : ",
+		"filter-quality": "Quality : ",
+		"filter-reset": "Reset Filters",
+		"bad-request": "Wait to eat your popcorns! Searching find nothing !!",
 		"disconnect": "Disconnect",
 		"close": "Close",
 		"submit": "Submit",
@@ -36,6 +42,12 @@
 		"back": "Back"
 	},
 	"fr": {
+		"filter-name": "Nom : ",
+		"filter-year": "Année : ",
+		"filter-seasons": "Saisons : ",
+		"filter-quality": "Qualité : ",
+		"filter-reset": "Réinitialiser les filtres",
+		"bad-request": "Attendez pour manger vos popcorns! La recherche ne trouve rien !!",
 		"disconnect": "Se déconnecter",
 		"close": "Fermer",
 		"submit": "Envoyer",

@@ -277,7 +277,7 @@ class HomePage extends React.Component {
 								<Col className="bad-request" key={Math.random()} smOffset={3} xs={12} md={8} lg={6}>
 									<Col>
 										<span className="bad-request-text">
-											Wait for eat your popcorn ! The request doesn't match !!
+											<FormattedMessage id="bad-request" />
 										</span>
 									</Col>
 									<Col smOffset={2}>
