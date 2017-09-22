@@ -94,31 +94,51 @@ router.get('/subtitles/:_id', (req, res) => {
 				let subtitlesPath = __dirname + '/../public/subtitles';
 
 				if (subtitles.en && subtitles.en[0]) {
-					download(subtitles.en[0].url, subtitlesPath).then(() => {
-						movie.subtitleEn = '/' + path.basename(subtitles.en[0].filename, '.srt') + '.vtt';
-						fs
-							.createReadStream(subtitlesPath + '/' + subtitles.en[0].filename)
-							.pipe(srt2vtt())
-							.pipe(fs.createWriteStream(subtitlesPath + movie.subtitleEn));
+					download(subtitles.en[0].url, subtitlesPath)
+						.then(() => {
+							fs.stat(subtitlesPath + '/' + subtitles.en[0].filename, (err) => {
+								if (err === null) {
+									movie.subtitleEn = '/' + path.basename(subtitles.en[0].filename, '.srt') + '.vtt';
+									fs
+										.createReadStream(subtitlesPath + '/' + subtitles.en[0].filename)
+										.pipe(srt2vtt())
+										.pipe(fs.createWriteStream(subtitlesPath + movie.subtitleEn));
+									fs.unlinkSync(subtitlesPath + '/' + subtitles.en[0].filename);
+								}
 
-						fs.unlinkSync(subtitlesPath + '/' + subtitles.en[0].filename);
-						if (subtitles.fr && subtitles.fr[0].url) {
-							download(subtitles.fr[0].url, subtitlesPath).then(() => {
-								movie.subtitleFr = '/' + path.basename(subtitles.fr[0].filename, '.srt') + '.vtt';
-								fs
-									.createReadStream(subtitlesPath + '/' + subtitles.fr[0].filename)
-									.pipe(srt2vtt())
-									.pipe(fs.createWriteStream(subtitlesPath + movie.subtitleFr));
+								if (subtitles.fr && subtitles.fr[0].url) {
+									download(subtitles.fr[0].url, subtitlesPath)
+										.then(() => {
+											fs.stat(subtitlesPath + '/' + subtitles.fr[0].filename, (err) => {
+												if (err === null) {
+													movie.subtitleFr =
+														'/' + path.basename(subtitles.fr[0].filename, '.srt') + '.vtt';
+													fs
+														.createReadStream(
+															subtitlesPath + '/' + subtitles.fr[0].filename
+														)
+														.pipe(srt2vtt())
+														.pipe(fs.createWriteStream(subtitlesPath + movie.subtitleFr));
 
-								fs.unlinkSync(subtitlesPath + '/' + subtitles.fr[0].filename);
-								movie.save();
-								res.json({ status: 'success', data: movie });
+													fs.unlinkSync(subtitlesPath + '/' + subtitles.fr[0].filename);
+												}
+
+												movie.save();
+												res.json({ status: 'success', data: movie });
+											});
+										})
+										.catch((err) => {
+											console.error(err);
+										});
+								} else {
+									movie.save();
+									res.json({ status: 'success', data: movie });
+								}
 							});
-						} else {
-							movie.save();
-							res.json({ status: 'success', data: movie });
-						}
-					});
+						})
+						.catch((err) => {
+							console.error(err);
+						});
 				} else {
 					res.json({ status: 'success', data: movie });
 				}
