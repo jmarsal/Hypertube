@@ -54,7 +54,6 @@ function queryMongoose(title, filters) {
 			if (year !== '' && yearActive) {
 				query.year = { $gt: year.min - 1, $lt: year.max + 1 };
 			}
-			debugger;
 			query = query !== {} ? query : '';
 		} else {
 			query.title = { $regex: title, $options: 'i' };

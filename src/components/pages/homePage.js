@@ -122,10 +122,25 @@ class HomePage extends React.Component {
 	}
 
 	handleScroll(event) {
-		if (event.srcElement.body.scrollTop > 220) {
-			this.setState({ anchor: true });
-		} else {
-			this.setState({ anchor: false });
+		// debugger;
+		if (!event.pageY && event.srcElement.body.scrollTop) {
+			if (event.srcElement.body.scrollTop > 220) {
+				this.setState({ anchor: true });
+			} else {
+				this.setState({ anchor: false });
+			}
+		} else if (!event.pageY && event.srcElement.documentElement.scrollTop) {
+			if (event.srcElement.documentElement.scrollTop > 220) {
+				this.setState({ anchor: true });
+			} else {
+				this.setState({ anchor: false });
+			}
+		} else if (event.pageY) {
+			if (event.pageY > 220) {
+				this.setState({ anchor: true });
+			} else {
+				this.setState({ anchor: false });
+			}
 		}
 	}
 
