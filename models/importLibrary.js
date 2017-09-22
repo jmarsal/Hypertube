@@ -461,16 +461,6 @@ function saveYtsListInCollection(json) {
 		});
 }
 
-// function timeout(ms) {
-// 	return new Promise((resolve) => setTimeout(resolve, ms));
-// }
-// async function doInsert(method, videos) {
-// 	for (const video of videos) {
-// 		await timeout(200);
-// 		await method(video);
-// 	}
-// }
-
 async function doInsert(method, videos) {
 	for (const video of videos) {
 		await method(video);
@@ -480,7 +470,7 @@ async function doInsert(method, videos) {
 function getAndInsertVideo(page, source, cb) {
 	const url =
 		source === 'yts'
-			? 'https://yts.ag/api/v2/list_movies.json?limit=50&page=https://yts.ag/api/v2/list_movies.json?limit=50&page='
+			? 'https://yts.ag/api/v2/list_movies.json?limit=50&page='
 			: 'https://eztv.ag/api/get-torrents?limit=50&page=';
 	let json = {};
 
@@ -488,36 +478,36 @@ function getAndInsertVideo(page, source, cb) {
 		if (!res) {
 			cb(err);
 		}
+
 		if (!err && res.statusCode == 200) {
 			try {
 				json = JSON.parse(body);
+
+				if (source === 'yts' ? !json.data : !json.torrents) {
+					debugger;
+					return cb(false);
+				}
+
+				const videos = source === 'yts' ? json.data.movies : json.torrents;
+				const method = source === 'yts' ? saveYtsListInCollection : saveEztvListInCollection;
+
+				// stop recursive call
+				if (!videos) {
+					return cb(false);
+				}
+
+				doInsert(method, videos);
 			} catch (err) {
 				return cb('yts:' + err);
 			}
 		}
-
-		if (source === 'yts' ? !json.data : !json.torrents) {
-			return cb(false);
-		}
-
-		const videos = source === 'yts' ? json.data.movies : json.torrents;
-		const method = source === 'yts' ? saveYtsListInCollection : saveEztvListInCollection;
-
-		// stop recursive call
-		if (!videos) {
-			return cb(false);
-		}
-
-		doInsert(method, videos);
 		page++;
-
 		getAndInsertVideo(page, source, cb);
 	});
 }
 
 const ImportLibrary = function() {
 	const sources = [ 'yts', 'eztv' ];
-	// const sources = [ 'eztv' ];
 
 	sources.forEach((source) => {
 		Video.find({
