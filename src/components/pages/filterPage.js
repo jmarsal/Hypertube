@@ -207,7 +207,7 @@ class FilterPage extends React.Component {
 							onChange={(e) => this.getNewFilterEvent(e)}
 							checked={filters && filters.type === 'movie' ? true : false}
 						>
-							Movies
+							<FormattedMessage id="filter-type-movies" />
 						</Radio>
 						<Radio
 							name="type-sort"
@@ -215,7 +215,7 @@ class FilterPage extends React.Component {
 							onChange={(e) => this.getNewFilterEvent(e)}
 							checked={filters && filters.type === 'serie' ? true : false}
 						>
-							Series - TV Show
+							<FormattedMessage id="filter-type-series" />
 						</Radio>
 					</Form>
 				</FormGroup>
