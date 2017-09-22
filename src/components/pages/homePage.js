@@ -85,22 +85,24 @@ class HomePage extends React.Component {
 	}
 
 	getCollectionFirstTime() {
-		const {
-			getCollectionsListByName,
-			getAllGenresInStore,
-			getAllQualityInStore,
-			getAllSeasonsInStore,
-			getMinMaxImdbNote,
-			getMinMaxYears
-		} = this.props;
+		if (this.state.searchRequest === '') {
+			const {
+				getCollectionsListByName,
+				getAllGenresInStore,
+				getAllQualityInStore,
+				getAllSeasonsInStore,
+				getMinMaxImdbNote,
+				getMinMaxYears
+			} = this.props;
 
-		getAllGenresInStore();
-		getAllQualityInStore();
-		getAllSeasonsInStore();
-		getMinMaxImdbNote();
-		getMinMaxYears();
+			getAllGenresInStore();
+			getAllQualityInStore();
+			getAllSeasonsInStore();
+			getMinMaxImdbNote();
+			getMinMaxYears();
 
-		getCollectionsListByName('', 1);
+			getCollectionsListByName('', 1);
+		}
 	}
 
 	componentDidUpdate(prevProps, prevState) {
@@ -120,7 +122,7 @@ class HomePage extends React.Component {
 	}
 
 	handleScroll(event) {
-		if (event.srcElement.documentElement.scrollTop > 220) {
+		if (event.srcElement.body.scrollTop > 220) {
 			this.setState({ anchor: true });
 		} else {
 			this.setState({ anchor: false });
@@ -262,7 +264,7 @@ class HomePage extends React.Component {
 						</Col>
 					</Form>
 				</Row>
-				<Waypoint onEnter={() => this.getNewPageMovies()} />
+				{this.state.searchRequest === '' ? <Waypoint onEnter={() => this.getNewPageMovies()} /> : null}
 			</Grid>
 		);
 	}
