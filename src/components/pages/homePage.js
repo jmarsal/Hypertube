@@ -122,6 +122,8 @@ class HomePage extends React.Component {
 	handleScroll(event) {
 		if (event.srcElement.documentElement.scrollTop > 220) {
 			this.setState({ anchor: true });
+		} else {
+			this.setState({ anchor: false });
 		}
 	}
 
