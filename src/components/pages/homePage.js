@@ -160,7 +160,7 @@ class HomePage extends React.Component {
 						<FormattedMessage id="title_home" />
 					</PageHeader>
 					<Form horizontal>
-						<FormGroup>
+						<FormGroup validationState={collection.length ? 'success' : 'error'}>
 							<Col smOffset={2} xs={8} md={8} lg={6} className={'smaller'}>
 								<FormControl
 									id="formControlsText"
@@ -192,7 +192,7 @@ class HomePage extends React.Component {
 								</div>
 							) : null}
 
-							{collection ? (
+							{collection.length ? (
 								collection.map((movie, index) => {
 									return (
 										<Col key={Math.random()} xs={12} md={4} sm={6}>
@@ -259,7 +259,22 @@ class HomePage extends React.Component {
 									);
 								})
 							) : (
-								'rien'
+								<Col className="bad-request" key={Math.random()} smOffset={3} xs={12} md={8} lg={6}>
+									<Col>
+										<span className="bad-request-text">
+											Wait for eat your popcorn ! The request doesn't match !!
+										</span>
+									</Col>
+									<Col smOffset={2}>
+										<Image
+											key={Math.random()}
+											src="/library/bad-request.gif"
+											width="355px"
+											className="bad-request"
+											responsive
+										/>
+									</Col>
+								</Col>
 							)}
 						</Col>
 					</Form>
