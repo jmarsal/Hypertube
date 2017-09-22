@@ -192,12 +192,14 @@ class MoviePage extends React.Component {
 				zIndex: '-100',
 				left: '0',
 				width: '100%',
-				height: '400px',
+				height: '1550px',
 				backgroundImage: 'url(' + image + ')',
 				backgroundPosition: 'center top',
 				backgroundRepeat: 'no-repeat',
 				backgroundSize: 'cover',
-				opacity: '0.5'
+				opacity: '1',
+				margin: '0',
+				padding: '0'
 			};
 
 			return (
