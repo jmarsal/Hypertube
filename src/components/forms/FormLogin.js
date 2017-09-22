@@ -215,12 +215,6 @@ class FormLogin extends Component {
 
 				<FormGroup>
 					<Col smOffset={2} sm={10}>
-						<Checkbox>Remember me</Checkbox>
-					</Col>
-				</FormGroup>
-
-				<FormGroup>
-					<Col smOffset={2} sm={10}>
 						<ButtonToolbar>
 							<Button type="button" onClick={() => showModal(false)}>
 								Close
