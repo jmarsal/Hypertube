@@ -349,7 +349,7 @@ class MoviePage extends React.Component {
 										{this.state.isPlaying ? null : (
 											<div className="video-foreground">
 												<p>
-													Veuillez patienter quelques instant, le film démarrera lorsqu'il
+													Veuillez patienter quelques instants, le film démarrera lorsqu'il
 													sera prêt
 												</p>
 
