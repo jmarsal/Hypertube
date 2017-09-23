@@ -1,0 +1,39 @@
+.anchor-top-text {
+	z-index: 5000;
+	position: fixed;
+	transition: opacity 2s;
+	top: 50px;
+	left: 665px;
+	opacity: 0;
+	background-color: #272727;
+	width: 150px;
+	margin-left: -60px;
+	text-align: center;
+	color: indianred;
+	border: 1px solid lighten(#272727, 15%);
+	filter: drop-shadow(8px 8px 10px red);
+}
+.anchor-top {
+	position: fixed;
+	left: 660px;
+	top: 10px;
+	z-index: 5000;
+	cursor: pointer;
+	-webkit-transition: width 2s, filter 2s, transform 2s; /* Safari */
+	transition: width 2s, filter 2s, transform 2s;
+
+	&:hover {
+		filter: invert(70%);
+		filter: drop-shadow(8px 8px 10px red);
+		transform: rotate3d(1, 2.0, 3.0, 360deg);
+	}
+}
+
+.anchor-collection {
+	&:hover {
+		.anchor-top-text {
+			transition: opacity 2s;
+			opacity: 1;
+		}
+	}
+}

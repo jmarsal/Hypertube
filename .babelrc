@@ -1,0 +1,29 @@
+{
+	"presets": [
+		[
+			"env",
+			{
+				"modules": false,
+				"targets": {
+					"browsers": [ "chrome >= 46", "firefox >= 41" ]
+				}
+			}
+		],
+		"es2015",
+		"react",
+		"stage-1"
+	],
+	"plugins": [
+		"transform-object-rest-spread",
+		"transform-decorators-legacy",
+		"syntax-dynamic-import",
+		[
+			"react-intl",
+			{
+				"messagesDir": "./localisation/messages",
+				"enforceDescriptions": false
+			}
+		],
+		"react-hot-loader/babel"
+	]
+}
