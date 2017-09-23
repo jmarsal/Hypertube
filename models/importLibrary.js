@@ -500,6 +500,10 @@ function getAndInsertVideo(page, source, cb) {
 			} catch (err) {
 				return cb('yts:' + err);
 			}
+		} else if (process.env.NODE_ENV === 'development' && !err && res.statusCode !== 200) {
+			console.error(
+				"ERR: le serveur reçois de la part d'" + source + ' le status ' + statusCode + ' a la page ' + page
+			);
 		}
 		page++;
 		getAndInsertVideo(page, source, cb);
