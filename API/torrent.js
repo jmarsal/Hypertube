@@ -206,7 +206,7 @@ router.get('/:_id/:quality', (req, res) => {
 				let fileExt = undefined;
 
 				// POUR LES LOGS DE TELECHARGEMENT
-				// let fileSize = undefined;
+				let fileSize = undefined;
 				//
 
 				engine
@@ -234,7 +234,7 @@ router.get('/:_id/:quality', (req, res) => {
 							}
 
 							// POUR LES LOGS DE TELECHARGEMENT
-							// fileSize = file.length;
+							fileSize = file.length;
 							//
 
 							let total = file.length;
@@ -278,11 +278,16 @@ router.get('/:_id/:quality', (req, res) => {
 							}
 						});
 					})
-					// POUR AFFICHER LES POURCENTAGES DU TELECHARGEMENT EN COURS
-					//.on('download', () => {
-					//	console.log(Math.round(engine.swarm.downloaded / fileSize * 100 * 100) / 100 + '%');
-					//})
-					//
+					.on('download', () => {
+						const percent = Math.round(engine.swarm.downloaded / fileSize * 100 * 100) / 100;
+
+						Library.findOne({ _id: movie._id }, (err, tmpMovie) => {
+							if (tmpMovie.downloadPercent < percent) {
+								tmpMovie.downloadPercent = percent;
+								tmpMovie.save();
+							}
+						});
+					})
 					.on('idle', () => {
 						console.log('Download is done !');
 						if (!movie.filePath) movie.filePath = new Object();

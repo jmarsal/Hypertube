@@ -16,10 +16,12 @@ import {
 	ListGroupItem,
 	Label,
 	Modal,
-	Jumbotron
+	Jumbotron,
+	ProgressBar
 } from 'react-bootstrap';
 import validator from 'validator';
 import { FormattedMessage, injectIntl } from 'react-intl';
+import ReactLoading from 'react-loading';
 
 import { addComment, getComments } from '../../actions/commentsActions';
 import { getOneUserByLogin } from '../../actions/usersActions';
@@ -28,7 +30,8 @@ class ModalUser extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			showModal: true
+			showModal: true,
+			isPlaying: false
 		};
 	}
 
@@ -92,6 +95,20 @@ class MoviePage extends React.Component {
 		this.props.getSubtitles(this.props.location.query.id);
 	}
 
+	componentDidUpdate() {
+		setTimeout(
+			function() {
+				this.props.getDetailMovie(this.props.location.query.id);
+
+				if (this.props.movie.data.downloadPercent * 10 >= 100) {
+					this.refs.video.play();
+					this.setState({ isPlaying: true });
+				}
+			}.bind(this),
+			5000
+		);
+	}
+
 	handleChange(e) {
 		const inputId = e.target.id,
 			val = e.target.value;
@@ -126,6 +143,10 @@ class MoviePage extends React.Component {
 			document.getElementById('commentForm').reset();
 			this.setState({ comment: '' });
 		}
+	}
+
+	onProgress(data) {
+		console.log(data);
 	}
 
 	render() {
@@ -186,6 +207,11 @@ class MoviePage extends React.Component {
 		};
 
 		if (this.props.movie && this.props.user) {
+			const percent = this.props.movie.data.downloadPercent
+				? Math.round(this.props.movie.data.downloadPercent * 10)
+				: 0;
+			const progressInstance = <ProgressBar active now={percent} label={`${percent}%`} />;
+
 			let image = this.props.movie.data.background;
 			let styleBackground = {
 				position: 'absolute',
@@ -320,7 +346,21 @@ class MoviePage extends React.Component {
 							<Col xs={12} md={12}>
 								<Jumbotron>
 									<div className="video-div">
+										{this.state.isPlaying ? null : (
+											<div className="video-foreground">
+												<p>
+													Veuillez patienter quelques instant, le film démarrera lorsqu'il
+													sera prêt
+												</p>
+
+												<div className="video-loading">
+													<ReactLoading type="spin" color="#444" />
+													<span>{percent >= 100 ? 100 : percent}%</span>
+												</div>
+											</div>
+										)}
 										<video
+											ref="video"
 											className="videoInsert"
 											src={
 												'/api/torrent/' +
@@ -328,9 +368,8 @@ class MoviePage extends React.Component {
 												'/' +
 												this.state.currentQuality
 											}
-											preload="none"
+											preload="auto"
 											controls
-											autoPlay
 										>
 											{this.props.movie.data.subtitleEn ? (
 												<track
