@@ -96,17 +96,19 @@ class MoviePage extends React.Component {
 	}
 
 	componentDidUpdate() {
-		setTimeout(
-			function() {
-				this.props.getDetailMovie(this.props.location.query.id);
+		if (!this.state.isPlaying) {
+			setTimeout(
+				function() {
+					this.props.getDetailMovie(this.props.location.query.id);
 
-				if (this.props.movie.data.downloadPercent * 10 >= 100) {
-					this.refs.video.play();
-					this.setState({ isPlaying: true });
-				}
-			}.bind(this),
-			5000
-		);
+					if (this.props.movie.data.downloadPercent * 10 >= 100) {
+						this.refs.video.play();
+						this.setState({ isPlaying: true });
+					}
+				}.bind(this),
+				5000
+			);
+		}
 	}
 
 	handleChange(e) {
