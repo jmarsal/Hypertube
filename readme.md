@@ -27,7 +27,7 @@ Requière **NodeJs** >= `8.1.2` && **NPM** >= `5.0.3` || **Yarn** >= `0.24.6` &&
     1. npm install
     2. npm run prod
 3. Sur chrome ou firefox => [localhost:3000](http://localhost:3000/)
-4. Enjoy mais **attention, ce projet n'est pas destiné à etre publier et / ou commercialiser. Il est uniquement fait dans un but pedagogique. Toute utilisation sera de votre responsabilité !**
+4. Enjoy mais **attention, ce projet n'est pas destiné à être publié et / ou commercialisé. Il est uniquement fait dans un but pedagogique. Toute utilisation sera de votre responsabilité !**
 
 ## API RESTful
 ### COLLECTION
