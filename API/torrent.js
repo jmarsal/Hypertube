@@ -15,7 +15,7 @@ const Library = require('../models/video.js');
 
 function findMovie(_id, quality) {
 	return new Promise((resolve, reject) => {
-		Library.findOne({ _id: _id }, function(err, movie) {
+		Library.findOne({ _id: _id }, (err, movie) => {
 			if (movie) {
 				console.log('Found on Library');
 				let magnet = undefined;
@@ -81,7 +81,7 @@ function streamFile(res, file, start, end, mimetype, fileName) {
 
 //GET SUBTITLES
 router.get('/subtitles/:_id', (req, res) => {
-	Library.findOne({ _id: req.params._id }, function(err, movie) {
+	Library.findOne({ _id: req.params._id }, (err, movie) => {
 		if (movie) {
 			OpenSubtitles.search({
 				sublanguageid: [ 'fre', 'eng' ].join(),
@@ -204,14 +204,11 @@ router.get('/:_id/:quality', (req, res) => {
 
 				let fileName = undefined;
 				let fileExt = undefined;
-
-				// POUR LES LOGS DE TELECHARGEMENT
 				let fileSize = undefined;
-				//
 
 				engine
 					.on('ready', () => {
-						engine.files.forEach(function(file) {
+						engine.files.forEach((file) => {
 							if (
 								path.extname(file.name) !== '.mp4' &&
 								path.extname(file.name) !== '.avi' &&
@@ -233,9 +230,7 @@ router.get('/:_id/:quality', (req, res) => {
 								file.select();
 							}
 
-							// POUR LES LOGS DE TELECHARGEMENT
 							fileSize = file.length;
-							//
 
 							let total = file.length;
 							let start = 0;
@@ -282,10 +277,14 @@ router.get('/:_id/:quality', (req, res) => {
 						const percent = Math.round(engine.swarm.downloaded / fileSize * 100 * 100) / 100;
 
 						Library.findOne({ _id: movie._id }, (err, tmpMovie) => {
-							if (tmpMovie.downloadPercent < percent) {
-								tmpMovie.downloadPercent = percent;
-								tmpMovie.save();
+							if (!tmpMovie.downloadPercent) tmpMovie.downloadPercent = new Object();
+
+							if (!tmpMovie.downloadPercent[quality] || tmpMovie.downloadPercent[quality] < percent) {
+								tmpMovie.downloadPercent[quality] = percent;
 							}
+
+							tmpMovie.markModified('downloadPercent');
+							tmpMovie.save();
 						});
 					})
 					.on('idle', () => {

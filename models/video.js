@@ -93,8 +93,8 @@ const videoShema = mongoose.Schema({
 		trim: true
 	},
 	downloadPercent: {
-		type: Number,
-		default: 0
+		type: Object,
+		trim: true
 	},
 	lastWatchingDate: {
 		type: Number
