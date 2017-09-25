@@ -211,3 +211,15 @@ h5 {
 	font-weight: bold;
 	font-size: 16px;
 }
+
+@media screen and (max-width: 991px) {
+	h1 {
+		font-size: 40px;
+	}
+}
+
+@media screen and (max-width: 575px) {
+	h1 {
+		font-size: 27px;
+	}
+}
