@@ -101,7 +101,7 @@ class MoviePage extends React.Component {
 				function() {
 					this.props.getDetailMovie(this.props.location.query.id);
 
-					if (this.props.movie.data.downloadPercent * 10 >= 100) {
+					if (this.props.movie.data.downloadPercent * 20 >= 100) {
 						this.refs.video.play();
 						this.setState({ isPlaying: true });
 					}
@@ -210,7 +210,7 @@ class MoviePage extends React.Component {
 
 		if (this.props.movie && this.props.user) {
 			const percent = this.props.movie.data.downloadPercent
-				? Math.round(this.props.movie.data.downloadPercent * 10)
+				? Math.round(this.props.movie.data.downloadPercent * 20)
 				: 0;
 			const progressInstance = <ProgressBar active now={percent} label={`${percent}%`} />;
 
