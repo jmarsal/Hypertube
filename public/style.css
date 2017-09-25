@@ -215,3 +215,10 @@ h5 {
 .modal {
 	z-index: 5000;
 }
+
+.logo_navbar {
+	display: inline !important;
+	width: 24px;
+	height: auto;
+	filter: invert(100%);
+}

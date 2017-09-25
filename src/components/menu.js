@@ -30,7 +30,9 @@ class Menu extends React.Component {
 			<Navbar inverse fixedTop>
 				<Navbar.Header>
 					<Navbar.Brand>
-						<a href="/">Hypertube</a>
+						<a href="/">
+							<img src="/favicon.ico" className={'logo_navbar'} /> Hypertube
+						</a>
 					</Navbar.Brand>
 					<Navbar.Toggle />
 				</Navbar.Header>
