@@ -1,4 +1,4 @@
-![Hypertube Library](./readme_images/library.png)
+****![Hypertube Library](./readme_images/library.png)
 
 ## Contributeurs
 [@jmarsal](https://github.com/jmarsal) | [@pwortham](https://github.com/pwortham) | [@WingardiumJKEULEYA](https://github.com/WingardiumJKEULEYA)
