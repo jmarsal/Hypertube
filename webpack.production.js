@@ -17,7 +17,7 @@ cssLoaders.push({
 });
 
 let config = {
-	entry: './src/client.js',
+	entry: [ './src/client.js', './public/style.css', './public/scss/main.scss' ],
 	output: {
 		filename: 'bundle.js',
 		path: path.resolve(__dirname, 'public')
@@ -35,15 +35,19 @@ let config = {
 			},
 			{
 				test: /\.css$/,
-				// exclude: /(node_modules|bower_components)/,
 				use: [ 'style-loader', { loader: 'css-loader', options: { importLoaders: 1 } }, 'postcss-loader' ]
 			},
 			{
 				test: /\.scss$/,
-				use: ExtractTextPlugin.extract({
-					fallback: 'style-loader',
-					use: [ ...cssLoaders, 'sass-loader' ]
-				})
+				use: [
+					'style-loader',
+					{
+						loader: 'css-loader',
+						options: { importLoaders: 2 }
+					},
+					'sass-loader',
+					'postcss-loader'
+				]
 			}
 		]
 	},
