@@ -122,7 +122,6 @@ class HomePage extends React.Component {
 	}
 
 	handleScroll(event) {
-		// debugger;
 		if (!event.pageY && event.srcElement.body.scrollTop) {
 			if (event.srcElement.body.scrollTop > 220) {
 				this.setState({ anchor: true });
@@ -148,7 +147,12 @@ class HomePage extends React.Component {
 		const { getCollectionsListByName, addOnePage, filters } = this.props;
 
 		addOnePage();
-		getCollectionsListByName(this.state.searchRequest, this.props.page, 'scroll', filters);
+		setTimeout(
+			function() {
+				getCollectionsListByName(this.state.searchRequest, this.props.page, 'scroll', filters);
+			}.bind(this),
+			1
+		);
 	}
 
 	openDetailMovie(id) {
@@ -294,7 +298,9 @@ class HomePage extends React.Component {
 						</Col>
 					</Form>
 				</Row>
-				{this.state.searchRequest === '' ? <Waypoint onEnter={() => this.getNewPageMovies()} /> : null}
+				{this.state.searchRequest === '' && this.props.collection[0] ? (
+					<Waypoint onEnter={() => this.getNewPageMovies()} />
+				) : null}
 			</Grid>
 		);
 	}
