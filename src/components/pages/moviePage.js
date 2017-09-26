@@ -155,10 +155,6 @@ class MoviePage extends React.Component {
 		}
 	}
 
-	onProgress(data) {
-		console.log(data);
-	}
-
 	render() {
 		const { intl } = this.props;
 

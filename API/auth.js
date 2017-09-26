@@ -69,7 +69,7 @@ passport.use(
 							facebook: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
-							if (err) console.log(err);
+							if (err) console.error(err);
 							return done(err, user);
 						});
 					} else {
@@ -126,7 +126,7 @@ passport.use(
 							twitter: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
-							if (err) console.log(err);
+							if (err) console.error(err);
 							return done(err, user);
 						});
 					} else {
@@ -182,7 +182,7 @@ passport.use(
 							google: profile._json ? profile._json : {}
 						});
 						user.save(function(err) {
-							if (err) console.log(err);
+							if (err) console.error(err);
 							return done(err, user);
 						});
 					} else {
@@ -247,7 +247,7 @@ passport.use(
 							github: profile._json ? profile._json : ''
 						});
 						user.save(function(err) {
-							if (err) console.log(err);
+							if (err) console.error(err);
 							return done(err, user);
 						});
 					} else {
@@ -317,7 +317,7 @@ passport.use(
 									42: profile ? profile : {}
 								});
 								user.save(function(err) {
-									if (err) console.log(err);
+									if (err) console.error(err);
 									return done(err, user);
 								});
 							} else {

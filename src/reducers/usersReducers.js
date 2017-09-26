@@ -126,7 +126,6 @@ export function usersReducers(
 			};
 
 		case 'SELECT_BASIC_AVATAR':
-			console.log(action.payload);
 			return {
 				...state,
 				classActive: action.payload

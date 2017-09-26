@@ -79,7 +79,6 @@ function queryMongoose(title, filters) {
 		if (type === 'movie' && query.season) {
 			delete query.season;
 		}
-		debugger;
 		return query;
 	} else {
 		return title !== '' ? { title: { $regex: title, $options: 'i' } } : '';

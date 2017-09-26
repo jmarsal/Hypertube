@@ -59,11 +59,6 @@ app.use('/comments', require('./API/comments'));
 const importLibrary = require('./models/importLibrary');
 importLibrary();
 
-process.on('unhandledRejection', (reason, p) => {
-	console.log('Unhandled Rejection at: Promise', p, 'reason:', reason);
-	// application specific logging, throwing an error, or other logic here
-});
-
 // PARSE MOVIES OLDER THAN 1 MONTH FOR DELETING THEM (Everyday at 11:59 PM)
 schedule.scheduleJob('00 59 23 * * *', () => {
 	console.log('Old movies cleaning begins...');
