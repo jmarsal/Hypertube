@@ -16,8 +16,7 @@ import {
 	ListGroupItem,
 	Label,
 	Modal,
-	Jumbotron,
-	ProgressBar
+	Jumbotron
 } from 'react-bootstrap';
 import validator from 'validator';
 import { FormattedMessage, injectIntl } from 'react-intl';
@@ -101,8 +100,16 @@ class MoviePage extends React.Component {
 				function() {
 					this.props.getDetailMovie(this.props.location.query.id);
 
-					if (this.props.movie.data.downloadPercent * 10 >= 100) {
-						this.refs.video.play();
+					const multiplier = this.props.movie.data.provider === 'yts' ? 20 : 5;
+
+					if (
+						this.props.movie.data.downloadPercent &&
+						this.props.movie.data.downloadPercent[this.state.currentQuality] * multiplier >= 100
+					) {
+						let playPromise = this.refs.video.play();
+
+						playPromise.then((_) => {}).catch((err) => {});
+
 						this.setState({ isPlaying: true });
 					}
 				}.bind(this),
@@ -122,6 +129,7 @@ class MoviePage extends React.Component {
 
 	handleQuality(quality) {
 		this.setState({ currentQuality: quality });
+		this.setState({ isPlaying: false });
 	}
 
 	handleClickOnUser(user) {
@@ -145,10 +153,6 @@ class MoviePage extends React.Component {
 			document.getElementById('commentForm').reset();
 			this.setState({ comment: '' });
 		}
-	}
-
-	onProgress(data) {
-		console.log(data);
 	}
 
 	render() {
@@ -209,10 +213,12 @@ class MoviePage extends React.Component {
 		};
 
 		if (this.props.movie && this.props.user) {
-			const percent = this.props.movie.data.downloadPercent
-				? Math.round(this.props.movie.data.downloadPercent * 10)
-				: 0;
-			const progressInstance = <ProgressBar active now={percent} label={`${percent}%`} />;
+			const multiplier = this.props.movie.data.provider === 'yts' ? 20 : 5;
+			const percent =
+				this.props.movie.data.downloadPercent &&
+				this.props.movie.data.downloadPercent[this.state.currentQuality]
+					? Math.round(this.props.movie.data.downloadPercent[this.state.currentQuality] * multiplier)
+					: 0;
 
 			let image = this.props.movie.data.background;
 			let styleBackground = {
@@ -351,8 +357,7 @@ class MoviePage extends React.Component {
 										{this.state.isPlaying ? null : (
 											<div className="video-foreground">
 												<p>
-													Veuillez patienter quelques instants, le film démarrera lorsqu'il
-													sera prêt
+													<FormattedMessage id="player_wait" />
 												</p>
 
 												<div className="video-loading">

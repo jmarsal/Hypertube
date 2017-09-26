@@ -156,12 +156,10 @@ export function jsonFormatForClient(jsonArr, requestAction) {
 
 export function getCollectionsByFilters(title, filters) {
 	const request = { title: title, filters: filters };
-	// debugger;
 	return (dispatch) => {
 		axios
 			.post('/api/collection/getCollectionByTitleForClient/', request)
 			.then((response) => {
-				// debugger;
 				if (response.data.status === 'success') {
 					dispatch({
 						type: 'FILTERS_UPDATE',

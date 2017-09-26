@@ -4,11 +4,18 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { activateAccount } from '../../actions/usersActions';
 import { FormattedMessage } from 'react-intl';
+import { browserHistory } from 'react-router';
 
 class ActivationPage extends React.Component {
 	componentDidMount() {
 		if (this.props.location.query.key && this.props.location.query.user) {
 			this.props.activateAccount(this.props.location.query.key, this.props.location.query.user);
+		}
+	}
+
+	componentDidUpdate() {
+		if (this.props.sessionUser) {
+			browserHistory.push('/');
 		}
 	}
 
@@ -33,7 +40,8 @@ class ActivationPage extends React.Component {
 
 function mapStateToProps(state) {
 	return {
-		activation: state.users.activation
+		activation: state.users.activation,
+		sessionUser: state.users.sessionUser
 	};
 }
 

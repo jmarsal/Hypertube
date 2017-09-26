@@ -3,7 +3,7 @@ const User = require('./user');
 class Check {
 	static subscribeInputs(req) {
 		return new Promise((resolve, reject) => {
-			req.checkBody('username', 'Login: 3 to 14 characters required.').len(3, 14);
+			req.checkBody('username', 'Login: 3 to 30 characters required.').len(3, 30);
 			req.checkBody('email', 'Invalid email.').isEmail().notEmpty();
 			req.checkBody('firstname', 'Firstname: 1 to 30 characters required.').len(1, 30);
 			req.checkBody('lastname', 'Lastname: 1 to 30 characters required.').len(1, 30);
@@ -22,7 +22,7 @@ class Check {
 
 	static subscribeInputsForUpdate(req) {
 		return new Promise((resolve, reject) => {
-			req.checkBody('username', 'Login: 3 to 14 characters required.').len(3, 14);
+			req.checkBody('username', 'Login: 3 to 30 characters required.').len(3, 30);
 			req.checkBody('email', 'Invalid email.').isEmail().notEmpty();
 			req.checkBody('firstname', 'Firstname: 1 to 30 characters required.').len(1, 30);
 			req.checkBody('lastname', 'Lastname: 1 to 30 characters required.').len(1, 30);

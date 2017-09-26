@@ -484,7 +484,6 @@ function getAndInsertVideo(page, source, cb) {
 				json = JSON.parse(body);
 
 				if (source === 'yts' ? !json.data : !json.torrents) {
-					debugger;
 					return cb(false);
 				}
 
@@ -498,8 +497,12 @@ function getAndInsertVideo(page, source, cb) {
 
 				doInsert(method, videos);
 			} catch (err) {
-				return cb('yts:' + err);
+				return cb(source + ': ' + err);
 			}
+		} else if (process.env.NODE_ENV === 'development' && !err && res.statusCode !== 200) {
+			console.error(
+				"ERR: le serveur reçois de la part d'" + source + ' le status ' + statusCode + ' a la page ' + page
+			);
 		}
 		page++;
 		getAndInsertVideo(page, source, cb);

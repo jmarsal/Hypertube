@@ -158,7 +158,7 @@ router.post('/forget', (req, res) => {
 
 //---->>> GET ONE USER BY ID <<<-----
 router.get('/one/:userID', (req, res) => {
-	if ((req.user && req.user.admin) || '/users/one/' + req.user.id == req._parsedOriginalUrl.pathname) {
+	if (req.session.user._id === req.params.userID) {
 		Check.tokenExists(req.user.token)
 			.then((response) => {
 				if (response.status === 'error') {
@@ -233,19 +233,9 @@ router.get('/', (req, res) => {
 	}
 });
 
-// //---->>> DELETE USER <<<-----
-// router.delete('/:_id', (req, res) => {
-// 	let query = { _id: req.params._id };
-
-// 	User.remove(query, (err, user) => {
-// 		if (err) throw err;
-// 		res.json(user);
-// 	});
-// });
-
 //---->>> UPDATE USER <<<-----
 router.put('/:_id', (req, res) => {
-	if (req.user.admin || '/users/' + req.user.id == req._parsedOriginalUrl.pathname) {
+	if (req.session.user._id === req.params._id) {
 		Check.tokenExists(req.user.token)
 			.then((response) => {
 				if (response.status === 'error') {
@@ -298,7 +288,8 @@ router.put('/:_id', (req, res) => {
 											if (err) throw err;
 											const payload = {
 												_id: userUpdated._id,
-												username: userUpdated.username
+												username: userUpdated.username,
+												language: userUpdated.language
 											};
 											req.session.user = payload;
 
@@ -415,7 +406,6 @@ router.get('/activation', (req, res) => {
 //UPDATE PASSWORD FOR REINIT
 router.post('/reinitialisation', (req, res) => {
 	const user = req.body;
-	//debugger;
 	User.findOne({ username: user.username }, (err, userToUpdate) => {
 		if (!userToUpdate) {
 			res.json({ status: 'error' });
@@ -430,15 +420,17 @@ router.post('/reinitialisation', (req, res) => {
 
 //UPDATE USER'S LANGUAGE
 router.post('/lang', (req, res) => {
-	User.findOne({ _id: req.session.user._id }, (err, user) => {
-		if (user) {
-			user.language = req.body.language;
-			user.save();
-			res.json({ status: 'success', content: user.language });
-		} else {
-			res.json({ status: 'error' });
-		}
-	});
+	if (req.session.user) {
+		User.findOne({ _id: req.session.user._id }, (err, user) => {
+			if (user) {
+				user.language = req.body.language;
+				user.save();
+				res.json({ status: 'success', content: user.language });
+			} else {
+				res.json({ status: 'error' });
+			}
+		});
+	}
 });
 
 module.exports = router;

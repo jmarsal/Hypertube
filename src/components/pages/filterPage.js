@@ -35,7 +35,6 @@ class FilterPage extends React.Component {
 	}
 
 	getNewFilterEvent(e) {
-		// debugger;
 		const {
 			getCollectionsByFilters,
 			filters,
@@ -124,8 +123,6 @@ class FilterPage extends React.Component {
 			filters.year = yearsMinMaxRange;
 			filters.yearActive = true;
 		}
-		// debugger;
-		/////////////////////////////////////////////////////////////////////////////
 		getCollectionsByFilters(this.state.titleVideo, filters);
 	}
 

@@ -14,7 +14,6 @@ class Mail {
 		const email = user.email,
 			login = user.username,
 			cle = user.activationKey;
-		// debugger;
 		let contentMail = '',
 			search = {
 				titre: '^^title^^',

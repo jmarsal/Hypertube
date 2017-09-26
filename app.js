@@ -22,7 +22,7 @@ app.use('/api', (req, res) => {
 });
 
 apiProxy.on('error', function(error) {
-	console.log(error);
+	console.error(error);
 });
 // END PROXY
 
