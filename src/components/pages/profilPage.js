@@ -260,21 +260,6 @@ class ProfilPage extends React.Component {
 							)}
 						</Col>
 					</FormGroup>
-					<FormGroup controlId="username" validationState={this.state.usernameCheck}>
-						<Col componentClass={ControlLabel} sm={2}>
-							<FormattedMessage id="login" />
-						</Col>
-						<Col sm={10}>
-							<FormControl
-								type="text"
-								placeholder="Enter your login"
-								ref="username"
-								autoFocus="true"
-								value={this.state.username}
-								onChange={(e) => this.handleChange(e)}
-							/>
-						</Col>
-					</FormGroup>
 
 					<FormGroup controlId="firstname" validationState={this.state.firstnameCheck}>
 						<Col componentClass={ControlLabel} sm={2}>

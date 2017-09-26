@@ -298,7 +298,8 @@ router.put('/:_id', (req, res) => {
 											if (err) throw err;
 											const payload = {
 												_id: userUpdated._id,
-												username: userUpdated.username
+												username: userUpdated.username,
+												language: userUpdated.language
 											};
 											req.session.user = payload;
 
