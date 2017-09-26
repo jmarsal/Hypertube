@@ -9,7 +9,7 @@
 	"scripts": {
 		"start": "node apiServer.js",
 		"prod": "NODE_ENV=production node -r 'babel-register' ./bin/www & NODE_ENV=production node apiServer.js",
-		"dev": "NODE_ENV=development node -r 'babel-register' ./bin/www & nodemon --inspect apiServer.js"
+		"dev": "NODE_ENV=development node -r 'babel-register' ./bin/www & NODE_ENV=development nodemon --inspect apiServer.js"
 	},
 	"devDependencies": {
 		"autoprefixer": "^7.1.4",

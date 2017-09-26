@@ -16,8 +16,7 @@ import {
 	ListGroupItem,
 	Label,
 	Modal,
-	Jumbotron,
-	ProgressBar
+	Jumbotron
 } from 'react-bootstrap';
 import validator from 'validator';
 import { FormattedMessage, injectIntl } from 'react-intl';
@@ -105,7 +104,10 @@ class MoviePage extends React.Component {
 						this.props.movie.data.downloadPercent &&
 						this.props.movie.data.downloadPercent[this.state.currentQuality] * 20 >= 100
 					) {
-						this.refs.video.play();
+						let playPromise = this.refs.video.play();
+
+						playPromise.then((_) => {}).catch((err) => {});
+
 						this.setState({ isPlaying: true });
 					}
 				}.bind(this),
@@ -125,6 +127,7 @@ class MoviePage extends React.Component {
 
 	handleQuality(quality) {
 		this.setState({ currentQuality: quality });
+		this.setState({ isPlaying: false });
 	}
 
 	handleClickOnUser(user) {
@@ -217,7 +220,6 @@ class MoviePage extends React.Component {
 				this.props.movie.data.downloadPercent[this.state.currentQuality]
 					? Math.round(this.props.movie.data.downloadPercent[this.state.currentQuality] * 20)
 					: 0;
-			const progressInstance = <ProgressBar active now={percent} label={`${percent}%`} />;
 
 			let image = this.props.movie.data.background;
 			let styleBackground = {
