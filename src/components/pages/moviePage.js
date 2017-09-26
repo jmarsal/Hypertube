@@ -100,9 +100,11 @@ class MoviePage extends React.Component {
 				function() {
 					this.props.getDetailMovie(this.props.location.query.id);
 
+					const multiplier = this.props.movie.data.provider === 'yts' ? 20 : 5;
+
 					if (
 						this.props.movie.data.downloadPercent &&
-						this.props.movie.data.downloadPercent[this.state.currentQuality] * 20 >= 100
+						this.props.movie.data.downloadPercent[this.state.currentQuality] * multiplier >= 100
 					) {
 						let playPromise = this.refs.video.play();
 
@@ -215,10 +217,11 @@ class MoviePage extends React.Component {
 		};
 
 		if (this.props.movie && this.props.user) {
+			const multiplier = this.props.movie.data.provider === 'yts' ? 20 : 5;
 			const percent =
 				this.props.movie.data.downloadPercent &&
 				this.props.movie.data.downloadPercent[this.state.currentQuality]
-					? Math.round(this.props.movie.data.downloadPercent[this.state.currentQuality] * 20)
+					? Math.round(this.props.movie.data.downloadPercent[this.state.currentQuality] * multiplier)
 					: 0;
 
 			let image = this.props.movie.data.background;
@@ -358,8 +361,7 @@ class MoviePage extends React.Component {
 										{this.state.isPlaying ? null : (
 											<div className="video-foreground">
 												<p>
-													Veuillez patienter quelques instants, le film démarrera lorsqu'il
-													sera prêt
+													<FormattedMessage id="player_wait" />
 												</p>
 
 												<div className="video-loading">
