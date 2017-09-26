@@ -190,7 +190,7 @@ class HomePage extends React.Component {
 									onChange={(e) => this.getMovies(e)}
 								/>
 							</Col>
-							<ModalFilters title={this.state.searchRequest} />
+							{collection.length > 1 ? <ModalFilters title={this.state.searchRequest} /> : null}
 						</FormGroup>
 						<Col id="collectionListItems">
 							{this.state.anchor ? (

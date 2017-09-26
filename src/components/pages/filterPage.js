@@ -216,44 +216,48 @@ class FilterPage extends React.Component {
 						</Radio>
 					</Form>
 				</FormGroup>
-				<FormGroup>
-					<ControlLabel>Note IMDB : </ControlLabel>
-					<Form>
-						<Checkbox
-							checked={this.props.noteActive}
-							onChange={(value) => this.getNewFilterEvent({ noteActive: value })}
-						>
-							{this.props.noteActive ? 'On' : 'Off'}
-						</Checkbox>
-						<InputRange
-							draggableTrack={true}
-							maxValue={notesMinMax.max}
-							minValue={notesMinMax.min}
-							value={notesMinMaxRange}
-							onChange={(value) => this.getNewFilterEvent({ note: value })}
-						/>
-					</Form>
-				</FormGroup>
-				<FormGroup>
-					<ControlLabel>
-						<FormattedMessage id="filter-year" />
-					</ControlLabel>
-					<Form>
-						<Checkbox
-							checked={this.props.yearActive}
-							onChange={(value) => this.getNewFilterEvent({ yearActive: value })}
-						>
-							{this.props.yearActive ? 'On' : 'Off'}
-						</Checkbox>
-						<InputRange
-							draggableTrack={true}
-							maxValue={yearsMinMax.max}
-							minValue={yearsMinMax.min}
-							value={yearsMinMaxRange}
-							onChange={(value) => this.getNewFilterEvent({ year: value })}
-						/>
-					</Form>
-				</FormGroup>
+				{notesMinMax.max > notesMinMax.min ? (
+					<FormGroup>
+						<ControlLabel>Note IMDB : </ControlLabel>
+						<Form>
+							<Checkbox
+								checked={this.props.noteActive}
+								onChange={(value) => this.getNewFilterEvent({ noteActive: value })}
+							>
+								{this.props.noteActive ? 'On' : 'Off'}
+							</Checkbox>
+							<InputRange
+								draggableTrack={true}
+								maxValue={notesMinMax.max}
+								minValue={notesMinMax.min}
+								value={notesMinMaxRange}
+								onChange={(value) => this.getNewFilterEvent({ note: value })}
+							/>
+						</Form>
+					</FormGroup>
+				) : null}
+				{yearsMinMax.max > yearsMinMax.min ? (
+					<FormGroup>
+						<ControlLabel>
+							<FormattedMessage id="filter-year" />
+						</ControlLabel>
+						<Form>
+							<Checkbox
+								checked={this.props.yearActive}
+								onChange={(value) => this.getNewFilterEvent({ yearActive: value })}
+							>
+								{this.props.yearActive ? 'On' : 'Off'}
+							</Checkbox>
+							<InputRange
+								draggableTrack={true}
+								maxValue={yearsMinMax.max}
+								minValue={yearsMinMax.min}
+								value={yearsMinMaxRange}
+								onChange={(value) => this.getNewFilterEvent({ year: value })}
+							/>
+						</Form>
+					</FormGroup>
+				) : null}
 				<FormGroup controlId="formControlsSelectGenres">
 					<ControlLabel>Genres :</ControlLabel>
 					<FormControl

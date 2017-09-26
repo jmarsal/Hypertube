@@ -183,10 +183,12 @@ router.post('/getQualityInCollection', (req, res) => {
 						req.body.title ? { title: { $regex: req.body.title, $options: 'i' } } : {}
 					)
 						.then((quality) => {
-							let find = quality.map((e, index) => (e === '3D' ? index : false));
-							let index = find.find((e) => {
-								if (e !== 'false') {
-									find = true;
+							let find3d = quality.map((e, index) => (e === '3D' ? index : false));
+							let index = find3d.find((e) => {
+								if (e === 0) {
+									return true;
+								}
+								if (e !== false) {
 									return e;
 								}
 							});
@@ -194,7 +196,11 @@ router.post('/getQualityInCollection', (req, res) => {
 								quality.splice(index, 1);
 							}
 							quality = quality.map((e) => {
-								return parseInt(e.match(/(\d{3,4})/)[0]);
+								if (e && e.match(/(\d{3,4})/)[0]) {
+									return parseInt(e.match(/(\d{3,4})/)[0]);
+								} else {
+									return null;
+								}
 							});
 
 							quality.sort(sortNumberDesc);
