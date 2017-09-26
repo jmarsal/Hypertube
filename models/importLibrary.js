@@ -510,7 +510,8 @@ function getAndInsertVideo(page, source, cb) {
 }
 
 const ImportLibrary = function() {
-	const sources = [ 'yts', 'eztv' ];
+	const sources = [ 'yts', 'eztv' ],
+		dev = process.env.NODE_ENV === 'development' ? true : false;
 
 	sources.forEach((source) => {
 		Video.find({
@@ -525,7 +526,7 @@ const ImportLibrary = function() {
 
 				getAndInsertVideo(1, source, (err) => {
 					if (err) {
-						console.error('ERROR WHILE INSERTING MOVIES:', err);
+						if (dev) console.error('ERROR WHILE INSERTING MOVIES:', err);
 					} else {
 						console.log(source + 'Movies collection downloaded');
 					}
