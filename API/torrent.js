@@ -29,6 +29,8 @@ function findMovie(_id, quality) {
 						}
 					}
 
+					if (magnet === undefined) magnet = 'magnet:?xt=urn:btih:' + movie.torrent[0].hash;
+
 					movie.magnet[0] = magnet;
 				} else {
 					magnet = movie.magnet[0];
