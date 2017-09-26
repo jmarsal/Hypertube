@@ -135,14 +135,6 @@ class FormLogin extends Component {
 		}
 	}
 
-	/*
-	loginOauth(site) {
-		const { logPassportWithOauth } = this.props;
-		logPassportWithOauth(site);
-		//
-	}
-	*/
-
 	render() {
 		const { showModal, errorsLogin, style, validEmailForget, messForget } = this.props;
 
