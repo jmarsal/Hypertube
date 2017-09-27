@@ -4,6 +4,8 @@ const router = express.Router();
 const Library = require('../models/video.js');
 const Check = require('../models/check.js');
 
+const dev = process.env.NODE_ENV === 'development' ? true : false;
+
 function findMovie(_id) {
 	return new Promise((resolve, reject) => {
 		Library.findOne({ _id: _id }, function(err, movie) {
@@ -64,7 +66,9 @@ router.post('/', (req, res) => {
 								movie.comments[0] = newComment;
 							}
 
-							movie.save();
+							movie.save().catch((err) => {
+								if (dev) console.error(err);
+							});
 							res.json({ status: 'success', content: movie.comments });
 						})
 						.catch((err) => {

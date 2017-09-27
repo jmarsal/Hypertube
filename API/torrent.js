@@ -13,7 +13,7 @@ const srt2vtt = require('srt-to-vtt');
 
 const Library = require('../models/video.js');
 
-dev = process.env.NODE_ENV === 'development' ? true : false;
+const dev = process.env.NODE_ENV === 'development' ? true : false;
 
 function findMovie(_id, quality) {
 	return new Promise((resolve, reject) => {
@@ -77,7 +77,10 @@ function streamFile(res, file, start, end, mimetype, fileName) {
 			.on('end', () => {
 				if (dev) console.log('Converting is done !');
 			})
-			.save('/goinfre/' + fileName + '.mp4');
+			.save('/goinfre/' + fileName + '.mp4')
+			.catch((err) => {
+				if (dev) console.error(err);
+			});
 
 		pump(stream, res);
 	}
@@ -130,7 +133,9 @@ router.get('/subtitles/:_id', (req, res) => {
 															);
 													}
 
-													movie.save();
+													movie.save().catch((err) => {
+														if (dev) console.error(err);
+													});
 													res.json({ status: 'success', data: movie });
 												});
 											})
@@ -138,7 +143,9 @@ router.get('/subtitles/:_id', (req, res) => {
 												console.error(err);
 											});
 									} else {
-										movie.save();
+										movie.save().catch((err) => {
+											if (dev) console.error(err);
+										});
 										res.json({ status: 'success', data: movie });
 									}
 								});
@@ -201,7 +208,9 @@ router.get('/:_id/:quality', (req, res) => {
 					if (movie.views.indexOf(req.user.username) < 0) {
 						movie.views.push(req.user.username);
 					}
-					movie.save();
+					movie.save().catch((err) => {
+						if (dev) console.error(err);
+					});
 
 					if (!movie.filePath || (movie.filePath && !movie.filePath[quality])) {
 						if (dev) console.log('No file path yet, preparing to download...');
@@ -237,7 +246,9 @@ router.get('/:_id/:quality', (req, res) => {
 
 						if (movie.provider === 'yts') {
 							movie.magnet = undefined;
-							movie.save();
+							movie.save().catch((err) => {
+								if (dev) console.error(err);
+							});
 						}
 
 						let fileName = undefined;
@@ -326,7 +337,9 @@ router.get('/:_id/:quality', (req, res) => {
 										}
 
 										tmpMovie.markModified('downloadPercent');
-										tmpMovie.save().catch((err) => {});
+										tmpMovie.save().catch((err) => {
+											if (dev) console.error(err);
+										});
 									} else {
 										if (dev) console.log('There is no movie with this ID');
 									}
@@ -337,13 +350,17 @@ router.get('/:_id/:quality', (req, res) => {
 								if (!movie.filePath) movie.filePath = new Object();
 								movie.filePath[quality] = '/goinfre/' + fileName + fileExt;
 								movie.downloadDate = new Date();
-								movie.save();
+								movie.save().catch((err) => {
+									if (dev) console.error(err);
+								});
 							});
 					} else {
 						if (dev) console.log('This movie is already downloaded');
 						if (movie.provider === 'yts') {
 							movie.magnet = undefined;
-							movie.save();
+							movie.save().catch((err) => {
+								if (dev) console.error(err);
+							});
 						}
 
 						let stats = fs.statSync(movie.filePath[quality]);

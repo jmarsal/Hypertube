@@ -13,6 +13,7 @@ const fs = require('fs');
 const Library = require('./models/video.js');
 
 let app = express();
+const dev = process.env.NODE_ENV === 'development' ? true : false;
 
 // MIDDLEWARE
 
@@ -76,7 +77,9 @@ schedule.scheduleJob('00 59 23 * * *', () => {
 						count++;
 					}
 					movie.lastWatchingDate = undefined;
-					movie.save();
+					movie.save().catch((err) => {
+						if (dev) console.error(err);
+					});
 				}
 			});
 

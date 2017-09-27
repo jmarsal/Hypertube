@@ -9,6 +9,8 @@ const User = require('../models/user.js');
 const Check = require('../models/check.js');
 const Mail = require('../models/mail.js');
 
+const dev = process.env.NODE_ENV === 'development' ? true : false;
+
 //---->>> POST USER <<<-----
 router.post('/', (req, res) => {
 	Check.userExists(req.body.username)
@@ -297,7 +299,9 @@ router.put('/:_id', (req, res) => {
 												if (err) throw err;
 
 												userToUpdate.setPassword(user.password, () => {
-													userToUpdate.save();
+													userToUpdate.save().catch((err) => {
+														if (dev) console.error(err);
+													});
 													return res.json({ status: 'success', user: payload });
 												});
 											});
@@ -398,7 +402,9 @@ router.post('/reinitialisation', (req, res) => {
 		}
 
 		userToUpdate.setPassword(user.password, () => {
-			userToUpdate.save();
+			userToUpdate.save().catch((err) => {
+				if (dev) console.error(err);
+			});
 			res.status(200).json({ status: 'success' });
 		});
 	});
@@ -410,7 +416,9 @@ router.post('/lang', (req, res) => {
 		User.findOne({ _id: req.session.user._id }, (err, user) => {
 			if (user) {
 				user.language = req.body.language;
-				user.save();
+				user.save().catch((err) => {
+					if (dev) console.error(err);
+				});
 				res.json({ status: 'success', content: user.language });
 			} else {
 				res.json({ status: 'error' });

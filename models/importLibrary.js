@@ -6,6 +6,8 @@ const express = require('express'),
 	Season = require('../models/season'),
 	Video = require('../models/video');
 
+const dev = process.env.NODE_ENV === 'development' ? true : false;
+
 function addMissingHttps(pattern, url) {
 	if (url.search('https:') > -1) {
 		return url;
@@ -300,7 +302,9 @@ function saveVideoWithoutOmdbResponse(response, typeMovie) {
 		season: response.season,
 		episode: response.episode
 	});
-	video.save();
+	video.save().catch((err) => {
+		if (dev) console.error(err);
+	});
 	return false;
 }
 
@@ -381,7 +385,9 @@ function saveEztvListInCollection(json) {
 			if (!videoData.video.year || videoData.video.year === 'NaN') {
 				videoData.video.year = -1;
 			}
-			videoData.video.save();
+			videoData.video.save().catch((err) => {
+				if (dev) console.error(err);
+			});
 		})
 		.catch((err) => {
 			if (
