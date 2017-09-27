@@ -55,13 +55,16 @@ class FilterPage extends React.Component {
 		) {
 			if (e.currentTarget.name === 'name-sort') {
 				filters.titleOrder =
-					e.target.labels['0'].innerText !== 'None'
-						? e.target.labels['0'].innerText === 'A-Z' ? 'asc' : 'desc'
+					e.target.offsetParent.innerText !== 'None'
+						? e.target.offsetParent.innerText === 'A-Z' ? 'asc' : 'desc'
 						: '';
 			} else {
+				debugger;
 				filters.type =
-					e.target.labels['0'].innerText !== 'None'
-						? e.target.labels['0'].innerText === 'Movies' ? 'movie' : 'serie'
+					e.target.offsetParent.innerText !== 'None'
+						? e.target.offsetParent.innerText === 'Movies' || e.target.offsetParent.innerText === 'Films'
+							? 'movie'
+							: 'serie'
 						: '';
 			}
 		}

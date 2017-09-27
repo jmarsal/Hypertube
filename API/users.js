@@ -158,7 +158,7 @@ router.post('/forget', (req, res) => {
 
 //---->>> GET ONE USER BY ID <<<-----
 router.get('/one/:userID', (req, res) => {
-	if (req.session.user._id === req.params.userID) {
+	if (req.session.user && req.session.user._id === req.params.userID) {
 		Check.tokenExists(req.user.token)
 			.then((response) => {
 				if (response.status === 'error') {
@@ -323,55 +323,41 @@ router.put('/:_id', (req, res) => {
 
 //---->>> UPLOAD USER'S IMAGE <<<-----
 router.post('/upload', (req, res) => {
-	if (req.user) {
-		Check.tokenExists(req.user.token)
-			.then((response) => {
-				if (response.status === 'error') {
-					return res.status(401).send('HTTP401 Unauthorized : Bad API_TOKEN');
-				} else {
-					mkdirp('./public/upload', function(err) {
-						if (!err) {
-							let Storage = multer.diskStorage({
-								destination: function(req, file, callback) {
-									callback(null, './public/upload');
-								},
-								filename: function(req, file, callback) {
-									callback(null, req.body.name);
-								}
-							});
-
-							let upload = multer({
-								storage: Storage,
-								fileFilter: (req, file, cb) => {
-									if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
-										res.json({ status: 'error', content: [ { msg: 'Avatar: Wrong format.' } ] });
-									} else {
-										cb(null, true);
-									}
-								}
-							}).single('file');
-
-							upload(req, res, function(err) {
-								if (err || !req.file) {
-									console.error(err);
-									res.json({
-										status: 'error',
-										content: [ { msg: 'Avatar: Please, choose a file.' } ]
-									});
-								} else {
-									res.json({ status: 'success', content: '' });
-								}
-							});
-						} else throw err;
-					});
+	mkdirp('./public/upload', function(err) {
+		if (!err) {
+			let Storage = multer.diskStorage({
+				destination: function(req, file, callback) {
+					callback(null, './public/upload');
+				},
+				filename: function(req, file, callback) {
+					callback(null, req.body.name);
 				}
-			})
-			.catch((err) => {
-				console.error(err);
 			});
-	} else {
-		return res.status(401).send('HTTP401 Unauthorized : Not logged.');
-	}
+
+			let upload = multer({
+				storage: Storage,
+				fileFilter: (req, file, cb) => {
+					if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)) {
+						res.json({ status: 'error', content: [ { msg: 'Avatar: Wrong format.' } ] });
+					} else {
+						cb(null, true);
+					}
+				}
+			}).single('file');
+
+			upload(req, res, function(err) {
+				if (err || !req.file) {
+					console.error(err);
+					res.json({
+						status: 'error',
+						content: [ { msg: 'Avatar: Please, choose a file.' } ]
+					});
+				} else {
+					res.json({ status: 'success', content: '' });
+				}
+			});
+		} else throw err;
+	});
 });
 
 // ACCOUNT ACTIVATION

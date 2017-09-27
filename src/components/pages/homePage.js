@@ -127,20 +127,16 @@ class HomePage extends React.Component {
 	}
 
 	handleScroll(event) {
-		if (!event.pageY && event.srcElement.body.scrollTop) {
-			if (event.srcElement.body.scrollTop > 220) {
+		let target = event.target || event.srcElement;
+
+		if (target.body.scrollTop) {
+			if (target.body.scrollTop > 220) {
 				this.setState({ anchor: true });
 			} else {
 				this.setState({ anchor: false });
 			}
-		} else if (!event.pageY && event.srcElement.documentElement.scrollTop) {
-			if (event.srcElement.documentElement.scrollTop > 220) {
-				this.setState({ anchor: true });
-			} else {
-				this.setState({ anchor: false });
-			}
-		} else if (event.pageY) {
-			if (event.pageY > 220) {
+		} else if (target.documentElement.scrollTop) {
+			if (target.documentElement.scrollTop > 220) {
 				this.setState({ anchor: true });
 			} else {
 				this.setState({ anchor: false });
@@ -171,7 +167,7 @@ class HomePage extends React.Component {
 			<Grid>
 				<Row>
 					<Jumbotron>
-						<h1>Welcome to Hypertube !</h1>
+						<h2>Welcome to Hypertube !</h2>
 						<p>This is a web project from 42. Enjoy ;)</p>
 					</Jumbotron>
 				</Row>

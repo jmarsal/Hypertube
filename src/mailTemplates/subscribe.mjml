@@ -36,10 +36,10 @@
           <mj-text font-style="italic"
                    font-size="20"
                    font-family="Helvetica Neue"
-                   color="#ffffff">Congratulation ^^login^^ !</mj-text>
+                   color="#ffffff">Congratulations ^^login^^ !</mj-text>
 
             <mj-text color="#ffffff">
-                You asked to register on Hypertube and we thank you. More than one step to start our new streaming experience!
+                You asked to register on Hypertube and we thank you. One more step to start our new streaming experience!
           </mj-text>
           <mj-text color="#ffffff">
                 And for that, nothing more simple!
@@ -49,7 +49,7 @@
           </mj-text>
 
             <mj-button background-color="#1b698e"
-                     href="http://^^link^^">Subscribe</mj-button>
+                     href="http://^^link^^">Activate my account</mj-button>
 
     </mj-column>
   </mj-section>

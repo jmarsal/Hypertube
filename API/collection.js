@@ -1,6 +1,7 @@
 const express = require('express'),
 	router = express.Router(),
-	Videos = require('../models/video.js');
+	Videos = require('../models/video.js'),
+	request = require('request');
 
 const Check = require('../models/check.js');
 
@@ -85,6 +86,38 @@ function queryMongoose(title, filters) {
 	}
 }
 
+function testStatusCodeCoverBackground(image, video) {
+	return new Promise((resolve, reject) => {
+		request(image, (err, res) => {
+			if (err || !res.statusCode) {
+				resolve({ status: 404, video: video });
+			}
+			resolve({ status: res.statusCode, video: video });
+		});
+	});
+}
+
+function mapImagesForEachVideo(source, video, whichImage) {
+	return new Promise((resolve, reject) => {
+		testStatusCodeCoverBackground(source, video)
+			.then((data) => {
+				if (data.status === 200) {
+					return video;
+				} else {
+					if (whichImage === 'cover') {
+						video.cover = '/library/not-available.png';
+					} else {
+						video.background = '/library/not-available.png';
+					}
+					return video;
+				}
+			})
+			.then((video) => {
+				resolve(video);
+			});
+	});
+}
+
 // GET LIST  OF MOVIES / TV SHOW FROM DB BY NAME
 router.post('/getCollectionByTitleForClient', (req, res) => {
 	if (req.user) {
@@ -106,7 +139,19 @@ router.post('/getCollectionByTitleForClient', (req, res) => {
 					})
 						.then((json) => {
 							if (json) {
-								res.json({ status: 'success', payload: json });
+								let promises = json.docs.map((video, index) => {
+									return mapImagesForEachVideo(video.cover, video, 'cover')
+										.then((video) => {
+											return mapImagesForEachVideo(video.background, video, 'background');
+										})
+										.then((video) => {
+											json.docs[index] = video;
+										});
+								});
+
+								Promise.all(promises).then((result) => {
+									res.json({ status: 'success', payload: json });
+								});
 							} else {
 								res.json({ status: 'no_data' });
 							}
@@ -243,20 +288,27 @@ router.post('/getSeasonsInCollection', (req, res) => {
 							: { type: 'serie' }
 					)
 						.then((resSeasons) => {
-							resSeasons.sort(sortNumberAsc);
-							resSeasons = resSeasons.map((season, index) => {
-								if (season > 0 && season < 100) {
-									return season;
-								} else {
-									resSeasons.splice(index - 1, 1);
-								}
-							});
-							if (resSeasons[0] === undefined) {
-								resSeasons.splice(0, 1);
-							}
+							if (resSeasons.length) {
+								resSeasons.sort(sortNumberAsc);
+								resSeasons = resSeasons.map((season, index) => {
+									if (season > 0 && season < 100) {
+										return season;
+									} else {
+										resSeasons.splice(index - 1, 1);
+									}
+								});
 
-							let allSeasons = resSeasons.map((season) => ({ val: season.toString(), selected: false }));
-							res.json({ status: 'success', payload: allSeasons });
+								let allSeasons = resSeasons.map((season) => {
+									if (season !== undefined)
+										return {
+											val: season.toString(),
+											selected: false
+										};
+								});
+								res.json({ status: 'success', payload: allSeasons });
+							} else {
+								res.json({ status: 'success', payload: null });
+							}
 						})
 						.catch((err) => {
 							if (err) {

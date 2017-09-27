@@ -108,15 +108,18 @@ class SubscribeForm extends React.Component {
 				username: this.state.username,
 				email: this.state.email,
 				password: this.state.password,
-				img: this.state.img,
+				img: this.state.img.search('/avatars/') < 0 ? '/upload/' + this.state.newImagename : this.state.img,
 				firstname: this.state.firstname,
 				lastname: this.state.lastname
 			},
 			file = this.state.imgObj;
-		if (this.state.img.search('/avatars/') > 0) {
+		debugger;
+		if (this.state.img.search('/avatars/') < 0) {
+			debugger;
 			this.props.uploadDocumentRequest({
 				file,
-				name: this.state.newImagename
+				name: this.state.newImagename,
+				username: user.username
 			});
 		}
 

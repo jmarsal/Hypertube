@@ -109,7 +109,6 @@ router.get('/subtitles/:_id', (req, res) => {
 											.createReadStream(subtitlesPath + '/' + subtitles.en[0].filename)
 											.pipe(srt2vtt())
 											.pipe(fs.createWriteStream(subtitlesPath + movie.subtitleEn));
-										fs.unlinkSync(subtitlesPath + '/' + subtitles.en[0].filename);
 									}
 
 									if (subtitles.fr && subtitles.fr[0].url) {
@@ -129,8 +128,6 @@ router.get('/subtitles/:_id', (req, res) => {
 															.pipe(
 																fs.createWriteStream(subtitlesPath + movie.subtitleFr)
 															);
-
-														fs.unlinkSync(subtitlesPath + '/' + subtitles.fr[0].filename);
 													}
 
 													movie.save();

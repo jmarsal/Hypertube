@@ -239,7 +239,7 @@ passport.use(
 							email: profile.emails[0] ? profile.emails[0].value : '',
 							firstname: '',
 							lastname: '',
-							img: profile.avatar_url ? profile.avatar_url : '',
+							img: profile._json.avatar_url ? profile._json.avatar_url : '',
 							activationKey: randomKey,
 							token: gen_token,
 							active: true,

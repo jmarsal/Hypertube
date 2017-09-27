@@ -313,8 +313,9 @@ function checkIfValidImageInResponse(response, data) {
 			if (err || res.statusCode !== 200) {
 				response.largeImage = '/library/not-available.png';
 				resolve(data);
+			} else {
+				resolve(data);
 			}
-			resolve(data);
 		});
 	});
 }

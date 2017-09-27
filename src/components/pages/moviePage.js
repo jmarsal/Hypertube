@@ -146,7 +146,7 @@ class MoviePage extends React.Component {
 			let commentData = new Object();
 
 			commentData.movieId = this.props.location.query.id;
-			commentData.comment = validator.escape(this.state.comment).trim();
+			commentData.comment = validator.escape(this.state.comment).trim().substring(0, 300);
 			commentData.username = this.props.user.username;
 
 			this.props.addComment(commentData);
