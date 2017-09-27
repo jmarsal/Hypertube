@@ -18,7 +18,9 @@ class Menu extends React.Component {
 
 	handleDisconnect() {
 		this.props.disconnectUser();
-		browserHistory.push('/');
+		setTimeout(() => {
+			browserHistory.push('/');
+		}, 500);
 	}
 
 	handleLanguage(language) {

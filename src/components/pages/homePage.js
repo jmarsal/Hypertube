@@ -301,7 +301,7 @@ class HomePage extends React.Component {
 						</Col>
 					</Form>
 				</Row>
-				{this.state.searchRequest === '' && this.props.collection[0] ? (
+				{this.props.sessionUser && this.state.searchRequest === '' && this.props.collection[0] ? (
 					<Waypoint onEnter={() => this.getNewPageMovies()} />
 				) : null}
 			</Grid>
