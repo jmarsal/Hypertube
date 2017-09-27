@@ -53,7 +53,8 @@ class HomePage extends React.Component {
 			scrollHeight: 0,
 			titleVideo: this.props.title,
 			isCollection: false,
-			anchor: false
+			anchor: false,
+			isCollection: false
 		};
 	}
 
@@ -106,6 +107,10 @@ class HomePage extends React.Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
+		if (!this.state.isCollection && this.props.collection && this.props.collection[0]) {
+			this.setState({ isCollection: true });
+		}
+
 		if (
 			document.getElementById('collectionListItems') &&
 			this.state.scrollHeight < document.getElementById('collectionListItems').scrollHeight
@@ -173,7 +178,7 @@ class HomePage extends React.Component {
 			</Grid>
 		) : (
 			<Grid>
-				{this.props.collection[0] ? null : this.getCollectionFirstTime()}
+				{this.state.isCollection ? null : this.getCollectionFirstTime()}
 				<Row>
 					<PageHeader className={'center_it'}>
 						<FormattedMessage id="title_home" />
@@ -190,7 +195,9 @@ class HomePage extends React.Component {
 									onChange={(e) => this.getMovies(e)}
 								/>
 							</Col>
-							{collection.length > 1 ? <ModalFilters title={this.state.searchRequest} /> : null}
+							{collection.length !== 1 ? (
+								<ModalFilters title={this.state.searchRequest} status={this.state.filtersOn} />
+							) : null}
 						</FormGroup>
 						<Col id="collectionListItems">
 							{this.state.anchor ? (
