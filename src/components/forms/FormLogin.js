@@ -141,7 +141,7 @@ class FormLogin extends Component {
 		return this.state.forget == false ? (
 			<Form horizontal>
 				<FormGroup>
-					<Col smOffset={2} sm={10}>
+					<Col smOffset={2} sm={10} className={'z_index_up'}>
 						<h5>Login from 42, Facebook, Google, Twitter, Github</h5>
 						<Col xs={2}>
 							<a href="/api/auth/42">

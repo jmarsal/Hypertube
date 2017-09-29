@@ -222,3 +222,7 @@ h5 {
 	height: auto;
 	filter: invert(100%);
 }
+
+.z_index_up {
+	z-index: 9000;
+}
