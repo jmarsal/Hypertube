@@ -169,10 +169,10 @@ class FormLogin extends Component {
 							</a>
 						</Col>
 					</Col>
-					<Col smOffset={5} sm={10}>
-						<h5>Or manually</h5>
-					</Col>
 				</FormGroup>
+				<Col smOffset={5} sm={10}>
+					<h5>Or manually</h5>
+				</Col>
 				<FormGroup controlId="formHorizontalLogin" validationState={this.state.loginCheck}>
 					<Col sm={12}>{errorsLogin ? <Alert bsStyle={style}>{errorsLogin}</Alert> : ''}</Col>
 					<Col componentClass={ControlLabel} sm={2}>
