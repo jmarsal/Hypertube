@@ -15,17 +15,21 @@ const dev = process.env.NODE_ENV === 'development' ? true : false;
 router.post('/', (req, res) => {
 	Check.userExists(req.body.username)
 		.then((response) => {
-			if (response.status === 'success') {
-				return Check.mailExists(req.body.email);
-			} else {
-				res.json({ status: 'error', content: response.data });
+			if (response) {
+				if (response.status === 'success') {
+					return Check.mailExists(req.body.email);
+				} else {
+					res.json({ status: 'error', content: response.data });
+				}
 			}
 		})
 		.then((response) => {
-			if (response.status === 'success') {
-				return Check.subscribeInputs(req);
-			} else {
-				res.json({ status: 'error', content: response.data });
+			if (response) {
+				if (response.status === 'success') {
+					return Check.subscribeInputs(req);
+				} else {
+					res.json({ status: 'error', content: response.data });
+				}
 			}
 		})
 		.then((response) => {

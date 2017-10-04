@@ -89,10 +89,11 @@ function queryMongoose(title, filters) {
 function testStatusCodeCoverBackground(image, video) {
 	return new Promise((resolve, reject) => {
 		request(image, (err, res) => {
-			if (err || !res.statusCode) {
+			if (err || !res || (res && !res.statusCode)) {
 				resolve({ status: 404, video: video });
+			} else {
+				resolve({ status: res.statusCode, video: video });
 			}
-			resolve({ status: res.statusCode, video: video });
 		});
 	});
 }

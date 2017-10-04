@@ -1,7 +1,6 @@
 let express = require('express');
 let path = require('path');
 let favicon = require('serve-favicon');
-let logger = require('morgan');
 import webpack from 'webpack';
 import webpackConfigDev from './webpack.development.js';
 import webpackConfigProd from './webpack.production.js';
@@ -63,7 +62,6 @@ if (process.env.NODE_ENV === 'development') {
 
 // uncomment after placing your favicon in /public
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('*', (req, res) => {
