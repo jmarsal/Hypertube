@@ -3,6 +3,9 @@
 ## Contributeurs
 [@jmarsal](https://github.com/jmarsal) | [@pwortham](https://github.com/pwortham) | [@WingardiumJKEULEYA](https://github.com/WingardiumJKEULEYA)
 
+## Note Finale
+```124 / 125```
+
 ![Hypertube Logo](./public/favicon.ico)
 # Projet Hypertube 42
 Ce projet vous propose de créer une application web permettant à un utilisateur de
