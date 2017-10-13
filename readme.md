@@ -4,7 +4,7 @@
 [@jmarsal](https://github.com/jmarsal) | [@pwortham](https://github.com/pwortham) | [@WingardiumJKEULEYA](https://github.com/WingardiumJKEULEYA)
 
 ## Note Finale
-```124 / 125```
+`124 / 100`
 
 ![Hypertube Logo](./public/favicon.ico)
 # Projet Hypertube 42
